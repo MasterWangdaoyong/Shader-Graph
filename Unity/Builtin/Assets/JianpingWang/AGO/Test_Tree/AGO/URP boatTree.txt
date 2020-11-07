@@ -1,0 +1,46 @@
+
+
+
+
+//SSS mask 
+fixed4 SSSmask = fixed4( min(vertex.color.g * 200 , 1), min(vertex.color.g * 200 , 1), min(vertex.color.g * 200 , 1), min(vertex.color.g * 200 , 1))  * albedo.rgba;
+
+//AO 
+fixed Ao = fixed3(vertex.color.a, vertex.color.a, vertex.color.a)
+
+
+//
+normalTex , vertex.normal
+float3 normalAffectSSS = Normals affect SSS(normalTex, vertex.normal);
+
+
+
+//  
+WorldPos
+half3 lightDir = half3(0.5, 0.5, 0);
+half3 lightColor = 1;
+half lightAtten = 1;
+
+lightDir = UnitySapceLightDir(WorldPos);
+lightColor = _LightColor0.rgb;
+lightAtten = shadowAttenuation;
+
+
+//
+float3 Adot = float3( saturate(dot(normalAffectSSS * (-1 * lightDir))) , saturate(dot(normalAffectSSS * (-1 * lightDir))) , saturate(dot(normalAffectSSS * (-1 * lightDir))));
+float3 ColorAndAtten = lightColor * lightAtten;
+float3 B =  Adot * ColorAndAtten;
+
+fixed3 Emission = B * SSSmask * Ao;
+
+
+
+
+
+
+
+
+
+
+
+
