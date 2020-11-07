@@ -1,0 +1,51 @@
+// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
+
+#include "Common.ush"
+
+float4 Value;
+uint Size;
+uint SrcOffset;
+uint DstOffset;
+
+StructuredBuffer<float4> SrcBuffer;
+RWStructuredBuffer<float4> DstBuffer;
+
+[numthreads(THREADGROUP_SIZE, 1, 1)]
+void MemsetBufferCS( uint3 DispatchThreadId : SV_DispatchThreadID ) 
+{
+	uint DestIndex = DstOffset + DispatchThreadId.x;
+
+	if (DispatchThreadId.x < Size)
+	{
+		DstBuffer[DestIndex] = Value;
+	}
+}
+
+[numthreads(THREADGROUP_SIZE, 1, 1)]
+void MemcpyBufferCS(uint3 DispatchThreadId : SV_DispatchThreadID) 
+{
+	uint SrcIndex = SrcOffset + DispatchThreadId.x;
+	uint DestIndex = DstOffset + DispatchThreadId.x;
+
+	if (DispatchThreadId.x < Size)
+	{
+		DstBuffer[DestIndex] = SrcBuffer[SrcIndex];
+	}
+}
+
+uint NumScatters;
+Buffer<float4> UploadBuffer;
+Buffer<uint> ScatterBuffer;
+
+[numthreads(THREADGROUP_SIZE, 1, 1)]
+void ScatterCopyCS( uint3 DispatchThreadId : SV_DispatchThreadID ) 
+{
+	uint ScatterIndex = DispatchThreadId.x;
+	
+	if (ScatterIndex < NumScatters)
+	{
+		uint DestIndex = ScatterBuffer.Load(ScatterIndex);
+		uint SrcIndex = ScatterIndex;
+		DstBuffer[DestIndex] = UploadBuffer.Load(SrcIndex);
+	}
+}

@@ -1,0 +1,12 @@
+// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
+
+#include "../Common.ush"
+#include "RayTracingCommon.ush"
+#include "RayTracingHitGroupCommon.ush"
+
+[shader("closesthit")]
+void DeferredMaterialCHS(inout FDeferredMaterialPayload Payload, in FDefaultAttributes Attributes)
+{
+	Payload.SortKey = GetHitGroupUserData();
+	Payload.HitT    = RayTCurrent();
+}

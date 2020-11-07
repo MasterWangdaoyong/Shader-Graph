@@ -1,0 +1,276 @@
+// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
+
+#include "../Common.ush"
+#include "../MonteCarlo.ush"
+#include "../DeferredShadingCommon.ush"
+#include "../ShadingModels.ush"
+#include "../QuasiRandom.ush"
+#include "SkyLightMipTreeCommon.ush"
+#include "RayTracingCommon.ush"
+#include "RayTracingSkyLightCommon.ush"
+#include "../ReflectionEnvironmentShared.ush"
+#include "../SceneTextureParameters.ush"
+
+struct FSkyLightVisibilityRays
+{
+	float4 DirectionAndPdf;
+};
+
+RaytracingAccelerationStructure TLAS;
+uint3 SkyLightVisibilityRaysDimensions;
+StructuredBuffer<FSkyLightVisibilityRays> SkyLightVisibilityRays;
+
+RWTexture2D<float4> RWOcclusionMaskUAV;
+RWTexture2D<float2> RWRayDistanceUAV;
+
+#define USE_MIP_PDF_TEXTURE 1
+#define USE_SOLID_ANGLE_TEXTURE 1
+
+float3 EvalSkyLight(float3 Direction)
+{
+	return SkyLight.Color * TextureCubeSampleLevel(SkyLight.Texture, SkyLight.TextureSampler, Direction, 0).rgb;
+}
+
+[shader("raygeneration")]
+void SkyLightRGS()
+{
+	uint2 PixelCoord = DispatchRaysIndex().xy + View.ViewRectMin;
+	uint LinearIndex = CalcLinearIndex(PixelCoord);
+
+	// Get G-Buffer surface data
+	float2 InvBufferSize = View.BufferSizeAndInvSize.zw;
+	float2 UV = (float2(PixelCoord) + 0.5) * InvBufferSize;
+	FScreenSpaceData ScreenSpaceData = GetScreenSpaceData(UV);
+	FGBufferData GBufferData = GetGBufferDataFromSceneTextures(UV);
+	float DeviceZ = SceneDepthBuffer.Load(int3(PixelCoord, 0)).r;
+	float3 WorldPosition;
+	float3 CameraDirection;
+	ReconstructWorldPositionAndCameraDirectionFromDeviceZ(PixelCoord, DeviceZ, WorldPosition, CameraDirection);
+	float3 WorldNormal = GBufferData.WorldNormal;
+	float3 Albedo = GBufferData.DiffuseColor;
+
+	// Recalculate DiffuseColor if subsurface reverted the contribution within the G-Buffer
+	if (UseSubsurfaceProfile(GBufferData.ShadingModelID))
+	{
+		Albedo = GBufferData.StoredBaseColor - GBufferData.StoredBaseColor * GBufferData.Metallic;
+		GBufferData.DiffuseColor = Albedo;
+	}
+	float3 SpecularColor = GBufferData.SpecularColor;
+	float Roughness = GBufferData.Roughness;
+
+	float RayDistance = 0.0;
+	float HitCount = 0.0;
+	uint SamplesPerPixel = SkyLight.SamplesPerPixel;
+
+	// Mask out depth values that are infinitely far away
+	bool IsFiniteDepth = DeviceZ > 0.0;
+	bool bTraceRay = (
+		IsFiniteDepth &&
+		GBufferData.ShadingModelID != SHADINGMODELID_UNLIT);
+	if (!bTraceRay)
+	{
+		SamplesPerPixel = 0.0;
+	}
+#if !DECOUPLE_SAMPLE_GENERATION
+	// Cache Cubeface CDF
+	uint MipCount = log2(SkyLight.MipDimensions.x);
+	float FaceCdf[7];
+	BuildFaceCdf(MipCount, FaceCdf);
+
+	FQuasiRandom QuasiRandom;
+	const uint Dimension = 0;
+	QuasiRandom_Initialize(QuasiRandom, PixelCoord, 0, SamplesPerPixel);
+	float3 BlueNoiseShift = EvalBlueNoise(QuasiRandom.BlueNoiseCoord, Dimension);
+#endif
+
+	float3 BentNormal = 0;
+	float3 ExitantRadiance = 0.0;
+	float3 DiffuseExitantRadiance = 0.0;
+	for (uint SampleIndex = 0; SampleIndex < SamplesPerPixel; ++SampleIndex)
+	{
+		RayDesc Ray;
+		float RayWeight;
+
+#if DECOUPLE_SAMPLE_GENERATION
+		float2 RayCoord = PixelCoord % SkyLightVisibilityRaysDimensions.xy;
+		uint RayCoordLinearIndex = (RayCoord.y * SkyLightVisibilityRaysDimensions.x + RayCoord.x) * SkyLight.SamplesPerPixel + SampleIndex;
+
+		float4 DirectionAndPdf = SkyLightVisibilityRays[RayCoordLinearIndex].DirectionAndPdf;
+		Ray.Origin = WorldPosition;
+		Ray.Direction = DirectionAndPdf.xyz;
+		Ray.TMin = 0.0;
+		Ray.TMax = SkyLight.MaxRayDistance;
+		RayWeight = DirectionAndPdf.w;
+#else
+		QuasiRandom_Update(QuasiRandom, SampleIndex, SamplesPerPixel);
+
+		// Determine sky light or lambert ray
+		float3 RandSample = QuasiRandom_Sample3(QuasiRandom);
+		RandSample = HaltonSequence3(QuasiRandom.HaltonSequence, QuasiRandom.HaltonIteration, Dimension);
+		RandSample += BlueNoiseShift;
+		RandSample = fmod(RandSample, 1.0);
+
+		float SkyLightSamplingStrategyPdf = 0.5;
+		float MisWeight = 1.0;
+		float RayPdf = 0.0;
+		BRANCH
+		if (RandSample.x < SkyLightSamplingStrategyPdf)
+		{
+			RandSample.x /= SkyLightSamplingStrategyPdf;
+			GenerateSkyLightOcclusionRay(FaceCdf, RandSample, Ray.Direction, RayPdf);
+			MisWeight = RayPdf / (SkyLightSamplingStrategyPdf * RayPdf + (1.0 - SkyLightSamplingStrategyPdf) * PdfCosineHemisphericalOcclusionRay(WorldNormal, Ray.Direction));
+		}
+		else
+		{
+			GenerateCosineHemisphericalOcclusionRay(WorldNormal, RandSample.yz, Ray.Direction, RayPdf);
+			MisWeight = RayPdf / ((1.0 - SkyLightSamplingStrategyPdf) * RayPdf + SkyLightSamplingStrategyPdf * PdfSkyLightOcclusionRay(FaceCdf, Ray.Direction));
+		}
+		Ray.Origin = WorldPosition;
+		Ray.TMin = 0.0;
+		Ray.TMax = SkyLight.MaxRayDistance;
+		RayWeight = MisWeight / RayPdf;
+#endif
+
+		// Recompute WorldNormal if lighting a hair fiber
+		if (GBufferData.ShadingModelID == SHADINGMODELID_HAIR)
+		{
+			const float3 LightDirection = Ray.Direction;
+			const float3 TangentDirection = normalize(WorldNormal);
+			WorldNormal = normalize(LightDirection - TangentDirection * dot(LightDirection, TangentDirection));
+		}
+		ApplyCameraRelativeDepthBias(Ray, PixelCoord, DeviceZ, WorldNormal, SkyLight.MaxNormalBias);
+
+		uint RayFlags = 0;
+#if !ENABLE_MATERIALS
+		RayFlags |= RAY_FLAG_FORCE_OPAQUE;
+#endif
+#if !ENABLE_TWO_SIDED_GEOMETRY
+		RayFlags |= RAY_FLAG_CULL_BACK_FACING_TRIANGLES;
+#endif
+		FPackedMaterialClosestHitPayload Payload = (FPackedMaterialClosestHitPayload)0;
+		Payload.SetMinimalPayloadMode(); // Only HitT will be filled by closest hit shader, skipping full material evaluation.
+
+		TraceRay(
+			TLAS,      // AccelerationStructure
+			RayFlags,
+			RAY_TRACING_MASK_SHADOW,          // InstanceInclusionMask
+			RAY_TRACING_SHADER_SLOT_SHADOW,   // RayContributionToHitGroupIndex
+			RAY_TRACING_NUM_SHADER_SLOTS,     // MultiplierForGeometryContributionToShaderIndex
+			0,         // MissShaderIndex
+			Ray,       // RayDesc
+			Payload    // Payload
+		);
+
+		if (Payload.IsHit())
+		{
+			RayDistance += Payload.HitT;
+			HitCount += 1.0;
+		}
+		else
+		{
+			BentNormal += Ray.Direction;
+			// Evaluate material
+			half3 N = GBufferData.WorldNormal;
+			half3 V = -CameraDirection;
+			half3 L = Ray.Direction;
+			float NoL = saturate(dot(WorldNormal, L));
+			FDirectLighting LightingSample;
+			if (GBufferData.ShadingModelID == SHADINGMODELID_HAIR)
+			{
+				float Shadow = 0.0;
+				float Backlit = 0.0;
+				float Area = 0.0;
+				uint2 Random = 0;
+				bool bEvalMultiScatter = false;
+				LightingSample.Diffuse = HairShading(GBufferData, L, V, N, Shadow, Backlit, Area, Random, bEvalMultiScatter);
+				LightingSample.Transmission = 0;
+				LightingSample.Specular = 0;
+			}
+			else
+			{
+				FShadowTerms ShadowTerms = { 0.0, 0.0, 0.0 };
+				LightingSample = EvaluateBxDF(GBufferData, N, V, L, NoL, ShadowTerms);
+			}
+			float3 Brdf = LightingSample.Diffuse + LightingSample.Transmission + LightingSample.Specular;
+			float3 IncomingRadiance = EvalSkyLight(Ray.Direction);
+			ExitantRadiance += IncomingRadiance * Brdf * RayWeight;
+			DiffuseExitantRadiance += IncomingRadiance * (LightingSample.Diffuse + LightingSample.Transmission) * RayWeight;
+		}
+	}
+
+	float AmbientOcclusion = HitCount;
+	if (SamplesPerPixel > 0)
+	{
+		float SamplesPerPixelInv = rcp(SamplesPerPixel);
+		ExitantRadiance *= SamplesPerPixelInv;
+		DiffuseExitantRadiance *= SamplesPerPixelInv;
+		AmbientOcclusion /= SamplesPerPixel;
+		BentNormal = normalize(BentNormal);
+	}
+
+	// Add multi-scattering contribution
+	if (GBufferData.ShadingModelID == SHADINGMODELID_HAIR) {
+		half3 N = GBufferData.WorldNormal;
+		half3 V = -CameraDirection;
+		half3 L = BentNormal;
+
+		// Cast ray from light to shading point to get estimation of "shadow thickness"
+		float ShadowThickness = 0.0;
+		{
+			uint RayFlagsLocal = 0;
+#if !ENABLE_MATERIALS
+			RayFlagsLocal |= RAY_FLAG_FORCE_OPAQUE;
+#endif
+#if !ENABLE_TWO_SIDED_GEOMETRY
+			RayFlagsLocal |= RAY_FLAG_CULL_BACK_FACING_TRIANGLES;
+#endif
+			FPackedMaterialClosestHitPayload Payload = (FPackedMaterialClosestHitPayload)0;
+			Payload.SetMinimalPayloadMode(); // Only HitT will be filled by closest hit shader, skipping full material evaluation.
+
+			RayDesc RayLocal;
+			RayLocal.Origin = WorldPosition + L * SkyLight.MaxShadowThickness;
+			RayLocal.Direction = -L;
+			RayLocal.TMin = 0.0;
+			RayLocal.TMax = SkyLight.MaxShadowThickness;
+
+			FPackedMaterialClosestHitPayload PayloadLocal = (FPackedMaterialClosestHitPayload)0;
+			PayloadLocal.SetMinimalPayloadMode(); // Only HitT will be filled by closest hit shader, skipping full material evaluation.
+			TraceRay(
+				TLAS,      // AccelerationStructure
+				RayFlagsLocal,
+				RAY_TRACING_MASK_SHADOW,          // InstanceInclusionMask
+				RAY_TRACING_SHADER_SLOT_SHADOW,   // RayContributionToHitGroupIndex
+				RAY_TRACING_NUM_SHADER_SLOTS,     // MultiplierForGeometryContributionToShaderIndex
+				0,         // MissShaderIndex
+				RayLocal,       // RayDesc
+				PayloadLocal    // Payload
+			);
+
+			float3 P = RayLocal.Origin + RayLocal.Direction * PayloadLocal.HitT;
+			ShadowThickness = min(length(WorldPosition - P), 1.0);
+		}
+		float3 ScatterThroughput = PI * KajiyaKayDiffuseAttenuation(GBufferData, L, V, N, ShadowThickness);
+
+		float3 DiffuseRadiance = GetSkySHDiffuse(L) * View.SkyLightColor.rgb;
+		DiffuseExitantRadiance += DiffuseRadiance * ScatterThroughput * (1.0 - AmbientOcclusion);
+	}
+
+	// Pre-divide by albedo, to be recovered in compositing
+	DiffuseExitantRadiance.r = Albedo.r > 0.0 ? DiffuseExitantRadiance.r / Albedo.r : DiffuseExitantRadiance.r;
+	DiffuseExitantRadiance.g = Albedo.g > 0.0 ? DiffuseExitantRadiance.g / Albedo.g : DiffuseExitantRadiance.g;
+	DiffuseExitantRadiance.b = Albedo.b > 0.0 ? DiffuseExitantRadiance.b / Albedo.b : DiffuseExitantRadiance.b;
+
+#if USE_PREEXPOSURE
+	DiffuseExitantRadiance.rgb *= View.PreExposure;
+#endif
+
+	RWOcclusionMaskUAV[PixelCoord] = float4(ClampToHalfFloatRange(DiffuseExitantRadiance.rgb), AmbientOcclusion);
+
+	float HitDistance = -1.0;
+	if (HitCount > 0.0)
+	{
+		HitDistance = RayDistance / HitCount;
+	}
+
+	RWRayDistanceUAV[PixelCoord] = float2(HitDistance, SamplesPerPixel);
+}
