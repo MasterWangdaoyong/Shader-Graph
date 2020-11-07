@@ -1,0 +1,118 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: boy_bingjilongxiao_body
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: DIFFUSE_ON EMISS_MAP_ON ENVLIGHT_ON REFLECT_MAP_ON RIM_ON SPEC_ON
+    TOON_EFFECT
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpTex:
+        m_Texture: {fileID: 2800000, guid: 01523fe472752d84d81f2c9f817b3009, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissTex:
+        m_Texture: {fileID: 2800000, guid: 15c7d2c09133a5f42811a5f6099258c6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 6da292fb27ac3bc4ca95a040e345efe8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicTex:
+        m_Texture: {fileID: 2800000, guid: b3f843541f77bcf46abc27baa8960af9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RoughTex:
+        m_Texture: {fileID: 2800000, guid: e6d2091d16695b446948623b3cb12661, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SkinTex:
+        m_Texture: {fileID: 2800000, guid: 7efc581c1698479459bc4f1877bd312c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _AttenScale: 0.259
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DiffScale: 1
+    - _DiffWrap: 0.922
+    - _DiffuseOpen: 1
+    - _DstBlend: 0
+    - _ENVLIGHT_ON: 1
+    - _EmissGloss: 1.31
+    - _EmissScale: 3.89
+    - _EmissionOn: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _RIM_ON: 1
+    - _ReflectOn: 1
+    - _ReflectScale: 1
+    - _RimBias: 0.495
+    - _RimScale: 0.55
+    - _Smoothness: 1
+    - _SmoothnessTextureChannel: 0
+    - _SpecScale: 1.62
+    - _SpecularHighlights: 1
+    - _SpecularOpen: 1
+    - _SrcBlend: 1
+    - _ToonEffectOn: 1
+    - _ToonScale: 0.047
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissColor: {r: 0.9150943, g: 0.7381185, b: 0.7381185, a: 1}
+    - _EmissionColor: {r: 0.8679245, g: 0.46262014, b: 0.46262014, a: 1}
+    - _RimColor: {r: 0.32941177, g: 0.68282855, b: 0.7529412, a: 1}
