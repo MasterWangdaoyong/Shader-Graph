@@ -66,10 +66,13 @@ fixed4 Skyboxfrag (v2f i) : SV_Target
 	c = c + dirSun * _DODSunColor * 0.8;
 	half3 ray = normalize(mul((float3x3)unity_ObjectToWorld, -i.uv));   
 	c += _DODSunColor * calcSunAttenuation(_WorldSpaceLightPos0.xyz, -ray);
-#endif
+	#endif
+
 	DOD_APPLY_FOG(i.fogCoord, i.worldPos, c);
-#if defined(LINEARCOLOR)
-	c = pow(c,0.5);
-#endif
+
+	#if defined(LINEARCOLOR)
+		c = pow(c,0.5);
+	#endif
+	
 	return half4(c, 1);
 }

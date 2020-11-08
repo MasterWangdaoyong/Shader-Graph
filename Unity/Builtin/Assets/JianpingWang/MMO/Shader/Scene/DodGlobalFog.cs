@@ -22,9 +22,7 @@ public class DodGlobalFog : MonoBehaviour
 
     [Range(0f, 1000f)]
     public float fog_smoothfog = 20f;  //平滑控制
-
     public float fog_fogstart = 20f;  //雾效起始
-
     public float fog_fogend = 100f;  //雾效完结
 
     [Range(0f, 0.5f)]
@@ -35,7 +33,6 @@ public class DodGlobalFog : MonoBehaviour
     public float fog_skyboxFogHeight = 0.0f;  
     [Range(0f, 1f)]
     public float fog_skyboxFogSmooth = 0.5f;
-
     public Color fog_sunColor = Color.gray;
 
     [Range(0.1f, 0.6f)]

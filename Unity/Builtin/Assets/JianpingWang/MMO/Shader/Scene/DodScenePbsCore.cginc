@@ -1,5 +1,6 @@
 //20200613 开始分析  JianpingWang 于深圳 台风混暑午的太阳    //mian = JianpingWang
 //20200726 再次分析
+//20201108 小查看
 #include "UnityCG.cginc"
 #include "Lighting.cginc"
 #include "AutoLight.cginc"
@@ -78,25 +79,25 @@ struct v2f
 	UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
-sampler2D _MainTex;
-sampler2D _NormalTex;
-sampler2D _MaskTex;
-float4 _MainTex_ST;
-float _Metallic;
-float _roughness;
-float _Emission;
-half4 _EmissionColor;
-float4 _MainColor;
+	sampler2D _MainTex;
+	sampler2D _NormalTex;
+	sampler2D _MaskTex;
+	float4 _MainTex_ST;
+	float _Metallic;
+	float _roughness;
+	float _Emission;
+	half4 _EmissionColor;
+	float4 _MainColor;
 	#if defined(TERRAIN)  //地形的定义
-	sampler2D _Splat0;
-	sampler2D _Splat1;
-	sampler2D _Splat2;
-	sampler2D _Splat3;
-	sampler2D _Control;
-	float4 _Splat0_ST,_Splat1_ST,_Splat2_ST,_Splat3_ST,_Control_ST;
+		sampler2D _Splat0;
+		sampler2D _Splat1;
+		sampler2D _Splat2;
+		sampler2D _Splat3;
+		sampler2D _Control;
+		float4 _Splat0_ST,_Splat1_ST,_Splat2_ST,_Splat3_ST,_Control_ST;
 	#endif
 	#if defined(CUTOFF)
-	half _Cutoff;
+		half _Cutoff;
 	#endif
 
 float FadeShadows (float3 wordposi, float attenuation) //阴影  待深入学习
@@ -276,11 +277,11 @@ float3 SpecularBRDF(float ndl, float ndv, float ndh, float ldh, float roughness,
 half3 pbrLightmapTmp(half3 finalcolor)
 {
 	half3 colorT = half3(0.0,0.0,0.0);
-#if defined(DOD_PLATFORM_PC)
-	colorT = finalcolor/(half3(0.78,0.78,0.78)+finalcolor)*1.165;
-#elif defined(DOD_PLATFORM_MOBILE) 
-	return L2G(finalcolor);
-#endif
+		#if defined(DOD_PLATFORM_PC)
+			colorT = finalcolor/(half3(0.78,0.78,0.78)+finalcolor)*1.165;
+		#elif defined(DOD_PLATFORM_MOBILE) 
+			return L2G(finalcolor);
+		#endif
 	return colorT;
 }
 
@@ -414,13 +415,13 @@ half3 simpleLight(half3 LightmapDir, half3 baseColor, half shadow, fixed nl)
 	baseColor = G2L(baseColor);   //数据转换，如果有定义LINEARCOLOR，就返回 pow(x, 2)到线性
 	LightmapDir.rgb = G2L(LightmapDir.rgb);   //数据转换，如果有定义LINEARCOLOR，就返回 pow(x, 2)到线性
 	half3 diffuse;   		//变量声明
-	#if defined(LINEARCOLOR)
-		diffuse = baseColor * shadow * _LightColor0 * 2.0 * nl + lerp( baseColor * LightmapDir , baseColor * LightmapDir * shadow, Dod_ShadowRange);
-		//          基础贴图 * 阴影 * 太阳光颜色 * 2倍 * lambert + 混合（ 基础贴图 * lightmap , 基础贴图 * lightmap * 阴影， 0.35)
-	#else
-		diffuse = baseColor * shadow * _LightColor0 * nl + lerp( baseColor * LightmapDir, baseColor * LightmapDir * shadow, Dod_ShadowRange);
-		//          基础贴图 * 阴影 * 太阳光颜色 * lambert + 混合（ 基础贴图 * l ightmap ,   基础贴图 * lightmap * 阴影    ， 0.35)
-	#endif
+		#if defined(LINEARCOLOR)
+			diffuse = baseColor * shadow * _LightColor0 * 2.0 * nl + lerp( baseColor * LightmapDir , baseColor * LightmapDir * shadow, Dod_ShadowRange);
+			//          基础贴图 * 阴影 * 太阳光颜色 * 2倍 * lambert + 混合（ 基础贴图 * lightmap , 基础贴图 * lightmap * 阴影， 0.35)
+		#else
+			diffuse = baseColor * shadow * _LightColor0 * nl + lerp( baseColor * LightmapDir, baseColor * LightmapDir * shadow, Dod_ShadowRange);
+			//          基础贴图 * 阴影 * 太阳光颜色 * lambert + 混合（ 基础贴图 * l ightmap ,   基础贴图 * lightmap * 阴影    ， 0.35)
+		#endif
 	finalColor = diffuse; //指定赋值
 	return finalColor; //返回
 }
