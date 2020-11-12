@@ -11,9 +11,9 @@
 
 //-------------------------------------------------------------------------------------
 // Default BRDF to use:
-#if !defined (UNITY_BRDF_PBS) // allow to explicitly override BRDF in custom shader
-    // still add safe net for low shader models, otherwise we might end up with shaders failing to compile
-    #if SHADER_TARGET < 30 || defined(SHADER_TARGET_SURFACE_ANALYSIS) // only need "something" for surface shader analysis pass; pick the cheap one
+#if !defined (UNITY_BRDF_PBS) // 允许在自定义着色器中显式覆盖BRDF
+    // 仍然为低着色器模型添加安全网，否则我们可能最终会导致着色器无法编译
+    #if SHADER_TARGET < 30 || defined(SHADER_TARGET_SURFACE_ANALYSIS) // 只需要“东西”即可进行表面着色器分析； 选择便宜的一个
         #define UNITY_BRDF_PBS BRDF3_Unity_PBS  //2.7
     #elif defined(UNITY_PBS_USE_BRDF3)
         #define UNITY_BRDF_PBS BRDF3_Unity_PBS  //2.7

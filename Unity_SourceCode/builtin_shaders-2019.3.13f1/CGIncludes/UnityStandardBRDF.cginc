@@ -78,9 +78,11 @@ inline half4 Pow5 (half4 x)
     return x*x * x*x * x;
 }
 
-inline half3 FresnelTerm (half3 F0, half cosA)
+inline half3 FresnelTerm (half3 F0, half cosA) //对应迪斯尼F项
 {
     half t = Pow5 (1 - cosA);   // ala Schlick插值
+    //公式中使用的是dot(v,h)。而Unity默认传入的是dot(l,h)
+    //是因为BRDF大量的计算使用的是l,h的点积，而h是l和v的半角向量，所以lh和vh的夹角是一样的。不需要多来一个变量。
     return F0 + (1-F0) * t;
 }
 inline half3 FresnelLerp (half3 F0, half3 F90, half cosA)
@@ -124,9 +126,10 @@ inline half SmithBeckmannVisibilityTerm (half NdotL, half NdotV, half roughness)
     return SmithVisibilityTerm (NdotL, NdotV, k) * 0.25f; // * 0.25是可见性项的1/4
 }
 // Ref: http://jcgt.org/published/0003/02/03/paper.pdf  2014年文献
+// 可见性项（包括几何函数和配平系数一起）的计算
 inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughness)
 {
-    #if 0
+    #if 0  //默认关闭，备注，这里是 Frostbite的GGX-Smith Joint方案（精确，但是需要开方两次，很不经济）
         // 原始配方:
         //  lambda_v    = (-1 + sqrt(a2 * (1 - NdotL2) / NdotL2 + 1)) * 0.5f;
         //  lambda_l    = (-1 + sqrt(a2 * (1 - NdotV2) / NdotV2 + 1)) * 0.5f;
@@ -140,7 +143,9 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
         return 0.5f / (lambdaV + lambdaL + 1e-5f);  //此功能不适合在Mobile上运行，
                                                     //因此epsilon小于可以表示为一半的值
     #else
-        //以上公式的近似值（简化sqrt，在数学上不正确，但足够接近）
+        // 走这个部分
+        // 近似值（简化sqrt，在数学上不正确，但足够接近）
+        // 这个部分是Respawn Entertainment的 GGX-Smith Joint近似方案
         float a = roughness;
         float lambdaV = NdotL * (NdotV * (1 - a) + a);
         float lambdaL = NdotV * (NdotL * (1 - a) + a);
@@ -152,7 +157,7 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
     #endif
 }
 
-inline float GGXTerm (float NdotH, float roughness)
+inline float GGXTerm (float NdotH, float roughness) //对应迪斯尼GTR2 下层
 {
     float a2 = roughness * roughness;
     float d = (NdotH * a2 - NdotH) * NdotH + 1.0f; // 2 mad
