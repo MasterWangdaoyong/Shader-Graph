@@ -1,4 +1,4 @@
-Shader "MMO/Actor/ActorShdow" 
+Shader "Dodjoy/Actor/ActorShdow" 
 {
 	SubShader
 	{

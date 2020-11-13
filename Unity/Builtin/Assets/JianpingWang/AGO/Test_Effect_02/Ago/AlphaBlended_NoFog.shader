@@ -7,6 +7,7 @@ Shader "Dodjoy/Effect/Alpha Blended_NoFog" {
 		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = 1.0
 		_USpeed("U Speed", float) = 0
 		_VSpeed("V Speed", float) = 0
+		_AlphaScale("Alpha Scale", Range(0, 1)) = 1
 	}
 
 		Category{
@@ -37,6 +38,8 @@ Shader "Dodjoy/Effect/Alpha Blended_NoFog" {
 
 					float _USpeed;
 					float _VSpeed;
+
+					float _AlphaScale;
 
 					struct appdata_t {
 						float4 vertex : POSITION;
@@ -94,11 +97,12 @@ Shader "Dodjoy/Effect/Alpha Blended_NoFog" {
 
 						fixed4 col = 2.0f * i.color * tex2D(_MainTex, i.texcoord);
 						col.a = saturate(col.a); // alpha should not have double-brightness applied to it, but we can't fix that legacy behavior without breaking everyone's effects, so instead clamp the output to get sensible HDR behavior (case 967476)
-
+						
 						//UNITY_APPLY_FOG(i.fogCoord, col);
 						#ifdef UNITY_UI_CLIP_RECT
 						col.a *= UnityGet2DClipping(i.worldPosition.xy, _ClipRect);
 						#endif
+						col.a *= _AlphaScale;
 						return col;
 					}
 					ENDCG

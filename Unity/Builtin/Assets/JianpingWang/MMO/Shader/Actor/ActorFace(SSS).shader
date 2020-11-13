@@ -1,4 +1,4 @@
-﻿Shader "MMO/Actor/ActorFace(SSS)"
+﻿Shader "Dodjoy/Actor/ActorFace(SSS)"
 {
     Properties
     {

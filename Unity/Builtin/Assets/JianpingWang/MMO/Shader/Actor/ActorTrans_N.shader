@@ -1,4 +1,4 @@
-﻿Shader "MMO/Actor/ActorTrans_N"
+﻿Shader "Dodjoy/Actor/ActorTrans_N"
 {
     Properties
     {
@@ -26,7 +26,6 @@
         Pass
         {
 			Tags{"LightMode"="ForwardBase"}
-			Cull off
 			ZWrite Off
 			Blend SrcAlpha OneMinusSrcAlpha
 

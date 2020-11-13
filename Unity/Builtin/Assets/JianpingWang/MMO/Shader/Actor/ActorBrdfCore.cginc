@@ -460,8 +460,9 @@ inline PS_OUTPUT UnityBrdfLight (BrdfSurfaceOutput s, half3 viewDir,
 	fixed diff = max(0, (nl + _DiffWrap) / (1 + _DiffWrap));
 	
 	//shadow:
-	fixed shadow = ( nl * atten + 0.5 ) / ( 1 + 0.5 );
-	
+	fixed shadow = ( nl * atten + _DiffWrap) / ( 1 + _DiffWrap );	
+	//fixed shadow = ( nl * atten + 5.0f) / ( 1 + 5.0f );	//HACK
+
 	fixed4 c;
 	c.rgb = fixed3(0,0,0);
 	
@@ -471,9 +472,9 @@ inline PS_OUTPUT UnityBrdfLight (BrdfSurfaceOutput s, half3 viewDir,
 	//如果有皮肤，则要分开计算漫反射系数
 	#ifdef SKIN_ON
 	half diffAtten = max(lerp(_AttenScale, 1, nl) * atten, _AttenScale);
-	half3 baseFactor = light.color * diff * (1 - s.Skin) * shadow + light.color * diffAtten * s.Skin;
+	half3 baseFactor = light.color * diff * (1 - s.Skin) * shadow * _DiffScale + light.color * diffAtten * s.Skin;
 	#else
-	half3 baseFactor = light.color * diff  * shadow;
+	half3 baseFactor = light.color * diff  * shadow * _DiffScale;
 	#endif
 
 #else
@@ -517,7 +518,7 @@ inline PS_OUTPUT UnityBrdfLight (BrdfSurfaceOutput s, half3 viewDir,
 		half lh = max(0.32h, dot(light.dir, halfDir));
 		half spec = GGX_Spec(nh, lh, _SpecRoughness)* _SpecScale;
 
-		fixed3 specTerm = s.SpecColor * spec * light.color * nl;
+		fixed3 specTerm = s.SpecColor * spec * light.color * shadow;
 		c.rgb += specTerm;
 
 	#ifdef MRT_ENABLE
@@ -529,9 +530,9 @@ inline PS_OUTPUT UnityBrdfLight (BrdfSurfaceOutput s, half3 viewDir,
 #endif
 
 #ifdef _ANISO_ON
-c.rgb += ToonEffect(s.Albedo * _Color * baseFactor*_DiffScale);
+c.rgb += ToonEffect(s.Albedo * _Color * baseFactor);
 #else
-c.rgb += ToonEffect(s.Albedo * baseFactor*_DiffScale);
+c.rgb += ToonEffect(s.Albedo * baseFactor);
 #endif
 
 
@@ -542,7 +543,7 @@ c.rgb += ToonEffect(s.Albedo * baseFactor*_DiffScale);
 		s.ReflectColor = lerp(s.ReflectColor, grazingTerm, s.RimFresnel);
 	#endif
 	
-	fixed3 reflectTerm = indirect.specular * s.ReflectColor * _ReflectScale;
+	fixed3 reflectTerm = indirect.specular * s.ReflectColor * _ReflectScale * shadow;
 	c.rgb += reflectTerm;
 
 	#ifdef MRT_ENABLE
@@ -703,7 +704,7 @@ BrdfSurfaceOutput dod_surf (DodInput IN) {
 	#ifdef FADE_ON
 	o.Alpha = _FadeAlpha;
 	#else
-	o.Alpha = baseColor.a * 0.5;
+	o.Alpha = baseColor.a;
 	#endif
 	
 	#ifdef NORMAL_MAP_ON

@@ -48,7 +48,9 @@ float _SpecGloss2;
 
 float _SpecIntensity;
 
-float _ClampMax;
+#ifdef FADE_ON
+float _FadeAlpha;
+#endif
 
 /*********************************
 @功能：计算切线偏移
@@ -114,7 +116,12 @@ fixed4 frag_mask(v2f i) : SV_Target
 
 	fixed4 finalColor = 0;
 	finalColor.rgb = _MainColor;
-	finalColor.a = albedo.a;
+
+	half alpha = albedo.a;
+#ifdef FADE_ON
+	alpha *= _FadeAlpha;
+#endif
+	finalColor.a = alpha;
 	return finalColor;
 }
 
@@ -137,6 +144,10 @@ fixed4 frag(v2f i) : SV_TARGET
 	half NdotL = saturate(dot(normalDir, lightDir));
 
 	fixed4 albedo = tex2D(_MainTex, i.uv);//G-Specular shift, B-Noise, A-Cutoff
+	
+#ifdef FADE_ON
+	albedo.a = _FadeAlpha;
+#endif
 
 ////// Lighting:
 	half3 ambient = DOD_LIGHTMODEL_AMBIENT(normalDir) * _MainColor;

@@ -46,17 +46,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>D:\soft\Unity\2018.4.8f1\Editor\Data\Managed/UnityEngine/UnityEngine.dll</HintPath>
+      <HintPath>D:\soft\Unity\2018.4.8f1\Unity\Editor\Data\Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>D:\soft\Unity\2018.4.8f1\Editor\Data\Managed/UnityEditor.dll</HintPath>
+      <HintPath>D:\soft\Unity\2018.4.8f1\Unity\Editor\Data\Managed/UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\JianpingWang\AGO\Reflection\PlaneReflection.cs" />
      <Compile Include="Assets\JianpingWang\AGO\Sripts\AutoRotate.cs" />
      <Compile Include="Assets\JianpingWang\AGO\Sripts\TweenPosition.cs" />
-     <Compile Include="Assets\JianpingWang\AGO\Test_Water_01\RAW\DodWater.cs" />
+     <Compile Include="Assets\JianpingWang\AGO\Test_Water_01\DodWater.cs" />
      <Compile Include="Assets\JianpingWang\MMO\Shader\Scene\DodGlobalFog.cs" />
      <Compile Include="Assets\JianpingWang\MMO\Shader\Scene\ShaderLOD.cs" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_03\Alpha_Depth.shader" />
@@ -76,23 +76,28 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ExpOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_WorldTransformParams.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SwizzleNode.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Water_00\RAW\Scene_Water.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Water_00\Scene_Water.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorEye2.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorShadow.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_CosOpNode.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorPBS2.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\EffectUnlitModelWithAdditive.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_FunctionNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Distortion.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_Smoke\Alpha_Blended_Smoke_ASE.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\DodHairCore.cginc" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_LightColorNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Legacy\MultiPassUnlit.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_worldFog\CustomFogClean.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\BlendAdd.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_Vector4Node.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_IndirectSpecularLight.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SimpleDivideOpNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\ProjectFininshed\DodNatureCore.cginc" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_GrayscaleNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_StaticSwitchNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Falloff Alpha.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\MobileAdditive_NoFog.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorUnlit.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ReflectOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ATanOpNode.shader" />
@@ -103,14 +108,15 @@
      <None Include="Assets\JianpingWang\MMO\Shader\Scene\SceneSkybox.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ATan2OpNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_03\Erosion_Alpha_vertex_Move.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\AdditiveEx.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Scene\SceneNormal.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\FadeActorFace.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Legacy\DefaultUnlit.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SimpleMaxOp.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_RotatorNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DecodeFloatRGBAHlpNode.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\RAW\Test_Effect_ActorStorm2.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_GammaAndLinear\RAW\线性与伽马，矫正的思路都是一样的.txt" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\Test_Effect_ActorStorm2.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_GammaAndLinear\线性与伽马，矫正的思路都是一样的.txt" />
      <None Include="Assets\JianpingWang\AGO\Test_GlassSSS\roomMap.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_WorldToObjectTransfNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ObjSpaceViewDirHlpNode.shader" />
@@ -119,20 +125,22 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TangentSignVertexDataNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_CeilOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_VertexBinormalNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Mask AlphaBlend.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\AGO\Scene_vertexColorView.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\RAW\Test_Effect_ActorStorm.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\Test_Effect_ActorStorm.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ScreenPosInputsNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TangentVertexDataNode.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Water_01\RAW\Scene_Water_GlassReflection.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Water_01\Scene_Water_GlassReflection.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_PiNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_FloorOpNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Matcap\ProjectFinished\Scene_Item_SSS.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TFHCCompareLessNode.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\RAW\Test_Effect_ActorStorm-ASE.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\Test_Effect_ActorStorm-ASE.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorSkin.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_03\Alpha_Dissolution.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_GammaAndLinear\RAW\Test_GammaToLinear.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\RAW\Test_Effect_ActorRamp2.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_GammaAndLinear\Test_GammaToLinear.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\FalloffTextureAdditiveNoFog.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\Test_Effect_ActorRamp2.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ObjSpaceLightDirHlpNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\AGO\URP boatTree.txt" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\说明.txt" />
@@ -145,7 +153,8 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DeltaTime.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\DodSkinCore.cginc" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\FadeActorHair.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_LightProbeGroup\RAW\NewUnlitShader.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_LightProbeGroup\NewUnlitShader.shader" />
+     <None Include="Assets\JianpingWang\MMO\Actor\ShowActorPBS.shader" />
      <None Include="Assets\AmplifyShaderEditor\ChangeLog.txt" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\ShaderLibrary\ShaderLibrary.txt" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TFHCIf.shader" />
@@ -153,7 +162,8 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_RoundOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_WorldSpaceLightPosNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_FlowMap\FlowMap.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_MergeShader\RAW\AGO_Falloff Texture.shader" />
+     <None Include="Assets\JianpingWang\MMO\Actor\HighActorHair.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_MergeShader\AGO_Falloff Texture.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_GetLocalVarNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_Log2OpNode.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\TestActorEyeCore.cginc" />
@@ -166,12 +176,14 @@
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\TestActorFlowLight.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_PBR\AGO\MainCustomShader\TEST_PBR_MAIN.cginc" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ShowActorFlowLight.shader" />
+     <None Include="Assets\JianpingWang\MMO\Actor\HighActorEye.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\TestActorTrans.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SimpleContrastNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Blink.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_RefractOpVec.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SignOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_RGBToHSVNode.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\AGO\AlphaBlend_Distort_NoFog.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\AlphaBlend_Distort_NoFog.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ClampOpNode.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Scene\SceneItemSSS.cginc" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_Log10OpNode.shader" />
@@ -186,10 +198,12 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TauNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_IntNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Mask AlphaBlend.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_GammaAndLinear\RAW\Test_LinearToGamma.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Dissolve Simple.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_GammaAndLinear\Test_LinearToGamma.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_Smoke\Alpha_Blended_Smoke.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Ago\Mask Add.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DegreesOpNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\AlphaBlend_Distort_NoFog.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TFHCPixelateUV.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Ago\Mask AlphaBlend.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_PBR\Shader\StructData.cginc" />
@@ -203,49 +217,56 @@
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorPBS.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ShowActorHair.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_Ramp\Alpha_Blended_Ramp.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\PointRoadRepeat.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SummedBlendNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TruncOpNode.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorTrans_VF.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Diffuse_HighLight_Alpha.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\EffectUnlitModelWithUVLight(Opaque).shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorPBSCore.cginc" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SinhOpNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Matcap\AGO\Test_SceneSSS_bake.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ParallaxMappingNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Dissolve ColorEdge.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TFHCCompareNotEqual.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Matcap\AGO\Test_SceneSSS.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DiffuseAndSpecularFromMetallic.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_CGNIC\RAW\Test_cgincA.cginc" />
+     <None Include="Assets\JianpingWang\AGO\Test_CGNIC\Test_cgincA.cginc" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TexCoordVertexDataNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ColorSpaceDouble.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\TestActorBrdfCore.cginc" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Mask_Alpha_Blend_2Side.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Scene\SceneDiff.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Additive_AlphaBlend_Dis_NoFog_Test.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\TestActorPBSCore.cginc" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\RAW\Test_Effect_piaodai.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Water_01\RAW\Scene_Sky.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\Test_Effect_piaodai.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Water_01\Scene_Sky.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_LinearToGammaNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SaturateNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_BlendOpsNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TanOpNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\AGO\Scene_Cutout_VF_LightProbeG.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TFHCCompareGreaterEqual.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_hunche\Shaders\JianpingWang-Transparent-AlphaBlend.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_hunche\JianpingWang-Transparent-AlphaBlend.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorFace.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_EncodeViewNormalStereoHlpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_RangedFloatNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Actor\ActorEye(Lit).shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\AGO\TreeCreatorLeavesFasts.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Water_01\RAW\Readme.txt" />
+     <None Include="Assets\JianpingWang\AGO\Test_Water_01\Readme.txt" />
      <None Include="Assets\JianpingWang\AGO\Test_PBR\Shader\shadow.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_PrimitiveIDVariableNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_PBR\Shader\PBRStandard.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\AGO\Test_Scene_Tree.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SimpleMinNode.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_CGNIC\RAW\Test_cgincB.cginc" />
+     <None Include="Assets\JianpingWang\AGO\Test_CGNIC\Test_cgincB.cginc" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ViewDirInputsCoordNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SamplerNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Mask Add_Color.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Additive_AlphaBlend_Dis_NoFog_Test2.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_GammaAndLinear\RAW\sampler.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\AGO\Additive_Distort_NoFog_fix.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_MergeShader\RAW\Additive_Distort_Rim_NoFog.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_GammaAndLinear\sampler.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\Additive_Distort_NoFog_fix.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_MergeShader\Additive_Distort_Rim_NoFog.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_Polar\Alpha_Blended_Polar_ASE.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_PowerNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_FractNode.shader" />
@@ -253,28 +274,32 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Legacy\Unlit.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DynamicAppendNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SimpleRemainderNode.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_MergeShader\RAW\AGO_Falloff Texture 1.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_MergeShader\AGO_Falloff Texture 1.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ComponentMaskNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_Polar\Alpha_Blended_Polar.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Mask_Alpha_Blend_2Side.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_RelayNode.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\DodEyeCore.cginc" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\AGO\AlphaBlend_Distort_NoFog_fix.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\AlphaBlend_Distort_NoFog_fix.shader" />
+     <None Include="Assets\JianpingWang\MMO\Actor\ActorHair(Lit).shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Mask Add_Color.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\TestActorPBS.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Unlit-Wind.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\LineRepeat.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Scroll_2Layers_AlphaBlended_Test.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Displacement Map Add.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Ago\Mask Add_Color.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_CGNIC\RAW\Scene_Test_GammaToLinear_Diffuse.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_CGNIC\RAW\Test_cginc_shader.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_CGNIC\Scene_Test_GammaToLinear_Diffuse.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_CGNIC\Test_cginc_shader.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_PannerNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ScaleNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\AGO\Test_Scene_Tree_CustomLight.cginc" />
      <None Include="Assets\JianpingWang\AGO\Test_PBR\AGO\MainCustomShader\Test_PBR_VF.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_LogOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_AppendNode.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_MergeShader\RAW\AGO_Additive_Distort_NoFog.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_MergeShader\AGO_Additive_Distort_NoFog.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_Ramp\Alpha_Blended_Ramp_ASE.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\RAW\MagicCoverAdd溶解.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\MagicCoverAdd溶解.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TanhOpNode.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\DodPBSUtils.cginc" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\TestActorTransPBR.shader" />
@@ -289,6 +314,7 @@
      <None Include="Assets\JianpingWang\MMO\Shader\Scene\Diffuse.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\FadeActorEye.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorTrans.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Additive_Top.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\LinearPreviews.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_WeightedBlendNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_IndirectDiffuseLight.shader" />
@@ -297,12 +323,14 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Legacy\PostProcess.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_EncodeFloatRGHlpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ACosOpNode.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Water_01\RAW\Additive_Distort_NoFog.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Water_01\Additive_Distort_NoFog.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DecodeFloatRGHlpNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\AlphaBlendAdditive_Distort_NoFog.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TextureCoordinatesNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\DodUIClick.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_FunctionInputNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Legacy\Particle Alpha Blend.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\AGO\Additive_Distort_NoFog.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\Additive_Distort_NoFog.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\AGO\Scene_Nature_Tree_AGO.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_CosTime.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_GlassSSS\RAW\InteriorMap_SF.shader" />
@@ -315,6 +343,7 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_HSVToRGBNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SqrtOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TimeNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\DodParticle.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DecodeViewNormalStereoHlpNode.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\TestActorEye.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_VertexIdVariableNode.shader" />
@@ -331,23 +360,29 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Legacy\UnlitLightmap.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\DodPBSCore.cginc" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorTransPBR.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Additive_NoFog.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Ago\Scroll2Layers-AlphaBlend.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ColorNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_LinearDepthNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_VoronoiNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_GlassSSS\Test_GlassSSS_sky.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\TestActorBrdf.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\Mask Add.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SubstanceSamplerNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ScaleAndOffsetNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\DodUIModelMask.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\EffectUnlitModelWithUVLight.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DdxOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_TextureArrayNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DecodeDepthNormalNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Effect\EffectUnlitModelWithAdditive(Opaque).shader" />
      <None Include="Assets\JianpingWang\AGO\Test_PBR\Shader\MainPBR.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Mask Add.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SimpleTimeNode.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorBrdfCore.cginc" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorBrdf.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_ToggleSwitchNode.shader" />
+     <None Include="Assets\JianpingWang\MMO\Actor\HighActorFace.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\AGO\Realtime_tree_sss.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_LerpOp.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_StepOpNode.shader" />
@@ -380,8 +415,8 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_FWidthOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_LayeredBlendNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Legacy\UIDefault.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\RAW\Test_Effect_ActorRamp.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_LightProbeGroup\RAW\Scene_Cutout_VF_LightProbeG.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_Effect_ActorRamp\Test_Effect_ActorRamp.shader" />
+     <None Include="Assets\JianpingWang\AGO\Test_LightProbeGroup\Scene_Cutout_VF_LightProbeG.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_LODFadeNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Ago\AlphaBlended_NoFog.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SimplifiedFModOpNode.shader" />
@@ -389,6 +424,7 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_Vector3Node.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\SRP (Legacy)\README.txt" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_02\Ago\AdditiveAlphaBlend_Distort_NoFog.shader" />
+     <None Include="Assets\JianpingWang\MMO\Actor\HighActorBrdf.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_FaceVariableNode.shader" />
      <None Include="Assets\JianpingWang\MMO\Shader\Actor\ActorHair2.shader" />
      <None Include="Assets\AmplifyShaderEditor\CreatingTerrainsWithASE.txt" />
@@ -398,523 +434,517 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_NoiseGeneratorNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_DesaturateNode.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Effect_03\Mobile UV Sine_Blend.shader" />
-     <None Include="Assets\JianpingWang\AGO\Test_LightProbeGroup\RAW\CustomFog.cginc" />
+     <None Include="Assets\JianpingWang\AGO\Test_LightProbeGroup\CustomFog.cginc" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_LuminanceNode.shader" />
- <Reference Include="Unity.TextMeshPro.Editor">
- <HintPath>G:/Shader-Graph/Unity/Builtin/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
- </Reference>
  <Reference Include="Unity.PackageManagerUI.Editor">
- <HintPath>G:/Shader-Graph/Unity/Builtin/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.TextMeshPro">
- <HintPath>G:/Shader-Graph/Unity/Builtin/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+ <HintPath>F:/Main_Project/Shader-Graph/Unity/Builtin/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AIModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.ARModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.ARModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ARModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AccessibilityModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.AccessibilityModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AccessibilityModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AnimationModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.AnimationModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AnimationModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AssetBundleModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.AssetBundleModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AssetBundleModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.BaselibModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.BaselibModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.BaselibModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.ClusterInputModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.ClusterInputModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ClusterInputModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.ClusterRendererModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.ClusterRendererModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ClusterRendererModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.CoreModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.CrashReportingModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.CrashReportingModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.CrashReportingModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.FileSystemHttpModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.FileSystemHttpModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.FileSystemHttpModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.GameCenterModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.GameCenterModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.GameCenterModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.GridModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.GridModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.GridModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.HotReloadModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.HotReloadModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.HotReloadModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.IMGUIModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.IMGUIModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.IMGUIModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.ImageConversionModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.ImageConversionModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ImageConversionModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.InputModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.InputModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.InputModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.JSONSerializeModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.JSONSerializeModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.JSONSerializeModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.LocalizationModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.LocalizationModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.LocalizationModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.ParticleSystemModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.ParticleSystemModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ParticleSystemModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.PerformanceReportingModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.PerformanceReportingModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.PerformanceReportingModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.PhysicsModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.PhysicsModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.PhysicsModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Physics2DModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.Physics2DModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.Physics2DModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.ProfilerModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.ProfilerModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ProfilerModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.ScreenCaptureModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.ScreenCaptureModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ScreenCaptureModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.SharedInternalsModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.SharedInternalsModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.SharedInternalsModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.SpriteMaskModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.SpriteMaskModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.SpriteMaskModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.SpriteShapeModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.SpriteShapeModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.SpriteShapeModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.StreamingModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.StreamingModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.StreamingModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.StyleSheetsModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.StyleSheetsModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.StyleSheetsModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.SubstanceModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.SubstanceModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.SubstanceModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.TLSModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.TLSModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TLSModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.TerrainModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.TerrainModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TerrainModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.TerrainPhysicsModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.TerrainPhysicsModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TerrainPhysicsModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.TextCoreModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.TextCoreModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TextCoreModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.TextRenderingModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.TextRenderingModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TextRenderingModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.TilemapModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.TilemapModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TilemapModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.TimelineModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.TimelineModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TimelineModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UIModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.UIModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UIModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UIElementsModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.UIElementsModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UIElementsModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UNETModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.UNETModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UNETModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UmbraModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.UmbraModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UmbraModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UnityConnectModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.UnityConnectModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UnityConnectModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UnityTestProtocolModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.UnityTestProtocolModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UnityTestProtocolModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VFXModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.VFXModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.VFXModule.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VehiclesModule">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.VehiclesModule.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.VehiclesModule.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Locator">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/Managed/Unity.Locator.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/Managed/Unity.Locator.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.TestRunner">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
  </Reference>
  <Reference Include="nunit.framework">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Timeline">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.GoogleAudioSpatializer">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/UnityExtensions/Unity/UnityGoogleAudioSpatializer/RuntimeEditor/UnityEngine.GoogleAudioSpatializer.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/UnityExtensions/Unity/UnityGoogleAudioSpatializer/RuntimeEditor/UnityEngine.GoogleAudioSpatializer.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.SpatialTracking">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
  <Reference Include="netstandard">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
  </Reference>
  <Reference Include="Microsoft.Win32.Primitives">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/Microsoft.Win32.Primitives.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/Microsoft.Win32.Primitives.dll</HintPath>
  </Reference>
  <Reference Include="System.AppContext">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.AppContext.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.AppContext.dll</HintPath>
  </Reference>
  <Reference Include="System.Collections.Concurrent">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Collections.Concurrent.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Collections.Concurrent.dll</HintPath>
  </Reference>
  <Reference Include="System.Collections">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Collections.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Collections.dll</HintPath>
  </Reference>
  <Reference Include="System.Collections.NonGeneric">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Collections.NonGeneric.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Collections.NonGeneric.dll</HintPath>
  </Reference>
  <Reference Include="System.Collections.Specialized">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Collections.Specialized.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Collections.Specialized.dll</HintPath>
  </Reference>
  <Reference Include="System.ComponentModel">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ComponentModel.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ComponentModel.dll</HintPath>
  </Reference>
  <Reference Include="System.ComponentModel.EventBasedAsync">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ComponentModel.EventBasedAsync.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ComponentModel.EventBasedAsync.dll</HintPath>
  </Reference>
  <Reference Include="System.ComponentModel.Primitives">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ComponentModel.Primitives.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ComponentModel.Primitives.dll</HintPath>
  </Reference>
  <Reference Include="System.ComponentModel.TypeConverter">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ComponentModel.TypeConverter.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ComponentModel.TypeConverter.dll</HintPath>
  </Reference>
  <Reference Include="System.Console">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Console.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Console.dll</HintPath>
  </Reference>
  <Reference Include="System.Data.Common">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Data.Common.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Data.Common.dll</HintPath>
  </Reference>
  <Reference Include="System.Diagnostics.Contracts">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Contracts.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Contracts.dll</HintPath>
  </Reference>
  <Reference Include="System.Diagnostics.Debug">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Debug.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Debug.dll</HintPath>
  </Reference>
  <Reference Include="System.Diagnostics.FileVersionInfo">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.FileVersionInfo.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.FileVersionInfo.dll</HintPath>
  </Reference>
  <Reference Include="System.Diagnostics.Process">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Process.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Process.dll</HintPath>
  </Reference>
  <Reference Include="System.Diagnostics.StackTrace">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.StackTrace.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.StackTrace.dll</HintPath>
  </Reference>
  <Reference Include="System.Diagnostics.TextWriterTraceListener">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.TextWriterTraceListener.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.TextWriterTraceListener.dll</HintPath>
  </Reference>
  <Reference Include="System.Diagnostics.Tools">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Tools.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Tools.dll</HintPath>
  </Reference>
  <Reference Include="System.Diagnostics.TraceSource">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.TraceSource.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.TraceSource.dll</HintPath>
  </Reference>
  <Reference Include="System.Diagnostics.Tracing">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Tracing.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Diagnostics.Tracing.dll</HintPath>
  </Reference>
  <Reference Include="System.Drawing.Primitives">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Drawing.Primitives.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Drawing.Primitives.dll</HintPath>
  </Reference>
  <Reference Include="System.Dynamic.Runtime">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Dynamic.Runtime.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Dynamic.Runtime.dll</HintPath>
  </Reference>
  <Reference Include="System.Globalization.Calendars">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Globalization.Calendars.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Globalization.Calendars.dll</HintPath>
  </Reference>
  <Reference Include="System.Globalization">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Globalization.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Globalization.dll</HintPath>
  </Reference>
  <Reference Include="System.Globalization.Extensions">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Globalization.Extensions.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Globalization.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.Compression">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.Compression.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.Compression.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.Compression.ZipFile">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.Compression.ZipFile.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.Compression.ZipFile.dll</HintPath>
  </Reference>
  <Reference Include="System.IO">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.FileSystem">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.FileSystem.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.FileSystem.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.FileSystem.DriveInfo">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.FileSystem.DriveInfo.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.FileSystem.DriveInfo.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.FileSystem.Primitives">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.FileSystem.Primitives.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.FileSystem.Primitives.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.FileSystem.Watcher">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.FileSystem.Watcher.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.FileSystem.Watcher.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.IsolatedStorage">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.IsolatedStorage.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.IsolatedStorage.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.MemoryMappedFiles">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.MemoryMappedFiles.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.MemoryMappedFiles.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.Pipes">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.Pipes.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.Pipes.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.UnmanagedMemoryStream">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.UnmanagedMemoryStream.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.IO.UnmanagedMemoryStream.dll</HintPath>
  </Reference>
  <Reference Include="System.Linq">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Linq.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Linq.dll</HintPath>
  </Reference>
  <Reference Include="System.Linq.Expressions">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Linq.Expressions.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Linq.Expressions.dll</HintPath>
  </Reference>
  <Reference Include="System.Linq.Parallel">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Linq.Parallel.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Linq.Parallel.dll</HintPath>
  </Reference>
  <Reference Include="System.Linq.Queryable">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Linq.Queryable.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Linq.Queryable.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.Http">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Http.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Http.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.NameResolution">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.NameResolution.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.NameResolution.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.NetworkInformation">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.NetworkInformation.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.NetworkInformation.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.Ping">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Ping.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Ping.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.Primitives">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Primitives.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Primitives.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.Requests">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Requests.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Requests.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.Security">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Security.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Security.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.Sockets">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Sockets.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.Sockets.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.WebHeaderCollection">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.WebHeaderCollection.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.WebHeaderCollection.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.WebSockets.Client">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.WebSockets.Client.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.WebSockets.Client.dll</HintPath>
  </Reference>
  <Reference Include="System.Net.WebSockets">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.WebSockets.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Net.WebSockets.dll</HintPath>
  </Reference>
  <Reference Include="System.ObjectModel">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ObjectModel.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ObjectModel.dll</HintPath>
  </Reference>
  <Reference Include="System.Reflection">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Reflection.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Reflection.dll</HintPath>
  </Reference>
  <Reference Include="System.Reflection.Extensions">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Reflection.Extensions.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Reflection.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="System.Reflection.Primitives">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Reflection.Primitives.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Reflection.Primitives.dll</HintPath>
  </Reference>
  <Reference Include="System.Resources.Reader">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Resources.Reader.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Resources.Reader.dll</HintPath>
  </Reference>
  <Reference Include="System.Resources.ResourceManager">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Resources.ResourceManager.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Resources.ResourceManager.dll</HintPath>
  </Reference>
  <Reference Include="System.Resources.Writer">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Resources.Writer.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Resources.Writer.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.CompilerServices.VisualC">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.CompilerServices.VisualC.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.CompilerServices.VisualC.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.Extensions">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Extensions.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.Handles">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Handles.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Handles.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.InteropServices">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.InteropServices.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.InteropServices.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.InteropServices.RuntimeInformation">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.Numerics">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Numerics.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Numerics.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.Serialization.Formatters">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Serialization.Formatters.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Serialization.Formatters.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.Serialization.Json">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Serialization.Json.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Serialization.Json.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.Serialization.Primitives">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Serialization.Primitives.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Serialization.Primitives.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.Serialization.Xml">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Serialization.Xml.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Runtime.Serialization.Xml.dll</HintPath>
  </Reference>
  <Reference Include="System.Security.Claims">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Claims.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Claims.dll</HintPath>
  </Reference>
  <Reference Include="System.Security.Cryptography.Algorithms">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.Algorithms.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.Algorithms.dll</HintPath>
  </Reference>
  <Reference Include="System.Security.Cryptography.Csp">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.Csp.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.Csp.dll</HintPath>
  </Reference>
  <Reference Include="System.Security.Cryptography.Encoding">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.Encoding.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.Encoding.dll</HintPath>
  </Reference>
  <Reference Include="System.Security.Cryptography.Primitives">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.Primitives.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.Primitives.dll</HintPath>
  </Reference>
  <Reference Include="System.Security.Cryptography.X509Certificates">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.X509Certificates.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Cryptography.X509Certificates.dll</HintPath>
  </Reference>
  <Reference Include="System.Security.Principal">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Principal.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.Principal.dll</HintPath>
  </Reference>
  <Reference Include="System.Security.SecureString">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.SecureString.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Security.SecureString.dll</HintPath>
  </Reference>
  <Reference Include="System.Text.Encoding">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Text.Encoding.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Text.Encoding.dll</HintPath>
  </Reference>
  <Reference Include="System.Text.Encoding.Extensions">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Text.Encoding.Extensions.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Text.Encoding.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="System.Text.RegularExpressions">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Text.RegularExpressions.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Text.RegularExpressions.dll</HintPath>
  </Reference>
  <Reference Include="System.Threading">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.dll</HintPath>
  </Reference>
  <Reference Include="System.Threading.Overlapped">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Overlapped.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Overlapped.dll</HintPath>
  </Reference>
  <Reference Include="System.Threading.Tasks">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Tasks.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Tasks.dll</HintPath>
  </Reference>
  <Reference Include="System.Threading.Tasks.Parallel">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Tasks.Parallel.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Tasks.Parallel.dll</HintPath>
  </Reference>
  <Reference Include="System.Threading.Thread">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Thread.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Thread.dll</HintPath>
  </Reference>
  <Reference Include="System.Threading.ThreadPool">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.ThreadPool.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.ThreadPool.dll</HintPath>
  </Reference>
  <Reference Include="System.Threading.Timer">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Timer.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Threading.Timer.dll</HintPath>
  </Reference>
  <Reference Include="System.ValueTuple">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ValueTuple.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.ValueTuple.dll</HintPath>
  </Reference>
  <Reference Include="System.Xml.ReaderWriter">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.ReaderWriter.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.ReaderWriter.dll</HintPath>
  </Reference>
  <Reference Include="System.Xml.XDocument">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XDocument.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XDocument.dll</HintPath>
  </Reference>
  <Reference Include="System.Xml.XmlDocument">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XmlDocument.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XmlDocument.dll</HintPath>
  </Reference>
  <Reference Include="System.Xml.XmlSerializer">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XmlSerializer.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XmlSerializer.dll</HintPath>
  </Reference>
  <Reference Include="System.Xml.XPath">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XPath.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XPath.dll</HintPath>
  </Reference>
  <Reference Include="System.Xml.XPath.XDocument">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XPath.XDocument.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netstandard/System.Xml.XPath.XDocument.dll</HintPath>
  </Reference>
  <Reference Include="System.Numerics.Vectors">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/Extensions/2.0.0/System.Numerics.Vectors.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/Extensions/2.0.0/System.Numerics.Vectors.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.InteropServices.WindowsRuntime">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll</HintPath>
  </Reference>
  <Reference Include="mscorlib">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/mscorlib.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/mscorlib.dll</HintPath>
  </Reference>
  <Reference Include="System.ComponentModel.Composition">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.ComponentModel.Composition.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.ComponentModel.Composition.dll</HintPath>
  </Reference>
  <Reference Include="System.Core">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Core.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Core.dll</HintPath>
  </Reference>
  <Reference Include="System.Data">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Data.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Data.dll</HintPath>
  </Reference>
  <Reference Include="System">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.dll</HintPath>
  </Reference>
  <Reference Include="System.Drawing">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Drawing.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Drawing.dll</HintPath>
  </Reference>
  <Reference Include="System.IO.Compression.FileSystem">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.IO.Compression.FileSystem.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.IO.Compression.FileSystem.dll</HintPath>
  </Reference>
  <Reference Include="System.Net">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Net.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Net.dll</HintPath>
  </Reference>
  <Reference Include="System.Numerics">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Numerics.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Numerics.dll</HintPath>
  </Reference>
  <Reference Include="System.Runtime.Serialization">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Runtime.Serialization.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Runtime.Serialization.dll</HintPath>
  </Reference>
  <Reference Include="System.ServiceModel.Web">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.ServiceModel.Web.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.ServiceModel.Web.dll</HintPath>
  </Reference>
  <Reference Include="System.Transactions">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Transactions.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Transactions.dll</HintPath>
  </Reference>
  <Reference Include="System.Web">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Web.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Web.dll</HintPath>
  </Reference>
  <Reference Include="System.Windows">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Windows.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Windows.dll</HintPath>
  </Reference>
  <Reference Include="System.Xml">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.dll</HintPath>
  </Reference>
  <Reference Include="System.Xml.Linq">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Linq.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Linq.dll</HintPath>
  </Reference>
  <Reference Include="System.Xml.Serialization">
- <HintPath>D:/soft/Unity/2018.4.8f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Serialization.dll</HintPath>
+ <HintPath>D:/soft/Unity/2018.4.8f1/Unity/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Serialization.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

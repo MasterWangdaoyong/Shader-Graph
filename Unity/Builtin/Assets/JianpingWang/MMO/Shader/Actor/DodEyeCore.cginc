@@ -40,6 +40,8 @@ float _ShadowScale;
 float _SpecOffsetX;
 float _SpecOffsetY;
 
+float _FadeAlpha;
+
 /**************************
 @功能：Eye顶点着色器
 @参数：v，顶点着色器输入结构体
@@ -80,6 +82,10 @@ fixed4 frag(v2f i) : SV_TARGET
 	
 	fixed4 albedo = tex2D(_MainTex, i.uv);
 	fixed4 mask = tex2D(_MaskTex, i.uv);//R-Specular, G-EyeColor, B-Reflect, A-Shadow
+
+	#ifdef FADE_ON
+	albedo.a = _FadeAlpha;
+	#endif
 
 ////// Lighting:
 	half3 ambient = DOD_LIGHTMODEL_AMBIENT(normalDir) * albedo;

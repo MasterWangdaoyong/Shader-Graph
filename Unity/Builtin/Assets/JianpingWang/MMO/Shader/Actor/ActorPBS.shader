@@ -1,4 +1,4 @@
-Shader "MMO/Actor/ActorPBS" {
+Shader "Dodjoy/Actor/ActorPBS" {
 	Properties 
 	{
 		_MainTex("Albedo", 2D) = "white" {}

@@ -43,6 +43,7 @@ float _Smoothness;
 float _RimGloss;
 float _RimScale;
 fixed3 _RimColor;
+float _FadeAlpha;
 
 ///妆容贴图
 sampler2D _EyeTex;
@@ -194,6 +195,9 @@ fixed4 fragSkin(v2f i) : SV_TARGET
 	half VdotH = dot(viewDir, halfDir);
 	half NdotV = dot(normalDir, viewDir);
 	fixed4 albedo = tex2D(_MainTex, i.uv);
+	#ifdef FADE_ON
+	albedo.a = _FadeAlpha;
+	#endif
 	
 	#ifdef SIMPLE_BLUR
 	albedo.rgb = SimpleBlur(albedo.rgb, i.uv, _Smoothness);
@@ -207,8 +211,8 @@ fixed4 fragSkin(v2f i) : SV_TARGET
 
 
 ////// Diffuse:
-	float curvature = saturate(length(fwidth(normalDir)) / length(fwidth(worldPosDir)) * _CurvatureScale * 0.1);
-	//float curvature = dot(LIGHTCOLOR.rgb, fixed3(0.22, 0.707, 0.071)) * _CurvatureScale;
+	//float curvature = saturate(length(fwidth(normalDir)) / length(fwidth(worldPosDir)) * _CurvatureScale * 0.1);
+	float curvature = dot(LIGHTCOLOR.rgb, fixed3(0.22, 0.707, 0.071)) * _CurvatureScale;
 	float wrap = (NdotL * shadow + _DiffWrap) / (1 + _DiffWrap);
 	half2 brdfUV = half2(wrap, curvature);
 	//float halfLambert = NdotL * 0.5 + 0.5;
@@ -237,5 +241,6 @@ fixed4 fragSkin(v2f i) : SV_TARGET
 ////// Final:
 	fixed4 finalColor = (fixed4)1.0;
 	finalColor.rgb = diffColor + specColor + ambient;
+	finalColor.a = albedo.a;
 	return finalColor;
 }

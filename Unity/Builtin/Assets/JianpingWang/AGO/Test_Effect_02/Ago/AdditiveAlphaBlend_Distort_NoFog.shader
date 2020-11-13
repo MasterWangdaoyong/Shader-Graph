@@ -18,6 +18,7 @@ Shader "Dodjoy/Effect/AdditiveAlphaBlend_Distort_NoFog" {
         _GLOW2 ("GLOW2", Float ) = 1
         _SpeedV2 ("V速度2", Float ) = 0
         _SpeedU2 ("U速度2", Float ) = 0
+		_AlphaScale("Alpha Scale", Range(0, 1)) = 1
     }
     SubShader {
         Tags {
@@ -76,6 +77,8 @@ Shader "Dodjoy/Effect/AdditiveAlphaBlend_Distort_NoFog" {
 			uniform float _SpeedV2;
 			uniform float _SpeedU2;
 
+			float _AlphaScale;
+
             struct VertexInput 
             {
                 float4 vertex : POSITION;
@@ -126,6 +129,7 @@ Shader "Dodjoy/Effect/AdditiveAlphaBlend_Distort_NoFog" {
 				#endif
 				half3 finalColor = emissive * (1 - finalAlpha) + emissive2 * finalAlpha;			
 
+				finalAlpha *= _AlphaScale;
                 return fixed4(finalColor, finalAlpha);
             }
 

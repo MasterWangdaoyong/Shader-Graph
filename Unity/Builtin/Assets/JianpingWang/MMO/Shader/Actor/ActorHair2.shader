@@ -1,4 +1,4 @@
-﻿Shader "MMO/Actor/ActorHair"
+﻿Shader "Dodjoy/Actor/ActorHair"
 {
     Properties
     {
@@ -8,7 +8,7 @@
 
         _BumpScale("Norm Scale", Range(0,1)) = 1
         _Cutoff("Cut off", range(0, 1)) = 0 
-        _DiffWrap("Diffuse wrap", Range(0, 2)) = 1
+        _DiffWrap("Diffuse wrap", Range(0, 5)) = 1
         _SpecIntensity("Specular Intensity", Range(0, 5)) = 1.0 
 	    
         [Header(Primary Specular)]

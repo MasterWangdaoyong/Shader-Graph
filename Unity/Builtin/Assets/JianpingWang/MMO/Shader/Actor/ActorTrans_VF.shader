@@ -1,10 +1,10 @@
-﻿Shader "MMO/Actor/ActorTrans_VF"
+﻿Shader "Dodjoy/Actor/ActorTrans_VF"
 {
     Properties
     {
 		_Color("Color Tint", Color) = (1,1,1,1)
         _MainTex ("Base (RGB)", 2D) = "white" {}
-		//_MaskTex("Mask (R-Spec, G-Emission, B-Reflect)", 2D) = "black" {}
+		_MaskTex("Mask (R-Spec, G-Emission, B-Reflect)", 2D) = "black" {}
 		_AlphaScale("Alpha Scale", Range(0, 1)) = 1
 
     }

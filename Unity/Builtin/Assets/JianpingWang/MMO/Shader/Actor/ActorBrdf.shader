@@ -1,4 +1,4 @@
-Shader "MMO/Actor/ActorBrdf" 
+Shader "Dodjoy/Actor/ActorBrdf" 
 {
 	Properties 
 	{
@@ -6,7 +6,7 @@ Shader "MMO/Actor/ActorBrdf"
 		_MaskTex ("Mask Tex(R-Spec,G-Emission,B-Reflect,A-Skin)", 2D) = "black" {}
 		
 		_DiffScale ("Diffuse scale", float) = 1	
-		_DiffWrap("Diffuse Wrap", Range(0, 2)) = 0.5
+		_DiffWrap("Diffuse Wrap", Range(0, 5)) = 0.5
 		_SpecRoughness("SpecRoughness", range(0, 1)) = 0.2
 		_SpecScale("Spec scale", float) = 1
 		_ReflectScale ("Reflect scale", float) = 1
@@ -30,7 +30,7 @@ Shader "MMO/Actor/ActorBrdf"
 			#pragma vertex BrdfVert
 			#pragma fragment BrdfFrag
 			#pragma multi_compile HIGHLIGHT_ON HIGHLIGHT_OFF
-			#pragma multi_compile_fwdbase nolightmap nodynlightmap nodirlightmap noshadowmask
+			#pragma multi_compile_fwdbase
 					
 			#define DIFFUSE_ON
 			#define SPEC_ON
@@ -38,15 +38,12 @@ Shader "MMO/Actor/ActorBrdf"
 			#define REFLECT_MAP_ON
 			#define ENVLIGHT_ON
 			#define SKIN_ON
-			
+
 			#define CUSTOM_MAIN_LIGHT
 			#define CUSTOM_ENV_LIGHT_ON
 			
-			
-			#include "ActorBrdfCore.cginc"	
-				
-			ENDCG
-			
+			#include "ActorBrdfCore.cginc"			
+			ENDCG		
 		}	
 		UsePass "Dodjoy/Actor/ActorShdow/SHADOW"
 	}
@@ -94,6 +91,6 @@ Shader "MMO/Actor/ActorBrdf"
 			ENDCG
 		}
 	}
-	FallBack "MMO/FallBack"
+	FallBack "Dodjoy/FallBack"
 }
 

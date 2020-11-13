@@ -1,54 +1,55 @@
-Shader "MMO/Actor/Fade/ActorEye" {
-Properties {	
-	_EyeBallColor("Eye Color", Color) = (0,0,0,0)
-	_MainTex ("Base (RGB)", 2D) = "grey" {}
-	_MaskTex ("MaskTex(R-Spec, G-EyeColor, B-Reflect)", 2D) = "black" {}
-	_ReflectMatcap("Reflect Matcap", 2D) = "black"{}
-	
-	_EnvScale("EnvLight Scale", float) = 1
-	_SpecScale("Spec scale", float) = 1
-	_ReflectScale ("Reflect scale", float) = 1
-}
+Shader "Dodjoy/Actor/Fade/ActorEye" 
+{
+	Properties
+	{	
+		_MainColor("Eye Color (A-Color blend)", Color) = (0,0,0,1)
+		_MainTex ("Base (RGB)", 2D) = "grey" {}
+		_MaskTex ("Mask(R-Specular, G-EyeColor, B-Reflect, A-Shadow)", 2D) = "white" {}
+		_ReflectMatcap("Reflect Matcap", 2D) = "black"{}
 
-	
-SubShader { 
-	Tags { "RenderType"="Transparent" "Queue"="Transparent" }
-	
-	Pass{
-		ZWrite On
-        ColorMask 0
-		Cull Back
+		_DiffScale("Diffuse Scale", Range(0, 5)) = 1
+		_DiffWrap("Diffuse Wrap", Range(0, 2)) = 1
+		_SpecScale("Specular Scale", Range(0, 10)) = 1
+		_SpecOffsetX("Specluar offsetX", Range(-2, 2)) = 0
+		_SpecOffsetY("Specluar offsetY", Range(-2, 2)) = 0
+		_ReflScale ("Reflect Scale", Range(0, 10)) = 1
+		_ShadowScale("Shadow Scale", Range(0, 1)) = 1
+		_FadeAlpha("Fade Alpha", Range(0, 1)) = 1
 	}
+
 	
-	Pass
-	{
-		Name "FORWARD" 
-		Tags { "LightMode" = "ForwardBase" }
-		Blend SrcAlpha OneMinusSrcAlpha
+	SubShader 
+	{ 
+		Tags { "RenderType"="Transparent" "Queue"="Transparent" }
 		
-		CGPROGRAM
+		Pass{
+			ZWrite On
+			ColorMask 0
+			Cull Back
+		}
 		
-		#pragma vertex EyeVert
-		#pragma fragment EyeFrag
-				
-		#define DIFFUSE_ON
-		#define SPEC_ON
-		#define REFLECT_MAP_ON
-		#define ENVLIGHT_ON
-		#define FADE_ON
-		
-		#define CUSTOM_MAIN_LIGHT
-		#define CUSTOM_ENV_LIGHT_ON
-		
-		#pragma multi_compile_fwdbase nolightmap nodynlightmap nodirlightmap noshadowmask
-		#pragma multi_compile_fog
-		
-		#include "ActorEyeCore.cginc"		
+		Pass
+		{
+			Name "FORWARD" 
+			Tags { "LightMode" = "ForwardBase" }
+			Blend SrcAlpha OneMinusSrcAlpha
+			
+			CGPROGRAM
+			
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma multi_compile_fwdbase
 
-		ENDCG
-		
-	}		
-}
+			#define CUSTOM_MAIN_LIGHT
+			#define CUSTOM_ENV_LIGHT_ON
+			#define LIGHT_ON
+			#define REFLECT_ON
+			#define FADE_ON
 
+			#include "DodEyeCore.cginc"		
+
+			ENDCG
+		}		
+	}
 }
 

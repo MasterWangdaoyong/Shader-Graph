@@ -1,4 +1,4 @@
-Shader "MMO/Actor/Show/ActorFlowLight" {
+Shader "Dodjoy/Actor/Show/ActorFlowLight" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "grey" {}
 	_MaskTex ("Mask Tex(R-Spec,G-Emission,B-Reflect)", 2D) = "black" {}

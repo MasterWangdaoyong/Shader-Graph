@@ -1,7 +1,7 @@
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "MMO/Actor/ActorTransPBR" {
+Shader "Dodjoy/Actor/ActorTransPBR" {
 	Properties{
 		_Color("Main Color", Color) = (1,1,1,1)
 		_MainTex("Base (RGB)", 2D) = "white" {}
@@ -16,13 +16,13 @@ Shader "MMO/Actor/ActorTransPBR" {
 			Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent"}
 
 			
-			//ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½
+			//½öÐ´ÈëÉî¶È
 			Pass{
 				ZWrite On
 				ColorMask 0
 			}
 			
-			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¾
+			//Õý³£äÖÈ¾
 			Pass{
 				Tags{"LightMode"="ForwardBase"}
 				ZWrite Off
@@ -122,7 +122,7 @@ Shader "MMO/Actor/ActorTransPBR" {
 					float D = a2 * sqrtD * sqrtD / 4;
 					float k = (a2 + 1) * (a2 + 1) / 8;
 
-					//G(l,v,h) / (nï¿½ï¿½l)(nï¿½ï¿½v)
+					//G(l,v,h) / (n¡¤l)(n¡¤v)
 					float GV = (NoV * (1 - k) + k);
 					float GL = (NoL * (1 - k) + k);
 

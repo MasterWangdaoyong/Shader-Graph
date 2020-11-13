@@ -1,76 +1,47 @@
-Shader "MMO/Actor/Show/ActorEye" {
-Properties {	
-	_EyeBallColor("Eye Color", Color) = (0,0,0,0)
-	_MainTex ("Base (RGB)", 2D) = "grey" {}
-	_MaskTex ("MaskTex(R-Spec, G-EyeColor, B-Reflect)", 2D) = "black" {}
-	_ReflectMatcap("Reflect Matcap", 2D) = "black"{}
-	
-	_EnvScale("EnvLight Scale", float) = 1
-	_SpecScale("Spec scale", float) = 1
-	_ReflectScale ("Reflect scale", float) = 1
-}
+Shader "Dodjoy/Actor/Show/ActorEye" 
+{
+	Properties 
+	{	
+		_MainColor("Eye Color (A-Color blend)", Color) = (0,0,0,1)
+		_MainTex ("Base (RGB)", 2D) = "grey" {}
+		_MaskTex ("Mask(R-Specular, G-EyeColor, B-Reflect, A-Shadow)", 2D) = "white" {}
+		_ReflectMatcap("Reflect Matcap", 2D) = "black"{}
 
-	
-SubShader { 
-	Tags { "Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Opaque"}
-	
-	
-	Pass
-	{
-		Name "FORWARD" 
-		Tags { "LightMode" = "ForwardBase" }
-		
-		CGPROGRAM
-		
-		#pragma vertex EyeVert
-		#pragma fragment EyeFrag
-				
-		#define DIFFUSE_ON
-		#define SPEC_ON
-		#define REFLECT_MAP_ON
-		#define ENVLIGHT_ON
-		
-		#define CUSTOM_ENV_LIGHT_ON
-
-		#pragma multi_compile_fwdbase nolightmap nodynlightmap nodirlightmap noshadowmask
-		
-		#define USE_DOD_SHADOW
-		#define TEX_HIGH
-
-		
-		#include "ActorEyeCore.cginc"		
-
-		ENDCG
-		
-	}	
-	
-	
-	// ------------------------------------------------------------------
-		//  Additive forward pass (one light per pass)
-	Pass
-	{
-		Name "FORWARD_DELTA"
-		Tags { "LightMode" = "ForwardAdd" }
-		Blend One One
-		Fog { Color (0,0,0,0) } // in additive pass fog should be black
-		ZWrite Off
-		ZTest LEqual
-
-		CGPROGRAM
-		
-		#pragma vertex EyeVert
-		#pragma fragment EyeFrag
-		
-		#pragma multi_compile_fwdadd
-		
-		#define DIFFUSE_ON
-		#define TEX_HIGH
-		
-		#include "ActorEyeCore.cginc"
-		
-		ENDCG
+		_DiffScale("Diffuse Scale", Range(0, 5)) = 1
+		_DiffWrap("Diffuse Wrap", Range(0, 2)) = 1
+		_SpecScale("Specular Scale", Range(0, 10)) = 1
+		_SpecOffsetX("Specluar offsetX", Range(-2, 2)) = 0
+		_SpecOffsetY("Specluar offsetY", Range(-2, 2)) = 0
+		_ReflScale ("Reflect Scale", Range(0, 10)) = 1
+		_ShadowScale("Shadow Scale", Range(0, 1)) = 1
 	}
-}
+
+	SubShader 
+	{ 
+		Tags { "Queue"="Geometry" "RenderType"="Opaque"}
+		Pass
+		{
+			Tags { "LightMode" = "ForwardBase" }
+			
+			CGPROGRAM
+			
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma multi_compile_fwdbase
+
+			//#define CUSTOM_MAIN_LIGHT
+			#define CUSTOM_ENV_LIGHT_ON
+			#define LIGHT_ON
+			#define REFLECT_ON	
+			#define TEX_HIGH
+
+
+			#include "DodEyeCore.cginc"		
+			ENDCG
+		}
+
+	}
+
 
 }
 

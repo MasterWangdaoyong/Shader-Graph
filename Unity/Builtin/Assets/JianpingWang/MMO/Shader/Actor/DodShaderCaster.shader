@@ -1,4 +1,4 @@
-﻿Shader "MMO/Actor/DodShaderCaster" {
+﻿Shader "Dodjoy/Actor/DodShaderCaster" {
 	Properties{
 	}
 
