@@ -1,0 +1,14 @@
+步一：选择A_gameobject (这里面有N个子项目)
+步二：copy A_gameobject (这里面有N个子项目) 中所有子项目的Position Rotation Scale
+步二：粘贴 步二的信息到 B_gameobject (这里面有N个子项目)
+
+做成一个右键快捷功能
+版本是4.6 5
+
+
+
+我的思路：
+1、编历一次将要copy的gameobject父项，查找有多少子项－－创建动态内存
+2、以数据方式存取所有子项的transform－－记录数据
+3、编历一次将要粘到的gameobject父项，查找有多少子项，检查是否一样，提出警告
+4、粘贴所有tansform－－清除动态内存
