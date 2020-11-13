@@ -6,7 +6,7 @@
 目录说明：
 - Algorithm : 算法库
 - UE4_SourceCode : UE着色器源码
-- Unity : U3D Buldin & URP 及 脚本工具
+- Unity : Builtin & URP & 脚本工具
 - Unity_SourceCode : U3D着色器源码
 
 ![MainCustom.jpg](https://github.com/MasterWangdaoyong/My-C--Primer-Plus/blob/master/Show/MainCustom.jpg)
