@@ -333,6 +333,7 @@
      <None Include="Assets\JianpingWang\AGO\Test_Effect_Distort\Additive_Distort_NoFog.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_Tree\AGO\Scene_Nature_Tree_AGO.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_CosTime.shader" />
+     <None Include="Assets\TimeShader.shader" />
      <None Include="Assets\JianpingWang\AGO\Test_GlassSSS\RAW\InteriorMap_SF.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_SimpleAddOpNode.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Previews\Preview_RsqrtOpNode.shader" />
