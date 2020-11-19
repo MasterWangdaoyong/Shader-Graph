@@ -157,7 +157,7 @@ inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughn
     #endif
 }
 
-inline float GGXTerm (float NdotH, float roughness) //对应迪斯尼GTR2 下层
+inline float GGXTerm (float NdotH, float roughness) //对应迪斯尼GTR2 下层高光
 {
     float a2 = roughness * roughness;
     float d = (NdotH * a2 - NdotH) * NdotH + 1.0f; // 2 mad
@@ -180,7 +180,7 @@ inline half PerceptualRoughnessToSpecPower (half perceptualRoughness)
 inline half NDFBlinnPhongNormalizedTerm (half NdotH, half n)
 {
     // norm = (n+2)/(2*pi)
-    half normTerm = (n + 2.0) * (0.5/UNITY_PI);
+    half normTerm = (n + 2.0) * (0.5 / UNITY_PI);
 
     half specTerm = pow (NdotH, n);
     return specTerm * normTerm;
@@ -215,7 +215,7 @@ inline float3 Unity_SafeNormalize(float3 inVec)
 
 //注意：BRDF入口点使用平滑度和oneMinusReflectivity进行优化
 //目的，主要用于DX9 SM2.0级别。 大部分数学运算都是在这些（1-x）值上完成的，这样可以节省
-//一些宝贵的ALU插槽。
+//一些宝贵的 ALU 插槽。
 
 
 //主要基于物理的BRDF
@@ -262,13 +262,13 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     half lv = saturate(dot(light.dir, viewDir));
     half lh = saturate(dot(light.dir, halfDir));
 
-    // Diffuse 项
+    // DisneyDiffuse 项
     half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
 
     // Specular 项
-    // HACK：理论上，我们应将diffuseTerm除以Pi，而不要乘以specularTerm！
+    // HACK：理论上，我们应将diffuseTerm除以Pi，而不要乘以 specularTerm ！
      //但1）会使着色器看起来比旧版着色器暗得多
-     //和2）在引擎中，“非重要”灯在注入周围环境SH的情况下也必须用Pi划分
+     //和2）在引擎中，“非重要”灯（指的是在面板强制为important属性的光）在注入周围环境SH的情况下也必须用Pi划分
     float roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 #if UNITY_BRDF_GGX
     //粗糙度为0的GGX完全没有镜面反射，在此使用max（roughness，0.002）匹配HDrenderloop粗糙度重新映射。
@@ -281,13 +281,13 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     half D = NDFBlinnPhongNormalizedTerm (nh, PerceptualRoughnessToSpecPower(perceptualRoughness));
 #endif
 
-    float specularTerm = V*D * UNITY_PI; // Torrance-Sparrow模型，菲涅耳稍后应用
+    float specularTerm = V * D * UNITY_PI; // Torrance-Sparrow 模型，菲涅耳稍后应用
 
 #   ifdef UNITY_COLORSPACE_GAMMA
         specularTerm = sqrt(max(1e-4h, specularTerm));
 #   endif
 
-    // specularTerm *在某些情况下，nl在金属上可以是NaN，请使用max（）来确保它是一个合理的值
+    // specularTerm * 在某些情况下，nl 在金属上可以是 NaN，请使用max（）来确保它是一个合理的值
     specularTerm = max(0, specularTerm * nl);
 #if defined(_SPECULARHIGHLIGHTS_OFF)
     specularTerm = 0.0;
@@ -296,16 +296,16 @@ half4 BRDF1_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivi
     // surfaceReduction = Int D(NdotH) * NdotH * Id(NdotL>0) dH = 1/(roughness^2+1)
     half surfaceReduction;
 #   ifdef UNITY_COLORSPACE_GAMMA
-        surfaceReduction = 1.0-0.28*roughness*perceptualRoughness;      // 1-0.28*x^3 作为近似值 (1/(x^4+1))^(1/2.2) on the domain [0;1]
+        surfaceReduction = 1.0 - 0.28 * roughness * perceptualRoughness;      // 1 - 0.28 * x^3 作为近似值 (1 / (x^4 + 1))^(1/2.2) on the domain [0;1]
 #   else
-        surfaceReduction = 1.0 / (roughness*roughness + 1.0);           // fade \in [0.5;1]
+        surfaceReduction = 1.0 / (roughness * roughness + 1.0);           // fade \in [0.5;1]
 #   endif
 
     //为了提供真正的lambert照明，我们需要能够完全消除镜面反射。
     specularTerm *= any(specColor) ? 1.0 : 0.0;
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
-    half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm)
+    half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm)  // ＝ diffColor * gi.diffuse + diffColor * light.color * diffuseTerm
                     + specularTerm * light.color * FresnelTerm (specColor, lh)
                     + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv);
 
