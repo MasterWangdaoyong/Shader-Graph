@@ -16,6 +16,8 @@ Shader "JianpingWang/PBR"  // 20201020
 
         _EmissionColor("Color", Color) = (0,0,0)
         _EmissionMap("Emission", 2D) = "white" {}
+
+        [Toggle(Debug)]_Debug("Debug", float) = 0
     }
 
     CGINCLUDE
