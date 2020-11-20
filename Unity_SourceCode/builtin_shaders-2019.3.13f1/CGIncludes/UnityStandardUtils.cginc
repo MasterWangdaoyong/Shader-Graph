@@ -185,7 +185,7 @@ half3 ShadeSHPerVertex (half3 normal, half3 ambient)
         // 完全按像素
         // 无用事项
     #elif (SHADER_TARGET < 30) || UNITY_STANDARD_SIMPLE
-        // 完全按顶点
+        // 平台判断 完全按顶点
         ambient += max(half3(0,0,0), ShadeSH9 (half4(normal, 1.0)));
     #else
         // 每顶点L2，每像素L0..L1和伽马校正

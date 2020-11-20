@@ -14,8 +14,6 @@
 
 #include "AutoLight.cginc"
 //-------------------------------------------------------------------------------------
-// counterpart for NormalizePerPixelNormal
-// skips normalization per-vertex and expects normalization to happen per-pixel
 // NormalizePerPixelNormal的对应项
 //跳过每个顶点的归一化，并期望每个像素进行归一化
 half3 NormalizePerVertexNormal (float3 n) // takes float to avoid overflow//进行浮点运算以避免溢出
@@ -36,7 +34,7 @@ float3 NormalizePerPixelNormal (float3 n)
     #if (SHADER_TARGET < 30) || UNITY_STANDARD_SIMPLE
         return n;
     #else
-        return normalize((float3)n); // takes float to avoid overflow
+        return normalize((float3)n); //进行浮动以避免溢出
     #endif
 }
 
@@ -395,7 +393,6 @@ inline half4 VertexGIForward(VertexInput v, float3 posWorld, half3 normalWorld)
 struct VertexOutputForwardBase  //1.01   v2f
 {
     UNITY_POSITION(pos); 
-    // On D3D reading screen space coordinates from fragment shader requires SM3.0
     //在D3D上，从片段着色器读取屏幕空间坐标需要SM3.0
     //#define UNITY_POSITION(pos) float4 pos : SV_POSITION
     //声明Clippos
@@ -467,7 +464,7 @@ VertexOutputForwardBase vertForwardBase (VertexInput v) //顶点着色器
         //只存顶点法线在世空间下的信息
     #endif
     //接收阴影 内含不同的判断 
-    UNITY_TRANSFER_LIGHTING(o, v.uv1); //1.4 祥见本人笔记文章《阴影》 
+    UNITY_TRANSFER_LIGHTING(o, v.uv1); //阴影
     o.ambientOrLightmapUV = VertexGIForward(v, posWorld, normalWorld); //1.5
     //顶点着色器内的顶点灯光计算
     #ifdef _PARALLAXMAP//曲面细分 视差效果 略过（端游才用得上）
@@ -478,7 +475,7 @@ VertexOutputForwardBase vertForwardBase (VertexInput v) //顶点着色器
         o.tangentToWorldAndPackedData[2].w = viewDirForParallax.z;
     #endif
     UNITY_TRANSFER_FOG_COMBINED_WITH_EYE_VEC(o,o.pos);
-    //fog 项 祥见本人笔记文章《雾效》 
+    //fog 项 雾效
     return o;
 }
 

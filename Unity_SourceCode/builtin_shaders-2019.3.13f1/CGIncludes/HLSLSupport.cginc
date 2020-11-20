@@ -545,7 +545,7 @@
 #endif
 
 
-// On D3D reading screen space coordinates from fragment shader requires SM3.0
+// 在D3D上，从片段着色器读取屏幕空间坐标需要SM3.0
 #define UNITY_POSITION(pos) float4 pos : SV_POSITION
 
 // Kept for backwards-compatibility
