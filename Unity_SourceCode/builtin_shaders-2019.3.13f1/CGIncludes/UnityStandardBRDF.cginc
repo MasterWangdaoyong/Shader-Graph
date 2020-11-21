@@ -412,10 +412,10 @@ half3 BRDF3_Direct(half3 diffColor, half3 specColor, half rlPow4, half smoothnes
     half LUT_RANGE = 16.0;     //必须与GeneratedTextures.cpp中的NHxRoughness（）函数中的范围匹配
      //查找纹理以保存指令
     half specular = tex2D(unity_NHxRoughness, half2(rlPow4, SmoothnessToPerceptualRoughness(smoothness))).r * LUT_RANGE;
-#if defined(_SPECULARHIGHLIGHTS_OFF)
-    specular = 0.0;
-#endif
-
+    #if defined(_SPECULARHIGHLIGHTS_OFF)
+        //shader 内定义开关
+        specular = 0.0;
+    #endif
     return diffColor + specular * specColor;
 }
 

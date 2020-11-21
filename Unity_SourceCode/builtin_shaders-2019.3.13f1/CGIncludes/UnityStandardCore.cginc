@@ -247,7 +247,7 @@ inline FragmentCommonData RoughnessSetup(float4 i_tex)
     return o;
 }
 
-inline FragmentCommonData MetallicSetup (float4 i_tex)  ////112a6
+inline FragmentCommonData MetallicSetup (float4 i_tex)  ////2.2.3
 {
     half2 metallicGloss = MetallicGloss(i_tex.xy);     //002a   //函数调取
     //得到原始metallic 原始roughness

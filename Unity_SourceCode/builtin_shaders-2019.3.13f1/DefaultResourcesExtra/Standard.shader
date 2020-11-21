@@ -49,7 +49,7 @@ Shader "Standard"
 
     CGINCLUDE
         #define UNITY_SETUP_BRDF_INPUT MetallicSetup
-    ENDCG  //定义不同的工作流  MetallicSetup 函数名 
+    ENDCG  //2.2.3 定义不同的工作流  MetallicSetup 函数名 
 
     SubShader
     {
