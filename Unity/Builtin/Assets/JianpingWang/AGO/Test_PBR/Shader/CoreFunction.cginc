@@ -424,28 +424,30 @@ inline half3 aUnityGI_IndirectSpecular(aUnityGIInput data, half occlusion, aUnit
     #endif
     #ifdef _GLOSSYREFLECTIONS_OFF
         specular = unity_IndirectSpecColor.rgb;
+        // specular = half3(0,0,0);
     #else
-        half3 env0 = aUnity_GlossyEnvironment (UNITY_PASS_TEXCUBE(unity_SpecCube0), data.probeHDR[0], glossIn);
-        #ifdef UNITY_SPECCUBE_BLENDING
-            const float kBlendFactor = 0.99999;
-            float blendLerp = data.boxMin[0].w;
-            UNITY_BRANCH
-            if (blendLerp < kBlendFactor)
-            {
-                #ifdef UNITY_SPECCUBE_BOX_PROJECTION
-                    glossIn.reflUVW = BoxProjectedCubemapDirection (originalReflUVW, data.worldPos, data.probePosition[1], data.boxMin[1], data.boxMax[1]);
-                #endif
+        // half3 env0 = aUnity_GlossyEnvironment (UNITY_PASS_TEXCUBE(unity_SpecCube0), data.probeHDR[0], glossIn);
+        half3 env0 = half3(0,0,0);
+        // #ifdef UNITY_SPECCUBE_BLENDING
+        //     const float kBlendFactor = 0.99999;
+        //     float blendLerp = data.boxMin[0].w;
+        //     UNITY_BRANCH
+        //     if (blendLerp < kBlendFactor)
+        //     {
+        //         #ifdef UNITY_SPECCUBE_BOX_PROJECTION
+        //             glossIn.reflUVW = BoxProjectedCubemapDirection (originalReflUVW, data.worldPos, data.probePosition[1], data.boxMin[1], data.boxMax[1]);
+        //         #endif
 
-                half3 env1 = aUnity_GlossyEnvironment (UNITY_PASS_TEXCUBE_SAMPLER(unity_SpecCube1,unity_SpecCube0), data.probeHDR[1], glossIn);
-                specular = lerp(env1, env0, blendLerp);
-            }
-            else
-            {
-                specular = env0;
-            }
-        #else
+        //         half3 env1 = aUnity_GlossyEnvironment (UNITY_PASS_TEXCUBE_SAMPLER(unity_SpecCube1,unity_SpecCube0), data.probeHDR[1], glossIn);
+        //         specular = lerp(env1, env0, blendLerp);
+        //     }
+        //     else
+        //     {
+        //         specular = env0;
+        //     }
+        // #else
             specular = env0;
-        #endif
+        // #endif
     #endif
 
     return specular * occlusion; //最后乘上AO
