@@ -25,7 +25,7 @@ sampler2D _EmissionMap;
 
 float unity_Lightmap_ST;
 
-float _Cutoff;
+float _Cutoff, _Glossiness, _Metallic;
 
 //=========================================================================================
 //=========================================================================================
@@ -165,8 +165,10 @@ half aAlpha(float2 uv)
 half2 aMetallicGloss(float2 uv)
 {
     half2 mg;
-    mg = tex2D(_MetallicGlossMap, uv).ra;
-    mg.g *= _GlossMapScale;
+    // mg = tex2D(_MetallicGlossMap, uv).ra;
+    // mg.g *= _GlossMapScale;
+    mg.r = _Metallic;
+    mg.g = _Glossiness;
     return mg;
 }
 
@@ -380,6 +382,17 @@ inline aUnityGI aUnityGI_Base(aUnityGIInput data, half occlusion, half3 normalWo
             #endif
         #endif
     #endif
+    #ifdef DYNAMICLIGHTMAP_ON //动态lightmap 略
+        // Dynamic lightmaps
+        fixed4 realtimeColorTex = UNITY_SAMPLE_TEX2D(unity_DynamicLightmap, data.lightmapUV.zw);
+        half3 realtimeColor = DecodeRealtimeLightmap (realtimeColorTex);
+        #ifdef DIRLIGHTMAP_COMBINED
+            half4 realtimeDirTex = UNITY_SAMPLE_TEX2D_SAMPLER(unity_DynamicDirectionality, unity_DynamicLightmap, data.lightmapUV.zw);
+            o_gi.indirect.diffuse += DecodeDirectionalLightmap (realtimeColor, realtimeDirTex, normalWorld);
+        #else
+            o_gi.indirect.diffuse += realtimeColor;
+        #endif
+    #endif
     o_gi.indirect.diffuse *= occlusion; //diffuse 第三步计算 乘上 AO
     return o_gi;
 }
@@ -413,7 +426,7 @@ inline half3 aUnityGI_IndirectSpecular(aUnityGIInput data, half occlusion, aUnit
         specular = unity_IndirectSpecColor.rgb;
     #else
         half3 env0 = aUnity_GlossyEnvironment (UNITY_PASS_TEXCUBE(unity_SpecCube0), data.probeHDR[0], glossIn);
-        #ifdef UNITY_SPECCUBE_BLENDING 
+        #ifdef UNITY_SPECCUBE_BLENDING
             const float kBlendFactor = 0.99999;
             float blendLerp = data.boxMin[0].w;
             UNITY_BRANCH
@@ -513,11 +526,11 @@ half4 aBRDF3_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectiv
 //=========================================================================================
 half3 aEmission(float2 uv)
 {
-#ifndef _EMISSION
-    return 0;
-#else
-    return tex2D(_EmissionMap, uv).rgb * _EmissionColor.rgb;
-#endif
+    #ifndef _EMISSION
+        return 0;
+    #else
+        return tex2D(_EmissionMap, uv).rgb * _EmissionColor.rgb;
+    #endif
 }
 //=========================================================================================
 #define aUNITY_OPAQUE_ALPHA(outputAlpha) outputAlpha = 1.0
@@ -533,13 +546,14 @@ half4 aOutputForward (half4 output, half alphaFromSurface)
 //=========================================================================================
 half4 frag (v2f i) : SV_Target
 { 
-    aUNITY_APPLY_DITHER_CROSSFADE(i.pos.xy); 
+    // aUNITY_APPLY_DITHER_CROSSFADE(i.pos.xy); 
     aFRAGMENT_SETUP(s)
     aUnityLight mainLight = aMainLight();
     UNITY_LIGHT_ATTENUATION(atten, i, s.posWorld);
     half occlusion = aOcclusion(i.tex.xy);
     aUnityGI gi = aFragmentGI (s, occlusion, i.SH, atten, mainLight);  
     half4 c = aUNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
-    c.rgb += aEmission(i.tex.xy);  
-    return aOutputForward(c, s.alpha); 
+    // c.rgb += aEmission(i.tex.xy);  
+    // return aOutputForward(c, s.alpha); 
+    return c; 
 }

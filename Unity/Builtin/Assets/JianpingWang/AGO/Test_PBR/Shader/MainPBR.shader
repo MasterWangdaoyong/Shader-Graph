@@ -18,6 +18,11 @@ Shader "JianpingWang/PBR"  // 20201020
         _EmissionMap("Emission", 2D) = "white" {}
 
         [Toggle(Debug)]_Debug("Debug", float) = 0
+        [Gamma] _Metallic("Metallic", Range(0.0, 1.0)) = 0.0
+        _Glossiness("Smoothness", Range(0.0, 1.0)) = 0.5
+
+        [ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
+        [ToggleOff] _GlossyReflections("Glossy Reflections", Float) = 1.0
     }
 
     CGINCLUDE
@@ -43,6 +48,10 @@ Shader "JianpingWang/PBR"  // 20201020
             #define _aNORMALMAP
             #define _EMISSION
             // #pragma multi_compile _ LOD_FADE_CROSSFADE
+            // #define _GLOSSYREFLECTIONS_OFF
+            // #define _SPECULARHIGHLIGHTS_OFF
+            #pragma multi_compile _ _SPECULARHIGHLIGHTS_OFF
+            #pragma multi_compile _ _GLOSSYREFLECTIONS_OFF
 
             
             #include "CoreFunction.cginc"
