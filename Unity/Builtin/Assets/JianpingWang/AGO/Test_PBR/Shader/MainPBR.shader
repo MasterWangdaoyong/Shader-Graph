@@ -1,4 +1,8 @@
-Shader "JianpingWang/PBR"  // 20201020
+// JianpingWang
+// 时间：20201020
+// 功能：PBR
+
+Shader "JianpingWang/PBR"
 {
     Properties 
     {
@@ -23,6 +27,16 @@ Shader "JianpingWang/PBR"  // 20201020
 
         [ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
         [ToggleOff] _GlossyReflections("Glossy Reflections", Float) = 1.0
+
+        [Space(10)] [Header(DeBug)]
+        [Toggle] _DeBugDiffuse("_DeBugDiffuse", float) = 0      //BRDF Diffuse项测试     
+        [Toggle] _DeBugD("_DeBugD", float) = 0          //BRDF D项测试     
+        [Toggle] _DeBugF("_DeBugF", float) = 0          //BRDF F项测试     
+        [Toggle] _DeBugG("_DeBugG", float) = 0          //BRDF G项测试     
+        
+        [Toggle] _DeBugInd("_DeBugInd", float) = 0      //间接光照部分测试     
+        [Toggle] _DeBugDev("_DeBugDev", float) = 0      //直接光照部分测试
+        [Toggle] _DeBugEnv("_DeBugEnv", float) = 0      //环境光照部分测试
     }
 
     CGINCLUDE
@@ -59,38 +73,39 @@ Shader "JianpingWang/PBR"  // 20201020
             ENDCG
         }
 
-
+//
         // ------------------------------------------------------------------
-        Pass {
-            Name "ShadowCaster"
-            Tags { "LightMode" = "ShadowCaster" }
+        // Pass {
+        //     Name "ShadowCaster"
+        //     Tags { "LightMode" = "ShadowCaster" }
 
-            ZWrite On ZTest LEqual
+        //     ZWrite On ZTest LEqual
 
-            CGPROGRAM
-            #pragma target 3.0
+        //     CGPROGRAM
+        //     #pragma target 3.0
 
-            // -------------------------------------
+        //     // -------------------------------------
 
 
-            // #pragma shader_feature_local _ _ALPHATEST_ON _ALPHABLEND_ON _ALPHAPREMULTIPLY_ON
-            // #pragma shader_feature_local _METALLICGLOSSMAP
-            // #pragma shader_feature_local _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-            // #pragma shader_feature_local _PARALLAXMAP
-            #pragma multi_compile_shadowcaster
-            // #pragma multi_compile_instancing
-            // Uncomment the following line to enable dithering LOD crossfade. Note: there are more in the file to uncomment for other passes.
-            //#pragma multi_compile _ LOD_FADE_CROSSFADE
+        //     // #pragma shader_feature_local _ _ALPHATEST_ON _ALPHABLEND_ON _ALPHAPREMULTIPLY_ON
+        //     // #pragma shader_feature_local _METALLICGLOSSMAP
+        //     // #pragma shader_feature_local _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        //     // #pragma shader_feature_local _PARALLAXMAP
+        //     #pragma multi_compile_shadowcaster
+        //     // #pragma multi_compile_instancing
+        //     // Uncomment the following line to enable dithering LOD crossfade. Note: there are more in the file to uncomment for other passes.
+        //     //#pragma multi_compile _ LOD_FADE_CROSSFADE
 
-            #pragma vertex vertShadowCaster
-            #pragma fragment fragShadowCaster
+        //     #pragma vertex vertShadowCaster
+        //     #pragma fragment fragShadowCaster
 
-            #include "UnityStandardShadow.cginc"
+        //     #include "UnityStandardShadow.cginc"
 
-            ENDCG
-        }
-        // ------------------------------------------------------------------
+        //     ENDCG
+        // }
+// ------------------------------------------------------------------
     }
+    CustomEditor "PBR_ShaderGUI"
 }
 
 
