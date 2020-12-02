@@ -78,10 +78,11 @@ Shader "JianpingWang/MMO/Scene/Diffuse"
                 half4 lightmap = UNITY_SAMPLE_TEX2D(unity_Lightmap, i.uvLM);
                 half4 bakedColor = half4(DecodeLightmap(lightmap), 1.0);
                 bakedColor.rgb = GammaToLinearSpace(bakedColor.rgb);  //如果管线是gamma的那么，在解压时使用转线性
-                //shadow
+                //lightmap shadow
                 fixed backatten = UnitySampleBakedOcclusion(i.uvLM, worldPos);
                 fixed shadowatten = SHADOW_ATTENUATION(i);
                 shadowatten = clamp(shadowatten, 0.5, 1); //阴影，但会跟shadowmask溶合（欠佳）
+                
                 //color blend
                 fixed4 col = tex2D(_MainTex, i.uv);
                 col.rgb = GammaToLinearSpace(col.rgb);  //贴图是gamma的，计算前使用转线性
