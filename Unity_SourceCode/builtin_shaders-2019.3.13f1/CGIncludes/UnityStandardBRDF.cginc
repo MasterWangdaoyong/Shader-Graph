@@ -108,8 +108,9 @@ half DisneyDiffuse(half NdotV, half NdotL, half LdotH, half perceptualRoughness)
     return lightScatter * viewScatter;
 }
 
+// 低效果版本 V 项，但性能更好
 //注意：可见性术语是Torrance-Sparrow模型的完整形式，其中包括几何术语：V = G /（N.L * N.V）
-//这样一来，交换几何图形项变得更加容易，并且有更多的优化空间（也许在CookTorrance geom项的情况下除外）
+//这样一来，交换几何图形项变得更加容易，并且有更多的优化空间（也许在 CookTorrance geom项的情况下除外）
 // 通用Smith-Schlick能见度术语
 inline half SmithVisibilityTerm (half NdotL, half NdotV, half k)
 {
@@ -125,6 +126,8 @@ inline half SmithBeckmannVisibilityTerm (half NdotL, half NdotV, half roughness)
     half k = roughness * c;
     return SmithVisibilityTerm (NdotL, NdotV, k) * 0.25f; // * 0.25是可见性项的1/4
 }
+
+// 高效果版本 V 项
 // Ref: http://jcgt.org/published/0003/02/03/paper.pdf  2014年文献
 // 可见性项（包括几何函数和配平系数一起）的计算
 inline float SmithJointGGXVisibilityTerm (float NdotL, float NdotV, float roughness)
