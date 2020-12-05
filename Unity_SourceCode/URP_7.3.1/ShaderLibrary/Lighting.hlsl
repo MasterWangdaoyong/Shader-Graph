@@ -319,7 +319,6 @@ half3 EnvironmentBRDF(BRDFData brdfData, half3 indirectDiffuse, half3 indirectSp
 
 //基于极简主义的CookTorrance BRDF
 //实现与原始推导略有不同：http://www.thetenthplanet.de/archives/255
-//
 // * NDF [修改] GGX
 // *修改了Kelemen和Szirmay-Kalos的可见度术语
 // *菲涅耳近似为1 / LdotH
@@ -333,14 +332,14 @@ half3 DirectBDRF(BRDFData brdfData, half3 normalWS, half3 lightDirectionWS, half
 
     // GGX分布乘以可见性和菲涅耳组合近似
     // BRDFspec =（D * V * F）/ 4.0
-    // D =粗糙度^ 2 / /（NoH ^ 2 *（粗糙度^ 2-1-1）+1）^ 2
-    // V * F = 1.0 /（LoH ^ 2 *（粗糙度+ 0.5））
+    // D =roughness^ 2 / /（NoH ^ 2 *（roughness^ 2-1-1）+1）^ 2
+    // V * F = 1.0 /（LoH ^ 2 *（roughness+ 0.5））
     //请参阅Siggraph 2015移动移动图形课程中的“优化移动PBR”
     // https://community.arm.com/events/1155
 
-    //最终的BRDFspec =粗糙度^ 2 / /（NoH ^ 2 *（粗糙度2-1-1）+ 1）^ 2 *（LoH ^ 2 *（粗糙度+ 0.5）* 4.0）
+    //最终的BRDFspec =roughness^ 2 / /（NoH ^ 2 *（roughness2-1-1）+ 1）^ 2 *（LoH ^ 2 *（roughness+ 0.5）* 4.0）
     //我们进一步优化了一些轻不变项
-    // brdfData.normalizationTerm =（粗糙度+ 0.5）* 4.0改写为粗糙度* 4.0 + 2.0以适合MAD。
+    // brdfData.normalizationTerm =（roughness+ 0.5）* 4.0改写为roughness* 4.0 + 2.0以适合MAD。
     float d = NoH * NoH * brdfData.roughness2MinusOne + 1.00001f;
 
     half LoH2 = LoH * LoH;
@@ -392,7 +391,6 @@ half3 SampleSHVertex(half3 normalWS)
     //没有最大值，因为这只是L2贡献
     return SHEvalLinearL2(normalWS, unity_SHBr, unity_SHBg, unity_SHBb, unity_SHC);
 #endif
-
     //完全按像素。 没什么可计算的。
     return half3(0.0, 0.0, 0.0);
 }
@@ -442,7 +440,7 @@ half3 SampleLightmap(float2 lightmapUV, half3 normalWS)
 
 //我们从烘焙的光照贴图或探针中采样GI。
 //如果lightmap：sampleData.xy = lightmapUV
-//如果探针：sampleData.xyz = L2 SH项
+//如果探针： sampleData.xyz = L2 SH项
 #ifdef LIGHTMAP_ON
 #define SAMPLE_GI(lmName, shName, normalWSName) SampleLightmap(lmName, normalWSName)
 #else
