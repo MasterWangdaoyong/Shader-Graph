@@ -348,10 +348,10 @@ half3 DirectBDRF(BRDFData brdfData, half3 normalWS, half3 lightDirectionWS, half
     //在一半实际上意味着某物的平台上，分母有溢出的风险
     //下面的钳位是专门为“修复”而添加的，但是dx编译器（我们将字节码转换为metal / gles）
     //看到 specularTerm 仅具有非负项，因此它在钳位中跳过 max（0，..）（仅保留min（100，...））
-#if defined (SHADER_API_MOBILE) || defined (SHADER_API_SWITCH)
-    specularTerm = specularTerm - HALF_MIN;
-    specularTerm = clamp(specularTerm, 0.0, 100.0); //防止FP16在手机上溢出
-#endif
+        #if defined (SHADER_API_MOBILE) || defined (SHADER_API_SWITCH)
+            specularTerm = specularTerm - HALF_MIN;
+            specularTerm = clamp(specularTerm, 0.0, 100.0); //防止FP16在手机上溢出
+        #endif
 
     half3 color = specularTerm * brdfData.specular + brdfData.diffuse;
     return color;
@@ -421,6 +421,7 @@ half3 SampleLightmap(float2 lightmapUV, half3 normalWS)
 #endif
 
     half4 decodeInstructions = half4(LIGHTMAP_HDR_MULTIPLIER, LIGHTMAP_HDR_EXPONENT, 0.0h, 0.0h);
+    //解压lightmap 待深入研究 20201207 后需重着重测试下不同平台 不同空间下的效果
 
     //着色器库样本光照贴图函数可转换光照贴图uv坐标以应用偏差和比例。
     //但是，通用管道已经在顶点处转换了这些坐标。 我们传递half4（1，1，0，0）和
