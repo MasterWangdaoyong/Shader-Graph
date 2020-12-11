@@ -5,7 +5,7 @@
 
 目录说明：
 - Algorithm : 算法库
-- Show : 贴图资源存库
+- Show : 图片资源存库
 - UE4_SourceCode : UE着色器源码
 - Unity_SourceCode : U3D着色器源码
 
