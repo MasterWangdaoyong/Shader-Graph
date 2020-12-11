@@ -1,0 +1,1145 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE simplemind-mindmaps>
+<simplemind-mindmaps generator="SimpleMindWin32" gen-version="1.15.0" doc-version="3">
+<mindmap>
+<meta>
+<guid guid="610A64B0C2FF42188CDDD9B7B001C677"/>
+<title text="URP-PBR-BRDF"/>
+<style key="system.natural-gray-scale"/>
+<auto-numbering style="disabled"/>
+<scrollstate zoom="100" x="-569" y="493"/>
+<main-centraltheme id="0"/>
+</meta>
+<topics>
+<topic id="0" parent="-1" guid="M1mw98cXokSaG2IRTeyvjA" x="300.00" y="732.00" layout="strict-horizontal" palette="1" colorinfo="1" text="URP-PBR-BRDF"/>
+<topic id="1" parent="-1" guid="mt1BcG8KBkuwSEyftBo5PQ" x="300.00" y="690.00" palette="1" colorinfo="1" text="20201025"/>
+<topic id="2" parent="-1" guid="g4cqc8iNKkuus4n1-kuxrg" x="700.00" y="1018.00" layout="strict-horizontal" layout-direction="right" palette="1" colorinfo="1" text="vertex function"/>
+<topic id="3" parent="2" guid="lBuqavvBzUuGjd2S8whZ8w" x="882.00" y="1018.00" palette="2" colorinfo="2" text="LitPassVertex">
+<note>
+Varyings LitPassVertex(Attributes input){    Varyings output = (Varyings)0;    UNITY_SETUP_INSTANCE_ID(input);    UNITY_TRANSFER_INSTANCE_ID(input, output);    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);    VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);    VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);    half3 viewDirWS = GetCameraPositionWS() - vertexInput.positionWS;    half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);    half fogFactor = ComputeFogFactor(vertexInput.positionCS.z);    output.uv = TRANSFORM_TEX(input.texcoord, _BaseMap);#ifdef _NORMALMAP    output.normalWS = half4(normalInput.normalWS, viewDirWS.x);    output.tangentWS = half4(normalInput.tangentWS, viewDirWS.y);    output.bitangentWS = half4(normalInput.bitangentWS, viewDirWS.z);#else    output.normalWS = NormalizeNormalPerVertex(normalInput.normalWS);    output.viewDirWS = viewDirWS;#endif    OUTPUT_LIGHTMAP_UV(input.lightmapUV, unity_LightmapST, output.lightmapUV);    OUTPUT_SH(output.normalWS.xyz, output.vertexSH);    output.fogFactorAndVertexLight = half4(fogFactor, vertexLight);#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)    output.positionWS = vertexInput.positionWS;#endif#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)    output.shadowCoord = GetShadowCoord(vertexInput);#endif    output.positionCS = vertexInput.positionCS;    return output;}
+</note>
+</topic>
+<topic id="4" parent="3" guid="naU0MuZa_ECtCg_BpDdoOw" x="1006.50" y="68.00" text="in"/>
+<topic id="5" parent="4" guid="ux1352gRTkGrnxdONVzKzg" x="1134.00" y="68.00" text="结构体Attributes">
+<note>
+struct Attributes{    float4 positionOS   : POSITION;    float3 normalOS     : NORMAL;    float4 tangentOS    : TANGENT;    float2 texcoord     : TEXCOORD0;    float2 lightmapUV   : TEXCOORD1;    UNITY_VERTEX_INPUT_INSTANCE_ID};
+</note>
+</topic>
+<topic id="6" parent="5" guid="zb8un-YKHE6-0KKeVsaR4w" x="1301.50" y="16.00" text="float4 positionOS"/>
+<topic id="7" parent="5" x="1299.00" y="42.00" text="float3 normalOS"/>
+<topic id="8" parent="5" x="1300.50" y="68.00" text="float4 tangentOS"/>
+<topic id="9" parent="5" x="1295.00" y="94.00" text="float2 texcoord"/>
+<topic id="10" parent="5" guid="i4d6jyOJOEKsTRXzDj5n0Q" x="1304.00" y="120.00" text="float2 lightmapUV"/>
+<topic id="11" parent="3" guid="GlXMtOK5rUGz1VTE__kpXg" x="1006.50" y="277.00" text="out"/>
+<topic id="12" parent="11" guid="OfdmHeBY80K0rnDc5Om6Ig" x="1131.00" y="277.00" text="结构体Varyings">
+<note>
+struct Varyings{    float2 uv                       : TEXCOORD0;    DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 1);#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)    float3 positionWS               : TEXCOORD2;#endif#ifdef _NORMALMAP    float4 normalWS                 : TEXCOORD3;    // xyz: normal, w: viewDir.x    float4 tangentWS                : TEXCOORD4;    // xyz: tangent, w: viewDir.y    float4 bitangentWS              : TEXCOORD5;    // xyz: bitangent, w: viewDir.z#else    float3 normalWS                 : TEXCOORD3;    float3 viewDirWS                : TEXCOORD4;#endif    half4 fogFactorAndVertexLight   : TEXCOORD6; // x: fogFactor, yzw: vertex light#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)    float4 shadowCoord              : TEXCOORD7;#endif    float4 positionCS               : SV_POSITION;    UNITY_VERTEX_INPUT_INSTANCE_ID    UNITY_VERTEX_OUTPUT_STEREO};
+</note>
+</topic>
+<topic id="13" parent="12" x="1268.50" y="152.00" text="float2 uv"/>
+<topic id="14" parent="12" guid="QWi7SH9QFEKJTvHB0nFQEA" x="1338.50" y="186.00" text="DECLARE_LIGHTMAP_OR_SH()">
+<note>
+#ifdef LIGHTMAP_ON    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) float2 lmName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT) OUT.xy = lightmapUV.xy * lightmapScaleOffset.xy + lightmapScaleOffset.zw;    #define OUTPUT_SH(normalWS, OUT)#else    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) half3 shName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT)    #define OUTPUT_SH(normalWS, OUT) OUT.xyz = SampleSHVertex(normalWS)#endif
+</note>
+</topic>
+<topic id="15" parent="14" guid="5cY_z_ObL0-cS9nN9XV11Q" x="1530.50" y="186.00" text="lightmapUV"/>
+<topic id="16" parent="15" x="1749.50" y="186.00" text="使用LIGHTMAP_ON来判断是用float2\NlightmapUV 还是half3 SH信息"/>
+<topic id="17" parent="12" guid="MKyMGkYKsUyr-8EVdOJ8SQ" x="1297.00" y="220.00" text="float3 positionWS"/>
+<topic id="18" parent="17" guid="YPna0vsqvUOWLITgvvpA9w" x="1605.00" y="220.00" text="在灯光相关判断下，定义宏 需要世界空间POS插值器"/>
+<topic id="19" parent="12" guid="8eNSPIh-YEC3UA_a_V7e3A" x="1294.50" y="246.00" text="float4 normalWS"/>
+<topic id="20" parent="12" guid="1B3Md834o02o7rAihYCmEw" x="1296.00" y="272.00" text="float4 tangentWS"/>
+<topic id="21" parent="12" guid="sZ0X01RlZ0mF2SJ_9sXORQ" x="1302.00" y="298.00" text="float4 bitangentWS"/>
+<topic id="22" parent="12" guid="I8hMeH_XcEaInVGEQJ8tYw" x="1296.00" y="324.00" text="float3 viewDirWS"/>
+<topic id="23" parent="12" guid="QNOECafiQU62rh9GKBPXbQ" x="1338.00" y="350.00" text="half4 fogFactorAndVertexLight"/>
+<topic id="24" parent="12" guid="acIvW7I9_kmnNfiGUWmfaQ" x="1304.50" y="376.00" text="float4 shadowCoord"/>
+<topic id="25" parent="24" guid="Wov-krVJfUqBvcgerFe4Kw" x="1625.00" y="376.00" text="在灯光相关判断下，定义宏 需要顶点阴影Coord插值器"/>
+<topic id="26" parent="12" guid="zAmvaXQ-kUuSvpLmt_uZMA" x="1295.00" y="402.00" text="float4 positionCS"/>
+<topic id="27" parent="3" guid="9ghCFyp6HkWIUb0wuWd9fg" x="1084.50" y="489.00" text="1、GetVertexPositionInputs()">
+<note>
+VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);VertexPositionInputs GetVertexPositionInputs(float3 positionOS){    VertexPositionInputs input;    input.positionWS = TransformObjectToWorld(positionOS);    input.positionVS = TransformWorldToView(input.positionWS);    input.positionCS = TransformWorldToHClip(input.positionWS);        float4 ndc = input.positionCS * 0.5f;    input.positionNDC.xy = float2(ndc.x, ndc.y * _ProjectionParams.x) + ndc.w;    input.positionNDC.zw = input.positionCS.zw;            return input;}
+</note>
+</topic>
+<topic id="28" parent="27" guid="06v4Xm-fBUqf7gFwHb3KHg" x="1248.50" y="434.00" text="in"/>
+<topic id="29" parent="28" guid="0uaDxHDbH0mO0rKlQ0ZEhQ" x="1376.00" y="434.00" text="结构体Attributes"/>
+<topic id="30" parent="29" guid="T99qsYr1I0Ckez4xf6WMvw" x="1537.00" y="434.00" text="positionOS.xyz"/>
+<topic id="31" parent="27" guid="ji35mxB5Zkm5V-T3YBCvLQ" x="1248.50" y="502.00" text="out"/>
+<topic id="32" parent="31" guid="tDXkU-T6BUqHkhB7FwJgPw" x="1411.00" y="502.00" text="结构体VertexPositionInputs">
+<note>
+struct VertexPositionInputs{    float3 positionWS; // World space position    float3 positionVS; // View space position    float4 positionCS; // Homogeneous clip space position    float4 positionNDC;// Homogeneous normalized device coordinates};
+</note>
+</topic>
+<topic id="33" parent="32" guid="2_xN-MCf6UiJEvk1-d7wBQ" x="1615.00" y="463.00" text="float3 positionWS"/>
+<topic id="34" parent="32" guid="0VHzr26gSkWxdrvNo98BVw" x="1613.00" y="489.00" text="float3 positionVS"/>
+<topic id="35" parent="32" guid="njnQr-nU80qdcL378cWAZg" x="1613.00" y="515.00" text="float4 positionCS"/>
+<topic id="36" parent="32" guid="6HPN3Zpbm0yIa8gZHoTH-Q" x="1617.50" y="541.00" text="float4 positionNDC"/>
+<topic id="37" parent="3" guid="NDsgmeH0o0uzpbfJc4qUGA" x="1082.00" y="634.00" text="2、GetVertexNormalInputs()">
+<note>
+VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);VertexNormalInputs GetVertexNormalInputs(float3 normalOS){    VertexNormalInputs tbn;    tbn.tangentWS = real3(1.0, 0.0, 0.0);    tbn.bitangentWS = real3(0.0, 1.0, 0.0);    tbn.normalWS = TransformObjectToWorldNormal(normalOS);    return tbn;}VertexNormalInputs GetVertexNormalInputs(float3 normalOS, float4 tangentOS){    VertexNormalInputs tbn;    // 符合mikkts空间要求。 仅在提取法线时标准化。    real sign = tangentOS.w * GetOddNegativeScale();    tbn.normalWS = TransformObjectToWorldNormal(normalOS);    tbn.tangentWS = TransformObjectToWorldDir(tangentOS.xyz);    tbn.bitangentWS = cross(tbn.normalWS, tbn.tangentWS) * sign;    return tbn;}
+</note>
+</topic>
+<topic id="38" parent="37" guid="iQDPqs8bCE6m8CyEOzFldQ" x="1243.50" y="592.00" text="in"/>
+<topic id="39" parent="38" guid="xOlB86WQJUyd4SKdl3Lgww" x="1371.00" y="592.00" text="结构体Attributes"/>
+<topic id="40" parent="39" guid="6QHhX0VUIkSo6DkwW4Jfmw" x="1536.00" y="579.00" text="float3 normalOS"/>
+<topic id="41" parent="39" guid="crU2QkwdgUawQeftcfQIDg" x="1537.50" y="605.00" text="float4 tangentOS"/>
+<topic id="42" parent="37" guid="fATCYlFSU0eU0UHiFIwjhQ" x="1243.50" y="663.00" text="out"/>
+<topic id="43" parent="42" guid="J_yBkLHnnUK5m92pgsieyQ" x="1403.50" y="663.00" text="结构体VertexNormalInputs">
+<note>
+struct VertexNormalInputs{    real3 tangentWS;    real3 bitangentWS;    float3 normalWS;};
+</note>
+</topic>
+<topic id="44" parent="43" x="1602.50" y="637.00" text="real3 tangentWS"/>
+<topic id="45" parent="43" guid="DUyZmHCztEik66WMDp9fVQ" x="1608.50" y="663.00" text="real3 bitangentWS"/>
+<topic id="46" parent="43" guid="EN-KGkTNL0yZJoI2tbnCbg" x="1602.50" y="689.00" text="float3 normalWS"/>
+<topic id="47" parent="3" guid="trnWw6WovkOI7o5FnJ_H6w" x="1081.00" y="721.00" text="3、GetCameraPositionWS()"/>
+<topic id="48" parent="47" guid="_A19Xddf60a-xWPTqucC0A" x="1241.50" y="721.00" text="out"/>
+<topic id="49" parent="48" guid="kfjNt2DUlkm8cMMNn5LyXA" x="1413.50" y="721.00" text="return _WorldSpaceCameraPos"/>
+<topic id="50" parent="3" guid="ErbI6Fi_Vk-Y5_qEqWBaDg" x="1055.00" y="966.00" text="4、VertexLighting()">
+<note>
+half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);half3 VertexLighting(float3 positionWS, half3 normalWS){    half3 vertexLightColor = half3(0.0, 0.0, 0.0);#ifdef _ADDITIONAL_LIGHTS_VERTEX    uint lightsCount = GetAdditionalLightsCount();    for (uint lightIndex = 0u; lightIndex &lt; lightsCount; ++lightIndex)    {        Light light = GetAdditionalLight(lightIndex, positionWS);        half3 lightColor = light.color * light.distanceAttenuation;        vertexLightColor += LightingLambert(lightColor, light.direction, normalWS);    }#endif    return vertexLightColor;}
+</note>
+</topic>
+<topic id="51" parent="50" guid="cW2jdirRs0uKrLH-2NC6Mg" x="1189.50" y="766.00" text="in"/>
+<topic id="52" parent="51" guid="nyo49DaYKki3hiXmalY1nQ" x="1352.00" y="753.00" text="结构体VertexPositionInputs"/>
+<topic id="53" parent="52" guid="2L4BfSIUOkKVAAAF2y6eYg" x="1556.00" y="753.00" text="float3 positionWS"/>
+<topic id="54" parent="51" guid="z7ia_2quNk2mLmxnIIuDuA" x="1349.50" y="779.00" text="结构体VertexNormalInputs"/>
+<topic id="55" parent="54" guid="x3LUNXScPE2nVMmEqyLF7A" x="1546.50" y="779.00" text="half3 normalWS"/>
+<topic id="56" parent="50" guid="ZDhh6Kjs60a7OMDdRjdx6A" x="1189.50" y="808.00" text="out"/>
+<topic id="57" parent="56" x="1315.00" y="808.00" text="half3 vertexLight"/>
+<topic id="58" parent="50" guid="_Yi0B9XB1UmeG-C1yTEKSg" x="1260.50" y="850.00" text="GetAdditionalLightsCount()">
+<note>
+uint lightsCount = GetAdditionalLightsCount();int GetAdditionalLightsCount(){    // TODO：我们需要在SRP API中公开流水线上限的功能    //在淘汰中。 这样我们可以用统一的方式进行循环分支    //这也有助于在SH中支持烘烤超光    return min(_AdditionalLightsCount.x, unity_LightData.y);}
+</note>
+</topic>
+<topic id="59" parent="58" guid="nnl0J5jGGEaVC5t1h4HZMA" x="1417.50" y="837.00" text="void"/>
+<topic id="60" parent="58" guid="EWTzpkPjOUS-R4cfpcQnXQ" x="1417.50" y="863.00" text="out"/>
+<topic id="61" parent="60" x="1539.00" y="863.00" text="uint lightsCount"/>
+<topic id="62" parent="50" guid="klYOxjMn_UWlMYowLGpeQw" x="1239.00" y="1008.00" text="GetAdditionalLight()">
+<note>
+Light light = GetAdditionalLight(lightIndex, positionWS);//填充给定循环i索引的light结构。 这将转换//索引到perObjectLightIndexLight GetAdditionalLight(uint i, float3 positionWS){    int perObjectLightIndex = GetPerObjectLightIndex(i);    return GetAdditionalPerObjectLight(perObjectLightIndex, positionWS);}
+</note>
+</topic>
+<topic id="63" parent="62" guid="6ihgb1lcmUmh9LxITGtnRg" x="1374.50" y="911.00" text="in"/>
+<topic id="64" parent="63" guid="qVzkmtC_Nkqlmcowf0Jpjw" x="1492.50" y="898.00" text="uint lightIndex"/>
+<topic id="65" parent="63" x="1502.00" y="924.00" text="float3 positionWS"/>
+<topic id="66" parent="62" guid="WpkXgK7RJ02z7b5Acq59yg" x="1374.50" y="995.00" text="out"/>
+<topic id="67" parent="66" guid="EupdTLlpJU-lc4fTGW565Q" x="1488.00" y="995.00" text="结构体Light">
+<note>
+// 浅色阴影数据的抽象。struct Light{    half3   direction;    half3   color;    half    distanceAttenuation;    half    shadowAttenuation;};
+</note>
+</topic>
+<topic id="68" parent="67" guid="NcNfsZKL4EiC-n-9XX-_PQ" x="1637.00" y="956.00" text="half3   direction"/>
+<topic id="69" parent="67" guid="Smyduq0QuEavqcZ64h5Q7g" x="1625.00" y="982.00" text="half3   color"/>
+<topic id="70" parent="67" guid="QRXdrY2Z6EuTNhC4aEKNrQ" x="1670.50" y="1008.00" text="half    distanceAttenuation"/>
+<topic id="71" parent="67" x="1668.50" y="1034.00" text="half    shadowAttenuation"/>
+<topic id="72" parent="62" guid="ljk0cKKneEeys1p3pqaBLw" x="1441.00" y="1079.00" text="GetPerObjectLightIndex()">
+<note>
+int perObjectLightIndex = GetPerObjectLightIndex(i);
+</note>
+</topic>
+<topic id="73" parent="72" x="1593.50" y="1066.00" text="in"/>
+<topic id="74" parent="72" x="1593.50" y="1092.00" text="out"/>
+<topic id="75" parent="62" guid="mE2sGRxEGESr7ag-Yq6lxA" x="1455.50" y="1121.00" text="GetAdditionalPerObjectLight()">
+<note>
+return GetAdditionalPerObjectLight(perObjectLightIndex, positionWS);// 给定一个perObjectLightIndex填充一个灯光结构Light GetAdditionalPerObjectLight(int perObjectLightIndex, float3 positionWS){    // 光输入常量的抽象#if USE_STRUCTURED_BUFFER_FOR_LIGHT_DATA    float4 lightPositionWS = _AdditionalLightsBuffer[perObjectLightIndex].position;    half3 color = _AdditionalLightsBuffer[perObjectLightIndex].color.rgb;    half4 distanceAndSpotAttenuation = _AdditionalLightsBuffer[perObjectLightIndex].attenuation;    half4 spotDirection = _AdditionalLightsBuffer[perObjectLightIndex].spotDirection;    half4 lightOcclusionProbeInfo = _AdditionalLightsBuffer[perObjectLightIndex].occlusionProbeChannels;#else    float4 lightPositionWS = _AdditionalLightsPosition[perObjectLightIndex];    half3 color = _AdditionalLightsColor[perObjectLightIndex].rgb;    half4 distanceAndSpotAttenuation = _AdditionalLightsAttenuation[perObjectLightIndex];    half4 spotDirection = _AdditionalLightsSpotDir[perObjectLightIndex];    half4 lightOcclusionProbeInfo = _AdditionalLightsOcclusionProbes[perObjectLightIndex];#endif    //方向灯将方向存储在lightPosition.xyz中，并将.w设置为0.0。    //这样，以下代码将同时适用于定向灯和准时灯。    float3 lightVector = lightPositionWS.xyz - positionWS * lightPositionWS.w;    float distanceSqr = max(dot(lightVector, lightVector), HALF_MIN);    half3 lightDirection = half3(lightVector * rsqrt(distanceSqr));    half attenuation = DistanceAttenuation(distanceSqr, distanceAndSpotAttenuation.xy) * AngleAttenuation(spotDirection.xyz, lightDirection, distanceAndSpotAttenuation.zw);    Light light;    light.direction = lightDirection;    light.distanceAttenuation = attenuation;    light.shadowAttenuation = AdditionalLightRealtimeShadow(perObjectLightIndex, positionWS);    light.color = color;    //如果我们使用光探头，则可以从ʻunity_ProbesOcclusion`中采样衰减#if defined(LIGHTMAP_ON) || defined(_MIXED_LIGHTING_SUBTRACTIVE)    //首先从灯光中找到探测通道。    //然后对ʻunity_ProbesOcclusion`进行采样以获取烘焙的遮挡。    //如果不进行烘焙，则通道为-1，我们不需要应用任何遮挡。    // probeChannel是&apos;unity_ProbesOcclusion&apos;中的索引，其中包含正确的遮挡值。    int probeChannel = lightOcclusionProbeInfo.x;    // 如果我们确实在使用探针，则将lightProbeContribution设置为0，否则设置为1。    half lightProbeContribution = lightOcclusionProbeInfo.y;    half probeOcclusionValue = unity_ProbesOcclusion[probeChannel];    light.distanceAttenuation *= max(probeOcclusionValue, lightProbeContribution);#endif    return light;}
+</note>
+</topic>
+<topic id="76" parent="50" guid="oZ2aKq8lX0uUn78She6n9Q" x="1232.00" y="1166.00" text="LightingLambert()">
+<note>
+vertexLightColor += LightingLambert(lightColor, light.direction, normalWS);half3 LightingLambert(half3 lightColor, half3 lightDir, half3 normal){    half NdotL = saturate(dot(normal, lightDir));    return lightColor * NdotL;}
+</note>
+</topic>
+<topic id="77" parent="76" x="1360.50" y="1153.00" text="in"/>
+<topic id="78" parent="76" x="1360.50" y="1179.00" text="out"/>
+<topic id="79" parent="3" guid="295UDB0cEUqy8vVNC7ZDVQ" x="1069.00" y="1240.00" text="5、ComputeFogFactor()">
+<note>
+half fogFactor = ComputeFogFactor(vertexInput.positionCS.z);real ComputeFogFactor(float z){    float clipZ_01 = UNITY_Z_0_FAR_FROM_CLIPSPACE(z);#if defined(FOG_LINEAR)    // factor = (end-z)/(end-start) = z * (-1/(end-start)) + (end/(end-start))    float fogFactor = saturate(clipZ_01 * unity_FogParams.z + unity_FogParams.w);    return real(fogFactor);#elif defined(FOG_EXP) || defined(FOG_EXP2)    // factor = exp(-(density*z)^2)    // -density * z computed at vertex    return real(unity_FogParams.x * clipZ_01);#else    return 0.0h;#endif}
+</note>
+</topic>
+<topic id="80" parent="79" guid="yw5pe_fvOkCJV2AgvPcLVw" x="1217.50" y="1214.00" text="in"/>
+<topic id="81" parent="80" x="1367.00" y="1214.00" text="vertexInput.positionCS.z"/>
+<topic id="82" parent="79" guid="kXrWUJOh50W87wXKJ_aoXw" x="1217.50" y="1240.00" text="out"/>
+<topic id="83" parent="82" guid="XnneQtIGQUugXdW48bFUyg" x="1333.50" y="1240.00" text="half fogFactor"/>
+<topic id="84" parent="79" guid="HkbZZ_jNl0SbBLV9NhKE1A" x="1319.00" y="1266.00" text="UNITY_Z_0_FAR_FROM_CLIPSPACE()">
+<note>
+#if UNITY_REVERSED_Z    #if SHADER_API_OPENGL || SHADER_API_GLES || SHADER_API_GLES3        //GL with reversed z =&gt; z clip range is [near, -far] -&gt; should remap in theory but dont do it in practice to save some perf (range is close enough)        #define UNITY_Z_0_FAR_FROM_CLIPSPACE(coord) max(-(coord), 0)    #else        //D3d with reversed Z =&gt; z clip range is [near, 0] -&gt; remapping to [0, far]        //max is required to protect ourselves from near plane not being correct/meaningfull in case of oblique matrices.        #define UNITY_Z_0_FAR_FROM_CLIPSPACE(coord) max(((1.0-(coord)/_ProjectionParams.y)*_ProjectionParams.z),0)    #endif#elif UNITY_UV_STARTS_AT_TOP    //D3d without reversed z =&gt; z clip range is [0, far] -&gt; nothing to do    #define UNITY_Z_0_FAR_FROM_CLIPSPACE(coord) (coord)#else    //Opengl =&gt; z clip range is [-near, far] -&gt; should remap in theory but dont do it in practice to save some perf (range is close enough)    #define UNITY_Z_0_FAR_FROM_CLIPSPACE(coord) (coord)#endif
+</note>
+</topic>
+<topic id="85" parent="3" guid="UheQWOSRA0GRA3hr6vSlww" x="1095.50" y="1311.00" text="6、NormalizeNormalPerVertex()">
+<note>
+output.normalWS = NormalizeNormalPerVertex(normalInput.normalWS);//关于法线归一化的一句话：//为了获得更好的质量，法线应该在之前和之后标准化插值。// 1）在顶点处，蒙皮或混合形状可能会大大改变法线的长度。// 2）在片段中，因为即使输出单位长度的法线插值也会使其变为非单位。// 3）使用法线贴图时会出现碎片，因为mikktspace会建立非正交的基础。//但是，我们将在此处尝试平衡性能与质量，同时让用户将其配置为//着色器质量等级。//低质量层：根据是否对法线贴图采样，对每个顶点或每个像素进行归一化。//中等质量层：始终对每个顶点进行标准化。 仅在使用法线贴图时对每个像素进行归一化//高质量层：在顶点和像素着色器中均进行归一化。real3 NormalizeNormalPerVertex(real3 normalWS){#if defined(SHADER_QUALITY_LOW) &amp;&amp; defined(_NORMALMAP)    return normalWS;#else    return normalize(normalWS);#endif}
+</note>
+</topic>
+<topic id="86" parent="85" guid="4Y8ykhGJ1EyZVQOmKxwA1A" x="1270.50" y="1298.00" text="in"/>
+<topic id="87" parent="86" guid="XkkKDxgllUyxY1dcAI4Dqg" x="1416.50" y="1298.00" text="normalInput.normalWS"/>
+<topic id="88" parent="85" guid="CD-NZR-Bv0eb0OpkWyWtGA" x="1270.50" y="1324.00" text="out"/>
+<topic id="89" parent="88" guid="eD6clz73RU6250ALPSGbrA" x="1398.00" y="1324.00" text="output.normalWS"/>
+<topic id="90" parent="3" guid="rgo9ggf_GUeDe8i8eYhCDw" x="1085.00" y="1385.00" text="7、OUTPUT_LIGHTMAP_UV()">
+<note>
+OUTPUT_LIGHTMAP_UV(input.lightmapUV, unity_LightmapST, output.lightmapUV);#ifdef LIGHTMAP_ON    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) float2 lmName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT) OUT.xy = lightmapUV.xy * lightmapScaleOffset.xy + lightmapScaleOffset.zw;    #define OUTPUT_SH(normalWS, OUT)#else    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) half3 shName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT)    #define OUTPUT_SH(normalWS, OUT) OUT.xyz = SampleSHVertex(normalWS)#endif
+</note>
+</topic>
+<topic id="91" parent="90" guid="VzOhjckiU02yRrMlGZ00sw" x="1249.50" y="1372.00" text="in"/>
+<topic id="92" parent="91" guid="9T0NnorszUucD4IE0NoTqQ" x="1376.50" y="1359.00" text="input.lightmapUV"/>
+<topic id="93" parent="91" guid="22paltgJgEq96r3pGB1K3Q" x="1379.00" y="1385.00" text="unity_LightmapST"/>
+<topic id="94" parent="90" guid="DvWpk2tiGUupTWieG4A5sA" x="1249.50" y="1414.00" text="out"/>
+<topic id="95" parent="94" x="1380.50" y="1414.00" text="output.lightmapUV"/>
+<topic id="96" parent="3" guid="YurnFBEw1EqMAgqm5t5roA" x="1047.50" y="1617.00" text="8、OUTPUT_SH()">
+<note>
+OUTPUT_SH(output.normalWS.xyz, output.vertexSH);#ifdef LIGHTMAP_ON    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) float2 lmName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT) OUT.xy = lightmapUV.xy * lightmapScaleOffset.xy + lightmapScaleOffset.zw;    #define OUTPUT_SH(normalWS, OUT)#else    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) half3 shName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT)    #define OUTPUT_SH(normalWS, OUT) OUT.xyz = SampleSHVertex(normalWS)#endif
+</note>
+</topic>
+<topic id="97" parent="96" guid="imb7FOT05UO_U-MAfkovQQ" x="1174.50" y="1446.00" text="in"/>
+<topic id="98" parent="97" x="1315.00" y="1446.00" text="output.normalWS.xyz"/>
+<topic id="99" parent="96" guid="g94hxS3Os0u0Cxpd8aibxw" x="1174.50" y="1488.00" text="out"/>
+<topic id="100" parent="99" guid="6w0zam0VsUGRw2pP1T1PjA" x="1315.00" y="1475.00" text="output.normalWS.xyz"/>
+<topic id="101" parent="99" guid="RD47cK7ll0-7J_uFQb59Pw" x="1297.50" y="1501.00" text="output.vertexSH"/>
+<topic id="102" parent="96" guid="U73cznDNmEOD45aHss_QUQ" x="1218.50" y="1659.00" text="SampleSHVertex()">
+<note>
+OUT.xyz = SampleSHVertex(normalWS)// SH顶点评估。 根据目标SH采样可能是//每个顶点完全完成，或与每个顶点的L2项以及L0，L1混合//每个像素 参见SampleSHPixelhalf3 SampleSHVertex(half3 normalWS){#if defined(EVALUATE_SH_VERTEX)    return max(half3(0, 0, 0), SampleSH(normalWS));#elif defined(EVALUATE_SH_MIXED)    //没有最大值，因为这只是L2贡献    return SHEvalLinearL2(normalWS, unity_SHBr, unity_SHBg, unity_SHBb, unity_SHC);#endif    //完全按像素。 没什么可计算的。    return half3(0.0, 0.0, 0.0);}
+</note>
+</topic>
+<topic id="103" parent="102" guid="2pOKsaBzbEyKgU97UYYjsA" x="1348.50" y="1533.00" text="in"/>
+<topic id="104" parent="103" guid="uzORhlSf-EmdW5FhUQgTGg" x="1454.00" y="1533.00" text="normalWS"/>
+<topic id="105" parent="102" guid="r-KhfJ-WWUi3FouDf5IVmA" x="1348.50" y="1559.00" text="out"/>
+<topic id="106" parent="105" x="1446.50" y="1559.00" text="OUT.xyz"/>
+<topic id="107" parent="102" guid="vLei5YGYtkq9IEcpDhNwJw" x="1372.00" y="1601.00" text="SampleSH()">
+<note>
+// Samples SH L0, L1 and L2 termshalf3 SampleSH(half3 normalWS){    // LPPV is not supported in Ligthweight Pipeline    real4 SHCoefficients[7];    SHCoefficients[0] = unity_SHAr;    SHCoefficients[1] = unity_SHAg;    SHCoefficients[2] = unity_SHAb;    SHCoefficients[3] = unity_SHBr;    SHCoefficients[4] = unity_SHBg;    SHCoefficients[5] = unity_SHBb;    SHCoefficients[6] = unity_SHC;    return max(half3(0, 0, 0), SampleSH9(SHCoefficients, normalWS));}
+</note>
+</topic>
+<topic id="108" parent="107" guid="43vWQM6CzkuZtAzhj9rSYQ" x="1481.50" y="1601.00" text="in"/>
+<topic id="109" parent="108" x="1587.00" y="1588.00" text="normalWS"/>
+<topic id="110" parent="108" x="1567.50" y="1614.00" text="out"/>
+<topic id="111" parent="110" x="1665.50" y="1614.00" text="OUT.xyz"/>
+<topic id="112" parent="102" guid="d74xbn6IrUmeoF4ehoTXdw" x="1389.00" y="1714.00" text="SHEvalLinearL2()">
+<note>
+real3 SHEvalLinearL2(real3 N, real4 shBr, real4 shBg, real4 shBb, real4 shC){    real3 x2;    // 4 of the quadratic (L2) polynomials    real4 vB = N.xyzz * N.yzzx;    x2.r = dot(shBr, vB);    x2.g = dot(shBg, vB);    x2.b = dot(shBb, vB);    // Final (5th) quadratic (L2) polynomial    real vC = N.x * N.x - N.y * N.y;    real3 x3 = shC.rgb * vC;    return x2 + x3;}
+</note>
+</topic>
+<topic id="113" parent="112" guid="aS1PwNR3xUGn-7JqPBdUrQ" x="1515.50" y="1701.00" text="in"/>
+<topic id="114" parent="113" x="1621.00" y="1649.00" text="normalWS"/>
+<topic id="115" parent="113" guid="dhaTPqxTxEm625S79i1xJA" x="1622.50" y="1675.00" text="unity_SHBr"/>
+<topic id="116" parent="113" guid="Cw0wcYTf-EuvAWzp39ErIQ" x="1624.00" y="1701.00" text="unity_SHBg"/>
+<topic id="117" parent="113" guid="QkqBFmwTT0eQzm0pwKtyMw" x="1624.00" y="1727.00" text="unity_SHBb"/>
+<topic id="118" parent="113" x="1620.00" y="1753.00" text="unity_SHC"/>
+<topic id="119" parent="112" x="1515.50" y="1782.00" text="out"/>
+<topic id="120" parent="119" x="1613.50" y="1782.00" text="OUT.xyz"/>
+<topic id="121" parent="3" guid="2pcX1TVh90u_5hIclxJIKg" x="1064.50" y="1920.00" text="9、GetShadowCoord()">
+<note>
+#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)    output.shadowCoord = GetShadowCoord(vertexInput);#endiffloat4 GetShadowCoord(VertexPositionInputs vertexInput){    return TransformWorldToShadowCoord(vertexInput.positionWS);}
+</note>
+</topic>
+<topic id="122" parent="121" guid="3YLF0-AQbki61BBSrlCW0g" x="1208.50" y="1862.00" text="in"/>
+<topic id="123" parent="122" guid="Wh9uFQr4MUuYhPRLjKXSsA" x="1371.00" y="1862.00" text="结构体VertexPositionInputs">
+<note>
+struct VertexPositionInputs{    float3 positionWS; // World space position    float3 positionVS; // View space position    float4 positionCS; // Homogeneous clip space position    float4 positionNDC;// Homogeneous normalized device coordinates};
+</note>
+</topic>
+<topic id="124" parent="123" x="1575.00" y="1823.00" text="float3 positionWS"/>
+<topic id="125" parent="123" x="1573.00" y="1849.00" text="float3 positionVS"/>
+<topic id="126" parent="123" x="1573.00" y="1875.00" text="float4 positionCS"/>
+<topic id="127" parent="123" x="1577.50" y="1901.00" text="float4 positionNDC"/>
+<topic id="128" parent="121" guid="GgOYKc5O_E2r_zUlOnVVPQ" x="1208.50" y="1930.00" text="out"/>
+<topic id="129" parent="128" guid="nHh31VCm50iNd05HulACPA" x="1354.00" y="1930.00" text="    output.shadowCoord"/>
+<topic id="130" parent="121" guid="TdwrKi0ZrEGH-iqvk3huaA" x="1301.50" y="1988.00" text="TransformWorldToShadowCoord()">
+<note>
+float4 TransformWorldToShadowCoord(float3 positionWS){#ifdef _MAIN_LIGHT_SHADOWS_CASCADE    half cascadeIndex = ComputeCascadeIndex(positionWS);#else    half cascadeIndex = 0;#endif    return mul(_MainLightWorldToShadow[cascadeIndex], float4(positionWS, 1.0));}
+</note>
+</topic>
+<topic id="131" parent="130" guid="AEEE4MKvtUyFPToB9vJhVw" x="1480.50" y="1959.00" text="in"/>
+<topic id="132" parent="131" x="1588.50" y="1959.00" text="positionWS"/>
+<topic id="133" parent="130" guid="4NCtOecfrkKkDfmxcDzvkQ" x="1544.00" y="2001.00" text="ComputeCascadeIndex()">
+<note>
+half ComputeCascadeIndex(float3 positionWS){    float3 fromCenter0 = positionWS - _CascadeShadowSplitSpheres0.xyz;    float3 fromCenter1 = positionWS - _CascadeShadowSplitSpheres1.xyz;    float3 fromCenter2 = positionWS - _CascadeShadowSplitSpheres2.xyz;    float3 fromCenter3 = positionWS - _CascadeShadowSplitSpheres3.xyz;    float4 distances2 = float4(dot(fromCenter0, fromCenter0), dot(fromCenter1, fromCenter1), dot(fromCenter2, fromCenter2), dot(fromCenter3, fromCenter3));    half4 weights = half4(distances2 &lt; _CascadeShadowSplitSphereRadii);    weights.yzw = saturate(weights.yzw - weights.xyz);    return 4 - dot(weights, half4(4, 3, 2, 1));}
+</note>
+</topic>
+<topic id="134" parent="133" x="1693.50" y="1988.00" text="in"/>
+<topic id="135" parent="134" x="1801.50" y="1988.00" text="positionWS"/>
+<topic id="136" parent="133" guid="TQDfIyF2TkqwjvQuELcrnQ" x="1693.50" y="2014.00" text="out"/>
+<topic id="137" parent="136" x="1823.50" y="2014.00" text="half cascadeIndex"/>
+<topic id="138" parent="-1" guid="z1WMgPvw_0CZMS8digV47A" x="2060.00" y="1054.00" layout="strict-horizontal" layout-direction="right" palette="1" colorinfo="1" text="LitPassFragment"/>
+<topic id="139" parent="138" guid="qnwXJfHGR0WdtrqecCtFjA" x="2215.00" y="-1888.00" palette="2" colorinfo="2" text="in"/>
+<topic id="140" parent="139" guid="xzGR_sbaUU6YvWExZSNkiw" x="2342.50" y="-1888.00" text="结构体Varyings">
+<note>
+struct Varyings{    float2 uv                       : TEXCOORD0;    DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 1);#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)    float3 positionWS               : TEXCOORD2;#endif#ifdef _NORMALMAP    float4 normalWS                 : TEXCOORD3;    // xyz: normal, w: viewDir.x    float4 tangentWS                : TEXCOORD4;    // xyz: tangent, w: viewDir.y    float4 bitangentWS              : TEXCOORD5;    // xyz: bitangent, w: viewDir.z#else    float3 normalWS                 : TEXCOORD3;    float3 viewDirWS                : TEXCOORD4;#endif    half4 fogFactorAndVertexLight   : TEXCOORD6; // x: fogFactor, yzw: vertex light#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)    float4 shadowCoord              : TEXCOORD7;#endif    float4 positionCS               : SV_POSITION;    UNITY_VERTEX_INPUT_INSTANCE_ID    UNITY_VERTEX_OUTPUT_STEREO};
+</note>
+</topic>
+<topic id="141" parent="140" x="2480.00" y="-2005.00" text="float2 uv"/>
+<topic id="142" parent="140" guid="L_vdlhNqdku9xQXJYTqK_w" x="2550.00" y="-1979.00" text="DECLARE_LIGHTMAP_OR_SH()">
+<note>
+#ifdef LIGHTMAP_ON    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) float2 lmName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT) OUT.xy = lightmapUV.xy * lightmapScaleOffset.xy + lightmapScaleOffset.zw;    #define OUTPUT_SH(normalWS, OUT)#else    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) half3 shName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT)    #define OUTPUT_SH(normalWS, OUT) OUT.xyz = SampleSHVertex(normalWS)#endif
+</note>
+</topic>
+<topic id="143" parent="140" x="2508.50" y="-1953.00" text="float3 positionWS"/>
+<topic id="144" parent="140" x="2506.00" y="-1927.00" text="float4 normalWS"/>
+<topic id="145" parent="140" x="2507.50" y="-1901.00" text="float4 tangentWS"/>
+<topic id="146" parent="140" x="2513.50" y="-1875.00" text="float4 bitangentWS"/>
+<topic id="147" parent="140" x="2507.50" y="-1849.00" text="float3 viewDirWS"/>
+<topic id="148" parent="140" x="2549.50" y="-1823.00" text="half4 fogFactorAndVertexLight"/>
+<topic id="149" parent="140" x="2516.00" y="-1797.00" text="float4 shadowCoord"/>
+<topic id="150" parent="140" x="2506.50" y="-1771.00" text="float4 positionCS"/>
+<topic id="151" parent="138" guid="9oCnhN956kKAm2P2qm_TbQ" x="2270.50" y="-1648.00" palette="3" colorinfo="3" text="结构体SurfaceData">
+<note>
+// 必须匹配Universal ShaderGraph主节点struct SurfaceData{    half3 albedo;    half3 specular;    half  metallic;    half  smoothness;    half3 normalTS;    half3 emission;    half  occlusion;    half  alpha;};
+</note>
+</topic>
+<topic id="152" parent="151" x="2440.50" y="-1739.00" text="half3 albedo"/>
+<topic id="153" parent="151" x="2445.50" y="-1713.00" text="half3 specular"/>
+<topic id="154" parent="151" x="2442.50" y="-1687.00" text="half  metallic"/>
+<topic id="155" parent="151" guid="0fbj7EViL0WoIPVt0p-4HQ" x="2454.00" y="-1661.00" text="half  smoothness"/>
+<topic id="156" parent="151" x="2449.50" y="-1635.00" text="half3 normalTS"/>
+<topic id="157" parent="151" x="2446.50" y="-1609.00" text="half3 emission"/>
+<topic id="158" parent="151" x="2447.00" y="-1583.00" text="half  occlusion"/>
+<topic id="159" parent="151" guid="K7i96ipWi0idzvRLEoR2Rg" x="2435.00" y="-1557.00" text="half  alpha"/>
+<topic id="160" parent="138" guid="YC70BrhR5UCsYH3UgNVAQg" x="2338.50" y="-1045.00" palette="4" colorinfo="4" text="1、InitializeStandardLitSurfaceData()">
+<note>
+InitializeStandardLitSurfaceData(input.uv, surfaceData);inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfaceData){    half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));    outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor, _Cutoff);    half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a);    outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;#if _SPECULAR_SETUP    outSurfaceData.metallic = 1.0h;    outSurfaceData.specular = specGloss.rgb;#else    outSurfaceData.metallic = specGloss.r;    outSurfaceData.specular = half3(0.0h, 0.0h, 0.0h);#endif    outSurfaceData.smoothness = specGloss.a;    outSurfaceData.normalTS = SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale);    outSurfaceData.occlusion = SampleOcclusion(uv);    outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));}
+</note>
+</topic>
+<topic id="161" parent="160" guid="AJADS1jhTUKsx9034oLXmg" x="2551.00" y="-1525.00" text="in"/>
+<topic id="162" parent="161" guid="9gNhwy3WWke0Wr3w4NgoKQ" x="2648.50" y="-1525.00" text="input.uv"/>
+<topic id="163" parent="160" guid="rTagV17I40WxLK5jyXOKug" x="2551.00" y="-1499.00" text="out"/>
+<topic id="164" parent="163" guid="a7U8Cu9Ig0m8gHNmJgGu7g" x="2687.50" y="-1499.00" text="结构体SurfaceData"/>
+<topic id="165" parent="160" guid="g7ZesdfPPECnqWJ1spvG8w" x="2624.00" y="-1428.00" text="1.1、SampleAlbedoAlpha()">
+<note>
+half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));half4 SampleAlbedoAlpha(float2 uv, TEXTURE2D_PARAM(albedoAlphaMap, sampler_albedoAlphaMap)){    return SAMPLE_TEXTURE2D(albedoAlphaMap, sampler_albedoAlphaMap, uv);}
+</note>
+</topic>
+<topic id="166" parent="165" guid="_OjZO_xrrEeqWmicqKyxNw" x="2783.00" y="-1441.00" text="in"/>
+<topic id="167" parent="166" guid="JU6qrIIA6EigBSKYw8ncvw" x="2869.00" y="-1467.00" text="uv"/>
+<topic id="168" parent="166" guid="4pDXaeOXFkSsQ3fiqywo2Q" x="2887.50" y="-1441.00" text="_BaseMap"/>
+<topic id="169" parent="166" x="2913.00" y="-1415.00" text="sampler_BaseMap"/>
+<topic id="170" parent="165" guid="tRR0RrFKikChRFO3Lhu-yQ" x="2783.00" y="-1386.00" text="out"/>
+<topic id="171" parent="170" guid="t0UTmStbdUyHQFv7XWk0Xw" x="2913.00" y="-1386.00" text="half4 albedoAlpha"/>
+<topic id="172" parent="160" guid="ovY96lCqJEytTyY0OdzOXg" x="2577.00" y="-1312.00" text="1.2、Alpha()">
+<note>
+outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor, _Cutoff);half Alpha(half albedoAlpha, half4 color, half cutoff){#if !defined(_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A) &amp;&amp; !defined(_GLOSSINESS_FROM_BASE_ALPHA)    half alpha = albedoAlpha * color.a;#else    half alpha = color.a;#endif#if defined(_ALPHATEST_ON)    clip(alpha - cutoff);#endif    return alpha;}
+</note>
+</topic>
+<topic id="173" parent="172" guid="KaGJcjt6i0CzBF8R-zy9Aw" x="2689.00" y="-1325.00" text="in"/>
+<topic id="174" parent="173" guid="6wfSDiNJWEeyY9xLfkZRew" x="2807.50" y="-1351.00" text="albedoAlpha.a"/>
+<topic id="175" parent="173" guid="A3b3VPPkKU-KoT_vqjOuQg" x="2814.50" y="-1325.00" text="half4 _BaseColor"/>
+<topic id="176" parent="173" guid="lLkQ8gfKgEKMTWO5wAvEZA" x="2797.00" y="-1299.00" text="half _Cutoff"/>
+<topic id="177" parent="172" guid="HUZtOjsBu0SJmx44ivjV7g" x="2689.00" y="-1270.00" text="out"/>
+<topic id="178" parent="177" guid="VpR4JP4lQE2UYwqiScI3hQ" x="2798.50" y="-1270.00" text="surfaceData"/>
+<topic id="179" parent="178" guid="aM96u8avD020ptOwskubXw" x="2926.00" y="-1270.00" text="half alpha"/>
+<topic id="180" parent="160" guid="MgDaObzevUyJImTeFk4FXA" x="2641.00" y="-1148.00" text="1.3、SampleMetallicSpecGloss()">
+<note>
+half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a);#ifdef _SPECULAR_SETUP    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, uv)#else    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv)#endifhalf4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha){    half4 specGloss;#ifdef _METALLICSPECGLOSSMAP    specGloss = SAMPLE_METALLICSPECULAR(uv);    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A        specGloss.a = albedoAlpha * _Smoothness;    #else        specGloss.a *= _Smoothness;    #endif#else // _METALLICSPECGLOSSMAP    #if _SPECULAR_SETUP        specGloss.rgb = _SpecColor.rgb;    #else        specGloss.rgb = _Metallic.rrr;    #endif    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A        specGloss.a = albedoAlpha * _Smoothness;    #else        specGloss.a = _Smoothness;    #endif#endif    return specGloss;}
+</note>
+</topic>
+<topic id="181" parent="180" guid="BkAwA3uT3kiW4nNky1rffg" x="2817.00" y="-1222.00" text="in"/>
+<topic id="182" parent="181" guid="vonKKX0nmkCCVm7Kio6EBQ" x="2916.00" y="-1235.00" text="float2 uv"/>
+<topic id="183" parent="181" guid="FzusmF4r_k2bihy1NQv_Tw" x="2943.50" y="-1209.00" text="half albedoAlpha"/>
+<topic id="184" parent="180" guid="bMOkr8i6BEOKUeZRazlkNQ" x="2817.00" y="-1180.00" text="out"/>
+<topic id="185" parent="184" guid="waN3dcGBTkm6D3OByI3Gbg" x="2938.00" y="-1180.00" text="half4 specGloss"/>
+<topic id="186" parent="180" guid="rvcxFypyT0mTNWciZbVs6g" x="2904.50" y="-1106.00" text="SAMPLE_METALLICSPECULAR()">
+<note>
+#ifdef _SPECULAR_SETUP    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, uv)#else    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv)#endif
+</note>
+</topic>
+<topic id="187" parent="186" guid="Lc8A_Kf5YUia1tgh2YLFAw" x="3078.00" y="-1119.00" text="in"/>
+<topic id="188" parent="187" guid="k6SjYeO8n0ueagXG6ZhYOA" x="3164.00" y="-1148.00" text="uv"/>
+<topic id="189" parent="187" guid="IerUEy5uHEieiZgOoSwPmg" x="3164.00" y="-1106.00" text="or"/>
+<topic id="190" parent="189" guid="txaXQpCn60yHQbRHchkgkw" x="3295.00" y="-1119.00" text="_MetallicGlossMap"/>
+<topic id="191" parent="189" x="3286.00" y="-1093.00" text="_SpecGlossMap"/>
+<topic id="192" parent="186" guid="2duW6EKiDk6C4xEWARGcgA" x="3078.00" y="-1061.00" text="out"/>
+<topic id="193" parent="192" x="3199.00" y="-1061.00" text="half4 specGloss"/>
+<topic id="194" parent="160" guid="Vts8NbkBcUGSlcMw38H3kg" x="2606.00" y="-958.00" text="1.4、SampleNormal()">
+<note>
+outSurfaceData.normalTS = SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale);half3 SampleNormal(float2 uv, TEXTURE2D_PARAM(bumpMap, sampler_bumpMap), half scale = 1.0h){#ifdef _NORMALMAP    half4 n = SAMPLE_TEXTURE2D(bumpMap, sampler_bumpMap, uv);    #if BUMP_SCALE_NOT_SUPPORTED        return UnpackNormal(n);    #else        return UnpackNormalScale(n, scale);    #endif#else    return half3(0.0h, 0.0h, 1.0h);#endif}
+</note>
+</topic>
+<topic id="195" parent="194" guid="7GXqr0dUoUmX0KIitlOuhg" x="2747.00" y="-997.00" text="in"/>
+<topic id="196" parent="195" guid="THW7PgsXq0iQ0HaCgsponA" x="2833.00" y="-1023.00" text="uv"/>
+<topic id="197" parent="195" guid="ezV05EhXbkuP3E5JgqI-rg" x="2854.50" y="-997.00" text="_BumpMap"/>
+<topic id="198" parent="195" guid="P06U1IwXFEyJjKCAskH83g" x="2859.00" y="-971.00" text="_BumpScale"/>
+<topic id="199" parent="194" guid="6um60Mhsvka0dY_V78pyuA" x="2747.00" y="-942.00" text="out"/>
+<topic id="200" parent="199" guid="9qTXJWhVY0a1jyyx9NWTYw" x="2856.50" y="-942.00" text="surfaceData"/>
+<topic id="201" parent="200" guid="zhm9lxM3F0ajWKKADYYFrw" x="3000.50" y="-942.00" text="half3 normalTS"/>
+<topic id="202" parent="194" guid="pbtZvl8Ix0K2zWYDJ6xeGw" x="2783.50" y="-916.00" text="UnpackNormal()"/>
+<topic id="203" parent="194" x="2801.50" y="-890.00" text="UnpackNormalScale()"/>
+<topic id="204" parent="160" guid="kgWhtKonPkKXBjG0m5YjXg" x="2614.00" y="-771.00" text="1.5、SampleOcclusion()">
+<note>
+outSurfaceData.occlusion = SampleOcclusion(uv);half SampleOcclusion(float2 uv){#ifdef _OCCLUSIONMAP// TODO: Controls things like these by exposing SHADER_QUALITY levels (low, medium, high)#if defined(SHADER_API_GLES)    return SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, uv).g;#else    half occ = SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, uv).g;    return LerpWhiteTo(occ, _OcclusionStrength);#endif#else    return 1.0;#endif}
+</note>
+</topic>
+<topic id="205" parent="204" guid="Ph7E8VMAZkaJk__Wrdeksg" x="2763.00" y="-829.00" text="in"/>
+<topic id="206" parent="205" guid="owCszR-qMk-a3d3zmTnHbg" x="2849.00" y="-855.00" text="uv"/>
+<topic id="207" parent="205" guid="6LVFQFdS1E6-0OgQ4kQv5A" x="2883.00" y="-829.00" text="_OcclusionMap"/>
+<topic id="208" parent="205" x="2896.50" y="-803.00" text="_OcclusionStrength"/>
+<topic id="209" parent="204" guid="_squtcH82k-idXpZDHAkkg" x="2763.00" y="-774.00" text="out"/>
+<topic id="210" parent="209" guid="Eu0jCQQr202Es_LMuxNkFA" x="2872.50" y="-774.00" text="surfaceData"/>
+<topic id="211" parent="210" guid="zrtEIcoKE0mKrPU8vt_A8A" x="3012.00" y="-774.00" text="half occlusion"/>
+<topic id="212" parent="204" guid="dF0FjS6dfE2YEshrHolXAA" x="2793.50" y="-716.00" text="LerpWhiteTo()"/>
+<topic id="213" parent="212" guid="gTxP4TfoSEebx6S-461iLA" x="2910.00" y="-729.00" text="in"/>
+<topic id="214" parent="213" guid="jSFlLBQ5oUKtQHjGI-AozA" x="3007.00" y="-742.00" text="half occ"/>
+<topic id="215" parent="213" guid="RbC7jUnb0ka6mvOCaVuC7Q" x="3043.50" y="-716.00" text="_OcclusionStrength"/>
+<topic id="216" parent="212" guid="49IHr-cWZUm4bubjg-8mzg" x="2910.00" y="-687.00" text="out"/>
+<topic id="217" parent="216" x="2996.00" y="-687.00" text="half"/>
+<topic id="218" parent="160" guid="_P63nLG-F0CpQkAoqSwYiw" x="2611.00" y="-610.00" text="1.6、SampleEmission()">
+<note>
+outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));half3 SampleEmission(float2 uv, half3 emissionColor, TEXTURE2D_PARAM(emissionMap, sampler_emissionMap)){#ifndef _EMISSION    return 0;#else    return SAMPLE_TEXTURE2D(emissionMap, sampler_emissionMap, uv).rgb * emissionColor;#endif}
+</note>
+</topic>
+<topic id="219" parent="218" guid="gmh4LL_zNUGpA7dhhKJ0Jg" x="2757.00" y="-623.00" text="in"/>
+<topic id="220" parent="219" guid="WRcqy_j8gEGjjkFCnJaLBg" x="2843.00" y="-649.00" text="uv"/>
+<topic id="221" parent="219" guid="ABUeLG6PdEeb7cXrAv5x1w" x="2889.50" y="-623.00" text="_EmissionColor.rgb"/>
+<topic id="222" parent="219" x="2874.00" y="-597.00" text="_EmissionMap"/>
+<topic id="223" parent="218" guid="CBcaneXGi0Opiza6QwEbDA" x="2757.00" y="-568.00" text="out"/>
+<topic id="224" parent="223" guid="9fvfjGk9WEa7wBazHLZ3jg" x="2866.50" y="-568.00" text="surfaceData"/>
+<topic id="225" parent="224" guid="QMy4ChEQyUyODTYBKbT9nA" x="2990.00" y="-568.00" text="emission"/>
+<topic id="226" parent="138" guid="PTTKtiEx6EaQ5l_GKgVd8g" x="2260.50" y="-455.00" palette="5" colorinfo="5" text="结构体InputData"/>
+<topic id="227" parent="226" guid="HHe-z_nnwUuHj-wBdswTsg" x="2438.50" y="-533.00" text="float3  positionWS"/>
+<topic id="228" parent="226" guid="6O1z9BJSXEWGraTo1BZmIw" x="2436.00" y="-507.00" text="half3   normalWS"/>
+<topic id="229" parent="226" guid="7F_T_FGFK0mdgy_2S1HZBg" x="2457.00" y="-481.00" text="half3   viewDirectionWS"/>
+<topic id="230" parent="226" guid="tct1N4Y0sU6pT3Gqh8-LcQ" x="2446.00" y="-455.00" text="float4  shadowCoord"/>
+<topic id="231" parent="226" guid="ywDEiGngy0-0ExFVgVMTHw" x="2430.00" y="-429.00" text="half    fogCoord"/>
+<topic id="232" parent="226" guid="-D1-NTuVjU-6jozpmayv-w" x="2448.50" y="-403.00" text="half3   vertexLighting"/>
+<topic id="233" parent="226" guid="UZT5uqd8aky8lIIVOcLbBg" x="2429.00" y="-377.00" text="half3   bakedGI"/>
+<topic id="234" parent="138" guid="Kugc-n1LaEuu_rJuXrGarA" x="2284.00" y="287.00" palette="6" colorinfo="6" text="2、InitializeInputData()">
+<children>
+<text x="0.00" y="-25.50">
+<note>
+初始化输入数据
+</note>
+</text>
+</children>
+<note>
+InitializeInputData(input, surfaceData.normalTS, inputData);void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData){    inputData = (InputData)0;#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)    inputData.positionWS = input.positionWS;#endif#ifdef _NORMALMAP    half3 viewDirWS = half3(input.normalWS.w, input.tangentWS.w, input.bitangentWS.w);    inputData.normalWS = TransformTangentToWorld(normalTS,        half3x3(input.tangentWS.xyz, input.bitangentWS.xyz, input.normalWS.xyz));#else    half3 viewDirWS = input.viewDirWS;    inputData.normalWS = input.normalWS;#endif    inputData.normalWS = NormalizeNormalPerPixel(inputData.normalWS);    viewDirWS = SafeNormalize(viewDirWS);    inputData.viewDirectionWS = viewDirWS;#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)    inputData.shadowCoord = input.shadowCoord;#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)    inputData.shadowCoord = TransformWorldToShadowCoord(inputData.positionWS);#else    inputData.shadowCoord = float4(0, 0, 0, 0);#endif    inputData.fogCoord = input.fogFactorAndVertexLight.x;    inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;    inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, inputData.normalWS);}
+</note>
+</topic>
+<topic id="235" parent="234" guid="gi4UgNKos0awyRvLi09i8Q" x="2442.00" y="-316.00" text="in"/>
+<topic id="236" parent="235" guid="CIUjTsDNYEyEVijq0KYPKQ" x="2566.50" y="-342.00" text="结构体Varyings"/>
+<topic id="237" parent="235" guid="gcfdNcYB6kihfLlVdh5WGw" x="2578.50" y="-303.00" text="结构体SurfaceData"/>
+<topic id="238" parent="237" guid="izGYazMZUUWkZ6Yn1q2YIA" x="2789.00" y="-290.00" text="half3 surfaceData.normalTS">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+法线贴图
+</note>
+</text>
+</children>
+</topic>
+<topic id="239" parent="234" guid="xQilX7VETku5oES1x76hfA" x="2442.00" y="-261.00" text="out"/>
+<topic id="240" parent="239" guid="LXrqDPqWNkybcgZktGdJoQ" x="2570.00" y="-261.00" text="结构体InputData"/>
+<topic id="241" parent="234" guid="RjRi72LE7E-W0L1SiKFGXQ" x="2533.00" y="-174.00" text="2.1、TransformTangentToWorld()">
+<children>
+<text guid="9IA0nGIAjEST0UAgEDA-FA" x="0.00" y="-24.00">
+<note>
+对法线贴图的空间转换
+</note>
+</text>
+</children>
+<note>
+inputData.normalWS = TransformTangentToWorld(normalTS,        half3x3(input.tangentWS.xyz, input.bitangentWS.xyz, input.normalWS.xyz));real3 TransformTangentToWorld(real3 dirTS, real3x3 tangentToWorld){    // Note matrix is in row major convention with left multiplication as it is build on the fly    return mul(dirTS, tangentToWorld);}
+</note>
+</topic>
+<topic id="242" parent="241" guid="Ewf0M8AByk6JwbwFb13EaA" x="2710.00" y="-200.00" text="in"/>
+<topic id="243" parent="242" guid="nurkN7G3GE-iOpXwfBJX8Q" x="2831.00" y="-229.00" text="real3 normalTS"/>
+<topic id="244" parent="242" guid="4kvwfS8fKUChIZlSgJYDhw" x="2805.50" y="-187.00" text="real3x3"/>
+<topic id="245" parent="244" x="2961.00" y="-187.00" text="input.tangentWS.xyz,\Ninput.bitangentWS.xyz,\Ninput.normalWS.xyz"/>
+<topic id="246" parent="241" guid="Dq75SpLSiUKJ7xDy5LqGTA" x="2710.00" y="-142.00" text="out"/>
+<topic id="247" parent="246" guid="Jj8ABvIj-UOkxjzQID-trw" x="2866.00" y="-142.00" text="real3 inputData.normalWS"/>
+<topic id="248" parent="234" guid="0qxQLjI3XkOjsMnhDD1N_g" x="2532.50" y="-84.00" text="2.2、NormalizeNormalPerPixel()">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+归一化，对法线信息的矫正
+</note>
+</text>
+</children>
+<note>
+inputData.normalWS = NormalizeNormalPerPixel(inputData.normalWS);real3 NormalizeNormalPerPixel(real3 normalWS){ #if defined(SHADER_QUALITY_HIGH) || defined(_NORMALMAP)    return normalize(normalWS);#else    return normalWS;#endif}
+</note>
+</topic>
+<topic id="249" parent="248" guid="9vDjPK70vUSZgm6RuHcyWw" x="2709.00" y="-110.00" text="in"/>
+<topic id="250" parent="249" guid="MMElz6Zp70exlPuaxLWoig" x="2832.50" y="-110.00" text="real3 normalWS"/>
+<topic id="251" parent="248" guid="zabU-4pdtEyUWZ1QMnazJw" x="2709.00" y="-84.00" text="out"/>
+<topic id="252" parent="251" guid="oo64LCJXdECdhdLOpSPEFQ" x="2832.50" y="-84.00" text="real3 normalWS"/>
+<topic id="253" parent="234" guid="V272Xfl13E64Maw9Fyu64A" x="2517.00" y="-26.00" text="2.3、SafeNormalize()">
+<children>
+<text guid="F85LLKCSuE-Nvt0-crWIeg" x="0.00" y="-24.00">
+<note>
+将长度为零的向量归一化
+</note>
+</text>
+</children>
+<note>
+viewDirWS = SafeNormalize(viewDirWS);real3 SafeNormalize(float3 inVec){    float dp3 = max(FLT_MIN, dot(inVec, inVec));    return inVec * rsqrt(dp3);}
+</note>
+</topic>
+<topic id="254" parent="253" guid="JiVxHnk8GUeFNJ3uUGnN6w" x="2678.00" y="-52.00" text="in"/>
+<topic id="255" parent="254" guid="f5HEgMAJNUagO4sOsK-d5Q" x="2804.50" y="-52.00" text="float3 viewDirWS"/>
+<topic id="256" parent="253" guid="Uive9_tEs0q7StzA8fjliQ" x="2678.00" y="-26.00" text="out"/>
+<topic id="257" parent="256" guid="Pgi15KtsZUWYC1YgassbAA" x="2803.00" y="-26.00" text="real3 viewDirWS"/>
+<topic id="258" parent="234" guid="9TbbGwP4kEibRyITrXq1-w" x="2552.50" y="32.00" text="2.4、TransformWorldToShadowCoord()">
+<children>
+<text guid="F6fvZ_2YTUCDsarUsaZa_w" x="0.00" y="-24.00">
+<note>
+阴影项
+</note>
+</text>
+</children>
+<note>
+inputData.shadowCoord = TransformWorldToShadowCoord(inputData.positionWS);float4 TransformWorldToShadowCoord(float3 positionWS){#ifdef _MAIN_LIGHT_SHADOWS_CASCADE    half cascadeIndex = ComputeCascadeIndex(positionWS);#else    half cascadeIndex = 0;#endif    return mul(_MainLightWorldToShadow[cascadeIndex], float4(positionWS, 1.0));}
+</note>
+</topic>
+<topic id="259" parent="258" guid="GQFC343PaEaK-DZ3aYuwDg" x="2749.00" y="6.00" text="in"/>
+<topic id="260" parent="259" guid="By5SJY3Tbk-iH3d33Tl4_Q" x="2876.50" y="6.00" text="float3 positionWS"/>
+<topic id="261" parent="258" guid="ute_wbhybEK9KViiYY94aQ" x="2749.00" y="32.00" text="out"/>
+<topic id="262" parent="261" guid="nIWRyTlmfEmYQWIevpybiw" x="2884.00" y="32.00" text="float4 shadowCoord"/>
+<topic id="263" parent="234" guid="Lx4sAjanYEuPIdvu1ry2mw" x="2520.50" y="490.00" text="2.5、SAMPLE_GI()">
+<children>
+<text guid="HWwy0UjOGECMt6wMEXZ0VA" x="0.00" y="-24.00">
+<note>
+对LightMap或者SH光照计算
+</note>
+</text>
+</children>
+<note>
+inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, inputData.normalWS);//我们从烘焙的光照贴图或探针中采样GI。//如果lightmap：sampleData.xy = lightmapUV//如果探针：sampleData.xyz = L2 SH项#ifdef LIGHTMAP_ON#define SAMPLE_GI(lmName, shName, normalWSName) SampleLightmap(lmName, normalWSName)#else#define SAMPLE_GI(lmName, shName, normalWSName) SampleSHPixel(shName, normalWSName)#endif
+</note>
+</topic>
+<topic id="264" parent="263" guid="AVU5AyZQB0mMfJixpHh8-A" x="2685.00" y="67.00" collapsed="True" text="in"/>
+<topic id="265" parent="264" guid="LXGYJtNkJUCdrckhgYKCgA" x="2753.00" y="67.00" text="lightmapUV"/>
+<topic id="266" parent="264" guid="viYu6JSl20S0dCBkmXj_tw" x="2753.00" y="67.00" text="vertexSH"/>
+<topic id="267" parent="264" x="2753.00" y="67.00" text="normalWS"/>
+<topic id="268" parent="263" guid="ZmymsiL2cUSGpf6re6LDig" x="2685.00" y="96.00" text="out"/>
+<topic id="269" parent="268" guid="IjVtIrhEE0q4mhBN9tqAJA" x="2801.00" y="96.00" text="half3 bakedGI"/>
+<topic id="270" parent="263" guid="QPolglyHpEmtl_bSHNkFWw" x="2750.50" y="361.00" text="2.51、SampleLightmap()">
+<children>
+<text guid="GmSwqj6z4EG4HTOW13vaeA" x="0.00" y="-24.00">
+<note>
+LightMap
+</note>
+</text>
+</children>
+<note>
+//样本烘焙的光照贴图。 非方向性和定向性（如果可用）。//不支持实时GI。half3 SampleLightmap(float2 lightmapUV, half3 normalWS){#ifdef UNITY_LIGHTMAP_FULL_HDR    bool encodedLightmap = false;#else    bool encodedLightmap = true;#endif    half4 decodeInstructions = half4(LIGHTMAP_HDR_MULTIPLIER, LIGHTMAP_HDR_EXPONENT, 0.0h, 0.0h);    //着色器库样本光照贴图函数可转换光照贴图uv坐标以应用偏差和比例。    //但是，通用管道已经在顶点处转换了这些坐标。 我们传递half4（1，1，0，0）和    //编译器将优化转换。    half4 transformCoords = half4(1, 1, 0, 0);#ifdef DIRLIGHTMAP_COMBINED    return SampleDirectionalLightmap(TEXTURE2D_ARGS(unity_Lightmap, samplerunity_Lightmap),        TEXTURE2D_ARGS(unity_LightmapInd, samplerunity_Lightmap),        lightmapUV, transformCoords, normalWS, encodedLightmap, decodeInstructions);#elif defined(LIGHTMAP_ON)    return SampleSingleLightmap(TEXTURE2D_ARGS(unity_Lightmap, samplerunity_Lightmap), lightmapUV, transformCoords, encodedLightmap, decodeInstructions);#else    return half3(0.0, 0.0, 0.0);#endif}
+</note>
+</topic>
+<topic id="271" parent="270" guid="or2Aaw-qC0-dQ9p4J3wPtg" x="2902.00" y="141.00" text="in"/>
+<topic id="272" parent="271" guid="OzR7CKZMXUGFIl_9VfD5aQ" x="3030.50" y="128.00" text="float2 lightmapUV"/>
+<topic id="273" parent="271" guid="6s03VbAQbE2uT7cs0VAlsg" x="3025.00" y="154.00" text="half3 normalWS"/>
+<topic id="274" parent="270" guid="ln9MfeCS_kuDkN2hm6g2Yg" x="2902.00" y="183.00" text="out"/>
+<topic id="275" parent="274" guid="WpxpieHC1EyIaGu2AoPsdw" x="2989.50" y="183.00" text="half3"/>
+<topic id="276" parent="270" guid="l1zzEMZ_0UeEL6StGMIlFA" x="2981.00" y="306.00" text="SampleDirectionalLightmap()">
+<note>
+SampleDirectionalLightmap(TEXTURE2D_ARGS(unity_Lightmap, samplerunity_Lightmap),        TEXTURE2D_ARGS(unity_LightmapInd, samplerunity_Lightmap),        lightmapUV, transformCoords, normalWS, encodedLightmap, decodeInstructions);
+</note>
+</topic>
+<topic id="277" parent="276" guid="DiyKnjVo6EyY6OSoS4kQLw" x="3146.00" y="293.00" text="in"/>
+<topic id="278" parent="277" guid="E124A6jl9E6pFq_wRLC-bg" x="3267.00" y="215.00" text="unity_Lightmap"/>
+<topic id="279" parent="277" guid="68WuvGcnfEqilVw9-vpv8w" x="3277.00" y="241.00" text="unity_LightmapInd"/>
+<topic id="280" parent="277" x="3255.00" y="267.00" text="lightmapUV"/>
+<topic id="281" parent="277" x="3270.00" y="293.00" text="transformCoords"/>
+<topic id="282" parent="277" x="3251.50" y="319.00" text="normalWS"/>
+<topic id="283" parent="277" x="3275.50" y="345.00" text="encodedLightmap"/>
+<topic id="284" parent="277" guid="YmJ0SwzjPE2O5aR09E48tA" x="3277.50" y="371.00" text="decodeInstructions"/>
+<topic id="285" parent="276" x="3146.00" y="400.00" text="out"/>
+<topic id="286" parent="285" x="3233.50" y="400.00" text="half3"/>
+<topic id="287" parent="270" guid="gCF5ampML0GIgTdnJgV3qw" x="2967.00" y="500.00" text="SampleSingleLightmap()">
+<note>
+SampleSingleLightmap(TEXTURE2D_ARGS(unity_Lightmap, samplerunity_Lightmap), lightmapUV, transformCoords, encodedLightmap, decodeInstructions)
+</note>
+</topic>
+<topic id="288" parent="287" guid="KVPJ1fNpJ0eyEwhKHhBzxw" x="3118.00" y="487.00" text="in"/>
+<topic id="289" parent="288" x="3239.00" y="435.00" text="unity_Lightmap"/>
+<topic id="290" parent="288" x="3227.00" y="461.00" text="lightmapUV"/>
+<topic id="291" parent="288" guid="OdlFSLw72Uu1eRtj1iLizQ" x="3242.00" y="487.00" text="transformCoords"/>
+<topic id="292" parent="288" x="3247.50" y="513.00" text="encodedLightmap"/>
+<topic id="293" parent="288" guid="pKZpAnvfxU2puTSw8G58_w" x="3249.50" y="539.00" text="decodeInstructions"/>
+<topic id="294" parent="287" guid="_pCoTleUMEOwH1CZEgysCA" x="3118.00" y="568.00" text="out"/>
+<topic id="295" parent="294" guid="kPa8GVzSREC93ZSCJo5EyA" x="3205.50" y="568.00" text="half3"/>
+<topic id="296" parent="263" guid="f_pFJrI9pEeQjl7cGM0cig" x="2746.00" y="758.00" text="2.52、SampleSHPixel()">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+像素SH
+</note>
+</text>
+</children>
+<note>
+// SH像素评估。 根据目标SH可能会进行采样//混合像素或完全像素。 参见SampleSHVertexhalf3 SampleSHPixel(half3 L2Term, half3 normalWS){#if defined(EVALUATE_SH_VERTEX)    return L2Term;#elif defined(EVALUATE_SH_MIXED)    half3 L0L1Term = SHEvalLinearL0L1(normalWS, unity_SHAr, unity_SHAg, unity_SHAb);    return max(half3(0, 0, 0), L2Term + L0L1Term);#endif    //默认值：按像素完全评估SH    return SampleSH(normalWS);}
+</note>
+</topic>
+<topic id="297" parent="296" guid="COZj0wWSfEi2P6dGtWcKxg" x="2893.00" y="619.00" text="in"/>
+<topic id="298" parent="297" guid="VvrJ2GchKUScCcPCsdlxiQ" x="3006.00" y="606.00" text="half3 L2Term"/>
+<topic id="299" parent="297" guid="M8bLHZ1xSUuOU3MsNOHTfw" x="3016.00" y="632.00" text="half3 normalWS"/>
+<topic id="300" parent="296" guid="U85fqddT8kupdzb-0ZHTag" x="2893.00" y="661.00" text="out"/>
+<topic id="301" parent="300" guid="7c7RqnE8BUmDZPjILKqNIg" x="2980.50" y="661.00" text="half3"/>
+<topic id="302" parent="296" guid="bebDI2HqOUmtTF_Mcv5oOQ" x="2941.00" y="745.00" text="SHEvalLinearL0L1()"/>
+<topic id="303" parent="302" guid="GH5hQMMvmkCRU7hvNlw6Mw" x="3075.00" y="732.00" text="in"/>
+<topic id="304" parent="303" guid="DOTjmuk5tUabRJ4OCJ9MFQ" x="3180.50" y="693.00" text="normalWS"/>
+<topic id="305" parent="303" guid="Jeu2cYGFwEOWrHNNGmhWAA" x="3182.00" y="719.00" text="unity_SHAr"/>
+<topic id="306" parent="303" guid="mmFW7ck6hEmyDoHrFFScbg" x="3183.50" y="745.00" text="unity_SHAg"/>
+<topic id="307" parent="303" guid="Hh-0XOo9VkOYiYCc0XcUjg" x="3183.50" y="771.00" text="unity_SHAb"/>
+<topic id="308" parent="302" x="3075.00" y="800.00" text="out"/>
+<topic id="309" parent="308" x="3162.50" y="800.00" text="half3"/>
+<topic id="310" parent="296" guid="fERCMSXi-EuenghiEesgZA" x="2916.50" y="858.00" text="SampleSH()">
+<note>
+// Samples SH L0, L1 and L2 termshalf3 SampleSH(half3 normalWS){    // LPPV is not supported in Ligthweight Pipeline    real4 SHCoefficients[7];    SHCoefficients[0] = unity_SHAr;    SHCoefficients[1] = unity_SHAg;    SHCoefficients[2] = unity_SHAb;    SHCoefficients[3] = unity_SHBr;    SHCoefficients[4] = unity_SHBg;    SHCoefficients[5] = unity_SHBb;    SHCoefficients[6] = unity_SHC;    return max(half3(0, 0, 0), SampleSH9(SHCoefficients, normalWS));}
+</note>
+</topic>
+<topic id="311" parent="310" guid="p2G-44bDQEWDUmnef5iuoA" x="3026.00" y="832.00" text="in"/>
+<topic id="312" parent="311" x="3131.50" y="832.00" text="normalWS"/>
+<topic id="313" parent="310" x="3026.00" y="858.00" text="out"/>
+<topic id="314" parent="313" x="3113.50" y="858.00" text="half3"/>
+<topic id="315" parent="310" guid="90ehEDguckOM3UplcrkogQ" x="3049.00" y="884.00" text="SampleSH9">
+<note>
+#if HAS_HALFhalf3 SampleSH9(half4 SHCoefficients[7], half3 N){    half4 shAr = SHCoefficients[0];    half4 shAg = SHCoefficients[1];    half4 shAb = SHCoefficients[2];    half4 shBr = SHCoefficients[3];    half4 shBg = SHCoefficients[4];    half4 shBb = SHCoefficients[5];    half4 shCr = SHCoefficients[6];    // Linear + constant polynomial terms    half3 res = SHEvalLinearL0L1(N, shAr, shAg, shAb);    // Quadratic polynomials    res += SHEvalLinearL2(N, shBr, shBg, shBb, shCr);    return res;}#endiffloat3 SampleSH9(float4 SHCoefficients[7], float3 N){    float4 shAr = SHCoefficients[0];    float4 shAg = SHCoefficients[1];    float4 shAb = SHCoefficients[2];    float4 shBr = SHCoefficients[3];    float4 shBg = SHCoefficients[4];    float4 shBb = SHCoefficients[5];    float4 shCr = SHCoefficients[6];    // Linear + constant polynomial terms    float3 res = SHEvalLinearL0L1(N, shAr, shAg, shAb);    // Quadratic polynomials    res += SHEvalLinearL2(N, shBr, shBg, shBb, shCr);    return res;}
+</note>
+</topic>
+<topic id="316" parent="138" guid="uYHXJbXI8UaiLe6U5uDGHg" x="2306.00" y="2387.00" palette="7" colorinfo="7" text="3、UniversalFragmentPBR()">
+<note>
+half4 UniversalFragmentPBR(InputData inputData, half3 albedo, half metallic, half3 specular,    half smoothness, half occlusion, half3 emission, half alpha){    BRDFData brdfData;    InitializeBRDFData(albedo, metallic, specular, smoothness, alpha, brdfData);        Light mainLight = GetMainLight(inputData.shadowCoord);    MixRealtimeAndBakedGI(mainLight, inputData.normalWS, inputData.bakedGI, half4(0, 0, 0, 0));    half3 color = GlobalIllumination(brdfData, inputData.bakedGI, occlusion, inputData.normalWS, inputData.viewDirectionWS);    color += LightingPhysicallyBased(brdfData, mainLight, inputData.normalWS, inputData.viewDirectionWS);#ifdef _ADDITIONAL_LIGHTS    uint pixelLightCount = GetAdditionalLightsCount();    for (uint lightIndex = 0u; lightIndex &lt; pixelLightCount; ++lightIndex)    {        Light light = GetAdditionalLight(lightIndex, inputData.positionWS);        color += LightingPhysicallyBased(brdfData, light, inputData.normalWS, inputData.viewDirectionWS);    }#endif#ifdef _ADDITIONAL_LIGHTS_VERTEX    color += inputData.vertexLighting * brdfData.diffuse;#endif    color += emission;    return half4(color, alpha);}
+</note>
+</topic>
+<topic id="317" parent="316" guid="MZjJG47BbkK8DGmLUdEbhw" x="2486.00" y="1022.00" text="in"/>
+<topic id="318" parent="317" x="2614.00" y="928.00" text="结构体InputData"/>
+<topic id="319" parent="317" guid="12d6aH850k2bMJ4dqXzvXQ" x="2622.50" y="1035.00" text="结构体SurfaceData"/>
+<topic id="320" parent="319" x="2784.50" y="957.00" text="half3 albedo"/>
+<topic id="321" parent="319" x="2789.50" y="983.00" text="half3 specular"/>
+<topic id="322" parent="319" x="2786.50" y="1009.00" text="half  metallic"/>
+<topic id="323" parent="319" x="2798.00" y="1035.00" text="half  smoothness"/>
+<topic id="324" parent="319" guid="OHES-7Tv90ucc3ADqn2oZA" x="2791.00" y="1061.00" text="half  occlusion"/>
+<topic id="325" parent="319" x="2790.50" y="1087.00" text="half3 emission"/>
+<topic id="326" parent="319" guid="8yv8KoEZHUmsj1QzL0BR-Q" x="2779.00" y="1113.00" text="half  alpha"/>
+<topic id="327" parent="316" guid="fkhzcNYGdESq0b2v07_Ivw" x="2486.00" y="1145.00" text="out"/>
+<topic id="328" parent="327" x="2591.50" y="1145.00" text="half4 color"/>
+<topic id="329" parent="316" guid="vYoqOjvz8EK3zl0w_7Ifuw" x="2529.50" y="1265.00" text="结构体BRDFData">
+<note>
+struct BRDFData{    half3 diffuse;    half3 specular;    half perceptualRoughness;    half roughness;    half roughness2;    half grazingTerm;    //我们保存了一些轻度不变的BRDF术语，因此我们不必重新计算    //将它们放在灯光循环中。 查看DirectBRDF函数以获取详细说明。    half normalizationTerm;     // roughness * 4.0 + 2.0    half roughness2MinusOne;    // roughness^2 - 1.0};
+</note>
+</topic>
+<topic id="330" parent="329" guid="ZryXxbRJ1USCC7QSVkH9GQ" x="2683.50" y="1174.00" text="half3 diffuse"/>
+<topic id="331" parent="329" x="2689.50" y="1200.00" text="half3 specular"/>
+<topic id="332" parent="329" x="2727.50" y="1226.00" text="half perceptualRoughness"/>
+<topic id="333" parent="329" x="2691.50" y="1252.00" text="half roughness"/>
+<topic id="334" parent="329" x="2695.00" y="1278.00" text="half roughness2"/>
+<topic id="335" parent="329" x="2699.00" y="1304.00" text="half grazingTerm"/>
+<topic id="336" parent="329" x="2719.00" y="1330.00" text="half normalizationTerm"/>
+<topic id="337" parent="329" x="2726.50" y="1356.00" text="half roughness2MinusOne"/>
+<topic id="338" parent="316" guid="SRxaVIk1aEWcmk8aTqlhXA" x="2584.00" y="1585.00" text="3.1、InitializeBRDFData()">
+<children>
+<text guid="owM7cSGM8EaD6Jkv6jpD7g" x="0.00" y="-24.00">
+<note>
+初始化结构体BRDFData输入数据
+</note>
+</text>
+</children>
+<note>
+inline void InitializeBRDFData(half3 albedo, half metallic, half3 specular, half smoothness, half alpha, out BRDFData outBRDFData){#ifdef _SPECULAR_SETUP    half reflectivity = ReflectivitySpecular(specular);    half oneMinusReflectivity = 1.0 - reflectivity;    outBRDFData.diffuse = albedo * (half3(1.0h, 1.0h, 1.0h) - specular);    outBRDFData.specular = specular;#else    half oneMinusReflectivity = OneMinusReflectivityMetallic(metallic);    half reflectivity = 1.0 - oneMinusReflectivity;    outBRDFData.diffuse = albedo * oneMinusReflectivity;    outBRDFData.specular = lerp(kDieletricSpec.rgb, albedo, metallic);#endif    outBRDFData.grazingTerm = saturate(smoothness + reflectivity);    outBRDFData.perceptualRoughness = PerceptualSmoothnessToPerceptualRoughness(smoothness);    outBRDFData.roughness = max(PerceptualRoughnessToRoughness(outBRDFData.perceptualRoughness), HALF_MIN);    outBRDFData.roughness2 = outBRDFData.roughness * outBRDFData.roughness;    outBRDFData.normalizationTerm = outBRDFData.roughness * 4.0h + 2.0h;    outBRDFData.roughness2MinusOne = outBRDFData.roughness2 - 1.0h;#ifdef _ALPHAPREMULTIPLY_ON    outBRDFData.diffuse *= alpha;    alpha = alpha * oneMinusReflectivity + reflectivity;#endif}
+</note>
+</topic>
+<topic id="339" parent="338" guid="Nuugd1yjoEqXY2-GsoPC5A" x="2768.00" y="1443.00" text="in"/>
+<topic id="340" parent="339" x="2881.50" y="1391.00" text=" half3 albedo"/>
+<topic id="341" parent="339" x="2879.50" y="1417.00" text="half metallic"/>
+<topic id="342" parent="339" guid="_ClSkcZyDUGlpkTWB9Eeig" x="2884.50" y="1443.00" text="half3 specular"/>
+<topic id="343" parent="339" guid="T3gAFG4JAkSLqk2B_JNwcQ" x="2891.00" y="1469.00" text="half smoothness"/>
+<topic id="344" parent="339" guid="u_evsNXccEifhNjQHvkcXg" x="2872.00" y="1495.00" text="half alpha"/>
+<topic id="345" parent="338" guid="6qEclwF9qk2YSJDaGOvlhw" x="2768.00" y="1524.00" text="out"/>
+<topic id="346" parent="345" guid="jyAzospL8U-c7Vf3DoTCUg" x="2901.00" y="1524.00" text="BRDFData brdfData"/>
+<topic id="347" parent="338" guid="rBLCmYSa3E-hha3GxJLB9Q" x="2821.50" y="1566.00" text="ReflectivitySpecular()">
+<note>
+half ReflectivitySpecular(half3 specular){#if defined(SHADER_API_GLES)    return specular.r; // Red channel - because most metals are either monocrhome or with redish/yellowish tint#else    return max(max(specular.r, specular.g), specular.b);#endif}
+</note>
+</topic>
+<topic id="348" parent="347" guid="GA4nNon_PEOBr3mF9Rb_Yw" x="2961.00" y="1553.00" text="in"/>
+<topic id="349" parent="348" guid="mfKUxmJJ2kW3Xf4XH3fHrg" x="3077.50" y="1553.00" text="half3 specular"/>
+<topic id="350" parent="347" guid="D4oT6oiH5kObiv_3SndcMQ" x="2961.00" y="1579.00" text="out"/>
+<topic id="351" parent="350" x="3080.00" y="1579.00" text="half reflectivity"/>
+<topic id="352" parent="338" guid="6rQVs0z_GEO4hyIBHp_1LQ" x="2849.50" y="1624.00" text="OneMinusReflectivityMetallic()">
+<note>
+half OneMinusReflectivityMetallic(half metallic){    // We&apos;ll need oneMinusReflectivity, so    //   1-reflectivity = 1-lerp(dielectricSpec, 1, metallic) = lerp(1-dielectricSpec, 0, metallic)    // store (1-dielectricSpec) in kDieletricSpec.a, then    //   1-reflectivity = lerp(alpha, 0, metallic) = alpha + metallic*(0 - alpha) =    //                  = alpha - metallic * alpha    half oneMinusDielectricSpec = kDieletricSpec.a;    return oneMinusDielectricSpec - metallic * oneMinusDielectricSpec;}
+</note>
+</topic>
+<topic id="353" parent="352" guid="ePrZRcDs90iTpQtEdZWYVQ" x="3017.00" y="1611.00" text="in"/>
+<topic id="354" parent="353" guid="rI-YKZ1uiUSHzOl68K5XSw" x="3128.50" y="1611.00" text="half metallic"/>
+<topic id="355" parent="352" guid="ku9QN4_LbEqDhrZeGYkq8w" x="3017.00" y="1637.00" text="out"/>
+<topic id="356" parent="355" guid="SitQt1sbAUe-ESEDYIgSDg" x="3168.50" y="1637.00" text="half oneMinusReflectivity"/>
+<topic id="357" parent="338" guid="cKb1jQHaHk6YdNpXkXnFEg" x="2907.50" y="1682.00" text="PerceptualSmoothnessToPerceptualRoughness()">
+<note>
+real PerceptualSmoothnessToPerceptualRoughness(real perceptualSmoothness){    return (1.0 - perceptualSmoothness);}
+</note>
+</topic>
+<topic id="358" parent="357" guid="3U-IXyDb5EmaaKx5DYzEsw" x="3133.00" y="1669.00" text="in"/>
+<topic id="359" parent="358" guid="Za2oeTRy8k24IESLJ0UeYw" x="3256.00" y="1669.00" text="half smoothness"/>
+<topic id="360" parent="357" guid="AyUlJQLDYkimBtWgQtMD6w" x="3133.00" y="1695.00" text="out"/>
+<topic id="361" parent="360" x="3317.50" y="1695.00" text="outBRDFData.perceptualRoughness"/>
+<topic id="362" parent="338" guid="rz1YjS1LWkSfUA-r41YtTQ" x="2869.00" y="1740.00" text="PerceptualRoughnessToRoughness()">
+<note>
+real PerceptualRoughnessToRoughness(real perceptualRoughness){    return perceptualRoughness * perceptualRoughness;}
+</note>
+</topic>
+<topic id="363" parent="362" guid="65DnzpOB7ECipc-b_hkGlg" x="3056.00" y="1727.00" text="in"/>
+<topic id="364" parent="363" x="3240.50" y="1727.00" text="outBRDFData.perceptualRoughness"/>
+<topic id="365" parent="362" guid="bNs1UKWFIE6-zFTJTBH9Kg" x="3056.00" y="1753.00" text="out"/>
+<topic id="366" parent="365" x="3204.50" y="1753.00" text="outBRDFData.roughness"/>
+<topic id="367" parent="316" guid="EwePYdfUvEydURAjnXhq-A" x="2513.50" y="1827.00" text="结构体Light">
+<note>
+// 浅色阴影数据的抽象。struct Light{    half3   direction;    half3   color;    half    distanceAttenuation;    half    shadowAttenuation;};
+</note>
+</topic>
+<topic id="368" parent="367" x="2662.50" y="1788.00" text="half3   direction"/>
+<topic id="369" parent="367" x="2650.50" y="1814.00" text="half3   color"/>
+<topic id="370" parent="367" x="2696.00" y="1840.00" text="half    distanceAttenuation"/>
+<topic id="371" parent="367" x="2694.00" y="1866.00" text="half    shadowAttenuation"/>
+<topic id="372" parent="316" guid="9PuLQJmbGEqYy-qELfZJUg" x="2536.00" y="1998.00" text="3.2、GetMainLight()">
+<children>
+<text guid="YKTsHGNuQEi4Vm-n42WIPw" x="0.00" y="-24.00">
+<note>
+初始化结构体Light
+</note>
+</text>
+</children>
+<note>
+Light mainLight = GetMainLight(inputData.shadowCoord);Light GetMainLight(){    Light light;    light.direction = _MainLightPosition.xyz;    //如果未通过剔除蒙版剔除，则unity_LightData.z为1，否则为0。    light.distanceAttenuation = unity_LightData.z;#if defined(LIGHTMAP_ON) || defined(_MIXED_LIGHTING_SUBTRACTIVE)    //unity_ProbesOcclusion.x是混合光探测器的遮挡数据    light.distanceAttenuation *= unity_ProbesOcclusion.x;#endif    light.shadowAttenuation = 1.0;    light.color = _MainLightColor.rgb;    return light;}Light GetMainLight(float4 shadowCoord){    Light light = GetMainLight();    light.shadowAttenuation = MainLightRealtimeShadow(shadowCoord);    return light;}
+</note>
+</topic>
+<topic id="373" parent="372" guid="WIp5M5VHhkqzfjJYRcj5kg" x="2672.00" y="1898.00" text="in"/>
+<topic id="374" parent="373" guid="1E4JuyBylECD6b2hmwHNgg" x="2839.50" y="1898.00" text="float4 inputData.shadowCoord"/>
+<topic id="375" parent="372" guid="eA9Xp7d6ykGe7PQLRMv5jA" x="2672.00" y="1924.00" text="out"/>
+<topic id="376" parent="375" guid="DHxZHmzWe0aop4CM1uYiQA" x="2819.50" y="1924.00" text="结构体Light mainLight"/>
+<topic id="377" parent="372" guid="Nuuvp5y5oUuqsT_AjGW0PA" x="2704.50" y="1995.00" text="GetMainLight()">
+<note>
+Light GetMainLight(){    Light light;    light.direction = _MainLightPosition.xyz;    //如果未通过剔除蒙版剔除，则unity_LightData.z为1，否则为0。    light.distanceAttenuation = unity_LightData.z;#if defined(LIGHTMAP_ON) || defined(_MIXED_LIGHTING_SUBTRACTIVE)    //unity_ProbesOcclusion.x是混合光探测器的遮挡数据    light.distanceAttenuation *= unity_ProbesOcclusion.x;#endif    light.shadowAttenuation = 1.0;    light.color = _MainLightColor.rgb;    return light;}
+</note>
+</topic>
+<topic id="378" parent="377" guid="UhyQEgtznUuLNy3nw4H0jw" x="2834.50" y="1995.00" text="初始化"/>
+<topic id="379" parent="378" guid="pNo4yVuZQEq4DTvLXpXuHg" x="2993.50" y="1961.00" text="light.direction =\N_MainLightPosition.xyz;"/>
+<topic id="380" parent="378" guid="xpVgXd-uQ0-mikHocl3smw" x="3024.00" y="1995.00" text="light.color = _MainLightColor.rgb;"/>
+<topic id="381" parent="378" guid="vBuuwnbAmE22FCcViR9BxA" x="3003.00" y="2029.00" text="light.distanceAttenuation =\Nunity_LightData.z;"/>
+<topic id="382" parent="372" guid="AYxzg8nlZka6uZDsoAMONg" x="2748.00" y="2069.00" collapsed="True" text="MainLightRealtimeShadow()">
+<note>
+half MainLightRealtimeShadow(float4 shadowCoord){#if !defined(MAIN_LIGHT_CALCULATE_SHADOWS)    return 1.0h;#endif    ShadowSamplingData shadowSamplingData = GetMainLightShadowSamplingData();    half4 shadowParams = GetMainLightShadowParams();    return SampleShadowmap(TEXTURE2D_ARGS(_MainLightShadowmapTexture, sampler_MainLightShadowmapTexture), shadowCoord, shadowSamplingData, shadowParams, false);}
+</note>
+</topic>
+<topic id="383" parent="382" x="2892.00" y="2069.00" text="in"/>
+<topic id="384" parent="383" x="2942.00" y="2069.00" text="float4 inputData.shadowCoord"/>
+<topic id="385" parent="382" guid="RNMTIjcJ00SMDMAUxl1--Q" x="2892.00" y="2069.00" text="out"/>
+<topic id="386" parent="385" x="2942.00" y="2069.00" text="light.shadowAttenuation"/>
+<topic id="387" parent="382" guid="1ksoFyrHkkOfUvw1mTfywQ" x="2892.00" y="2069.00" text="GetMainLightShadowSamplingData()"/>
+<topic id="388" parent="382" guid="JwHGWZQF8UyUZvK8BtCnbA" x="2892.00" y="2069.00" text="GetMainLightShadowParams()"/>
+<topic id="389" parent="382" x="2892.00" y="2069.00" text="SampleShadowmap()"/>
+<topic id="390" parent="316" guid="ZUWHhTRlgEeLeLKCDLqhrw" x="2573.00" y="2217.00" text="3.3、MixRealtimeAndBakedGI()">
+<children>
+<text guid="igGaxFRr2ECpuqKf5hKocg" x="0.00" y="-24.00">
+<note>
+实时光与非实时光混合
+</note>
+</text>
+</children>
+<note>
+MixRealtimeAndBakedGI(mainLight, inputData.normalWS, inputData.bakedGI, half4(0, 0, 0, 0));void MixRealtimeAndBakedGI(inout Light light, half3 normalWS, inout half3 bakedGI, half4 shadowMask){#if defined(_MIXED_LIGHTING_SUBTRACTIVE) &amp;&amp; defined(LIGHTMAP_ON)    bakedGI = SubtractDirectMainLightFromLightmap(light, normalWS, bakedGI);#endif}
+</note>
+</topic>
+<topic id="391" parent="390" guid="vMUfeUJCKEC5g-O5u935TQ" x="2748.00" y="2146.00" text="inout"/>
+<topic id="392" parent="391" guid="5dPi3-rNXUquTrAKEg0Mog" x="2872.00" y="2133.00" text="inout Light light">
+<children>
+<text guid="0utD5tgTHkyHYjk8EWNuEg" x="0.00" y="-24.00">
+<note>
+没有输出使用
+</note>
+</text>
+</children>
+</topic>
+<topic id="393" parent="391" guid="u3-N81-WWkaVseRxn48X0A" x="2884.00" y="2185.00" text="inout half3 bakedGI">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+输出使用
+</note>
+</text>
+</children>
+</topic>
+<topic id="394" parent="390" guid="y3eSVyYwXkqKCcJ_5MEa7Q" x="2746.00" y="2230.00" text="in"/>
+<topic id="395" parent="394" guid="ofkycPQ_qUSaHjXQojd67Q" x="2869.00" y="2217.00" text="half3 normalWS"/>
+<topic id="396" parent="394" guid="dqkuIOWz2kmR36nG09OY6A" x="2876.00" y="2243.00" text="half4 shadowMask"/>
+<topic id="397" parent="390" guid="xzlJ4NVqZ0SkiwNTGF5Iog" x="2746.00" y="2272.00" text="out"/>
+<topic id="398" parent="397" x="2832.00" y="2272.00" text="void"/>
+<topic id="399" parent="390" guid="RGE1KK0JPEC3eniz943cqQ" x="2859.00" y="2301.00" collapsed="True" text="SubtractDirectMainLightFromLightmap()">
+<note>
+#if defined(_MIXED_LIGHTING_SUBTRACTIVE) &amp;&amp; defined(LIGHTMAP_ON)    bakedGI = SubtractDirectMainLightFromLightmap(light, normalWS, bakedGI);#endifhalf3 SubtractDirectMainLightFromLightmap(Light mainLight, half3 normalWS, half3 bakedGI){    //让我们尝试使实时阴影在已经包含    //烘烤的灯光和主要太阳光的阴影。    //摘要：    // 1）通过从实时阴影遮挡的位置减去估计的光贡献来计算阴影中的可能值：    // a）保留其他烘焙的灯光和反弹光    // b）消除了背向灯光的几何图形上的阴影    // 2）锁定用户定义的ShadowColor。    // 3）选择原始的光照贴图值（如果它是最暗的）。    // 1）提供良好的照明估计，就好像在烘焙过程中光线会被遮盖一样。    //我们只减去主方向灯。 这在下面的贡献期内说明。    half shadowStrength = GetMainLightShadowStrength();    half contributionTerm = saturate(dot(mainLight.direction, normalWS));    half3 lambert = mainLight.color * contributionTerm;    half3 estimatedLightContributionMaskedByInverseOfShadow = lambert * (1.0 - mainLight.shadowAttenuation);    half3 subtractedLightmap = bakedGI - estimatedLightContributionMaskedByInverseOfShadow;    // 2）允许用户定义场景的整体环境并在实时阴影变得太暗时控制情况。    half3 realtimeShadow = max(subtractedLightmap, _SubtractiveShadowColor.xyz);    realtimeShadow = lerp(bakedGI, realtimeShadow, shadowStrength);    // 3）选择最深的颜色    return min(bakedGI, realtimeShadow);}
+</note>
+</topic>
+<topic id="400" parent="399" x="3040.00" y="2301.00" text="light"/>
+<topic id="401" parent="399" guid="-cgzHwvNAk6POF-f0RrJsg" x="3040.00" y="2301.00" text="half3 normalWS"/>
+<topic id="402" parent="399" x="3040.00" y="2301.00" text="inout half3 bakedGI"/>
+<topic id="403" parent="399" guid="UOU0z3Zg5U69nCEfu4LTJg" x="3040.00" y="2301.00" text="GetMainLightShadowStrength()">
+<note>
+half shadowStrength = GetMainLightShadowStrength();// 不推荐使用：改用GetMainLightShadowParams。half GetMainLightShadowStrength(){    return _MainLightShadowData.x;}
+</note>
+</topic>
+<topic id="404" parent="316" guid="2IsgpMm5C0WyzIHGz3EAvA" x="2552.50" y="2775.00" text="3.4、GlobalIllumination()">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+全局光计算
+</note>
+</text>
+</children>
+<note>
+half3 color = GlobalIllumination(brdfData, inputData.bakedGI, occlusion, inputData.normalWS, inputData.viewDirectionWS);half3 GlobalIllumination(BRDFData brdfData, half3 bakedGI, half occlusion, half3 normalWS, half3 viewDirectionWS){    half3 reflectVector = reflect(-viewDirectionWS, normalWS);    half fresnelTerm = Pow4(1.0 - saturate(dot(normalWS, viewDirectionWS)));    half3 indirectDiffuse = bakedGI * occlusion;    half3 indirectSpecular = GlossyEnvironmentReflection(reflectVector, brdfData.perceptualRoughness, occlusion);    return EnvironmentBRDF(brdfData, indirectDiffuse, indirectSpecular, fresnelTerm);}
+</note>
+</topic>
+<topic id="405" parent="404" guid="deaN9Bn5YUGsh97V-qqqdQ" x="2705.00" y="2488.00" text="in"/>
+<topic id="406" parent="405" guid="sVItW3DQvE-jUcAin0nnrQ" x="2834.50" y="2433.00" text="结构体BRDFData"/>
+<topic id="407" parent="406" x="2988.50" y="2342.00" text="half3 diffuse"/>
+<topic id="408" parent="406" x="2994.50" y="2368.00" text="half3 specular"/>
+<topic id="409" parent="406" x="3032.50" y="2394.00" text="half perceptualRoughness"/>
+<topic id="410" parent="406" x="2996.50" y="2420.00" text="half roughness"/>
+<topic id="411" parent="406" x="3000.00" y="2446.00" text="half roughness2"/>
+<topic id="412" parent="406" x="3004.00" y="2472.00" text="half grazingTerm"/>
+<topic id="413" parent="406" x="3024.00" y="2498.00" text="half normalizationTerm"/>
+<topic id="414" parent="406" x="3031.50" y="2524.00" text="half roughness2MinusOne"/>
+<topic id="415" parent="405" guid="wcx73dgVAk2bySn9bi8JDw" x="2833.00" y="2582.00" text="结构体InputData"/>
+<topic id="416" parent="415" guid="iDhsbMXYLEaZ8tOdDlBjhQ" x="2973.50" y="2556.00" text="bakedGI"/>
+<topic id="417" parent="415" guid="K9HtnQb6TkO0e6G0A6RySw" x="2980.50" y="2582.00" text="normalWS"/>
+<topic id="418" parent="415" guid="F4wXOUjOPEOJ6zb7dMr2yA" x="3001.50" y="2608.00" text="viewDirectionWS"/>
+<topic id="419" parent="405" guid="IJUn0uxIE0SQLO8IYtexvg" x="2807.00" y="2637.00" text="occlusion"/>
+<topic id="420" parent="404" guid="xkJdBdfKREirtLQ5Nk1JYA" x="2705.00" y="2666.00" text="out"/>
+<topic id="421" parent="420" guid="DPawZnbcT0SGTG3syuOPkg" x="2810.50" y="2666.00" text="half3 color"/>
+<topic id="422" parent="404" guid="D3mGJX0vr0aBxzyA18SFNA" x="2787.50" y="2882.00" text="GlossyEnvironmentReflection()">
+<children>
+<text guid="h7o_z3yjK0y5wfJn0Ov4fg" x="0.00" y="-24.00">
+<note>
+环境球光滑反射IBL
+</note>
+</text>
+</children>
+<note>
+half3 indirectSpecular = GlossyEnvironmentReflection(reflectVector, brdfData.perceptualRoughness, occlusion);half3 GlossyEnvironmentReflection(half3 reflectVector, half perceptualRoughness, half occlusion){#if !defined(_ENVIRONMENTREFLECTIONS_OFF)    half mip = PerceptualRoughnessToMipmapLevel(perceptualRoughness);    half4 encodedIrradiance = SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectVector, mip);#if !defined(UNITY_USE_NATIVE_HDR)    half3 irradiance = DecodeHDREnvironment(encodedIrradiance, unity_SpecCube0_HDR);#else    half3 irradiance = encodedIrradiance.rbg;#endif    return irradiance * occlusion;#endif // GLOSSY_REFLECTIONS    return _GlossyEnvironmentColor.rgb * occlusion;}
+</note>
+</topic>
+<topic id="423" parent="422" guid="AWPoBiLiE0WW9E4F_dLOJw" x="2956.00" y="2724.00" text="in"/>
+<topic id="424" parent="423" guid="K1axusHgG0moyYIO8HlR8A" x="3085.50" y="2698.00" text="half3 reflectVector"/>
+<topic id="425" parent="423" guid="ihLFK7hSPEC-V5Xvpn-twQ" x="3125.50" y="2724.00" text="brdfData.perceptualRoughness"/>
+<topic id="426" parent="423" guid="osdtCuw7o0GNuEiKaTZ9Gg" x="3072.00" y="2750.00" text="half occlusion"/>
+<topic id="427" parent="422" guid="VVBLp4zaYEulcSTjlnYUIA" x="2956.00" y="2779.00" text="out"/>
+<topic id="428" parent="427" guid="BnEFUGMRRkK-pzApqOPKUA" x="3098.00" y="2779.00" text="half3 indirectSpecular"/>
+<topic id="429" parent="422" guid="j76fSIWGtkun007R9DXg3A" x="3065.50" y="2834.00" text="PerceptualRoughnessToMipmapLevel()">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+rouhgness控制
+</note>
+</text>
+</children>
+<note>
+half mip = PerceptualRoughnessToMipmapLevel(perceptualRoughness);
+</note>
+</topic>
+<topic id="430" parent="429" guid="CMxVRtCf90-zNsqpRx-8_Q" x="3261.00" y="2808.00" text="in"/>
+<topic id="431" parent="430" x="3415.50" y="2808.00" text="half perceptualRoughness"/>
+<topic id="432" parent="429" guid="euvCdcRs-EGErZM1hYDI7w" x="3261.00" y="2834.00" text="out"/>
+<topic id="433" parent="432" guid="Xz3V_VSRa0m8KJJZCw-Cig" x="3359.00" y="2834.00" text="half mip"/>
+<topic id="434" parent="422" guid="obAI7x7ElUyxwq4_mTq0Rg" x="3040.50" y="2921.00" text="SAMPLE_TEXTURECUBE_LOD()">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+Cube采样
+</note>
+</text>
+</children>
+</topic>
+<topic id="435" parent="434" guid="kJbOnsB73EKTFKoC6KsQcA" x="3211.00" y="2895.00" text="in"/>
+<topic id="436" parent="435" x="3338.00" y="2869.00" text="unity_SpecCube0"/>
+<topic id="437" parent="435" guid="ytAG0UG53Ui0F1rLLMFExg" x="3340.50" y="2895.00" text="half3 reflectVector"/>
+<topic id="438" parent="435" x="3309.00" y="2921.00" text="half mip"/>
+<topic id="439" parent="434" guid="tqnGOhWN_k-CNOGU04nMSw" x="3211.00" y="2950.00" text="out"/>
+<topic id="440" parent="439" guid="q5iTRKBUlkCh9OjHfTSZ0Q" x="3360.50" y="2950.00" text="half4 encodedIrradiance"/>
+<topic id="441" parent="422" guid="90iS7AfYmEyj4gLdUMYExA" x="3023.50" y="3024.00" text="DecodeHDREnvironment()">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+HDR环境球
+</note>
+</text>
+</children>
+</topic>
+<topic id="442" parent="441" guid="EKQilH7p7EGkZj1A9yPLhg" x="3177.00" y="2998.00" text="in"/>
+<topic id="443" parent="442" x="3326.50" y="2985.00" text="half4 encodedIrradiance"/>
+<topic id="444" parent="442" guid="4nP8J02HYkmB3VLOiz_qlQ" x="3321.00" y="3011.00" text="unity_SpecCube0_HDR"/>
+<topic id="445" parent="441" guid="-vCWhTyyqUWmYCUYclSHcg" x="3177.00" y="3040.00" text="out"/>
+<topic id="446" parent="445" guid="nqLud_I-FkiNl7UiGmri5w" x="3299.00" y="3040.00" text="half3 irradiance"/>
+<topic id="447" parent="404" guid="ZWm2rB6kTEW6jCdJueBy-g" x="2752.50" y="3130.00" text="EnvironmentBRDF()">
+<note>
+return EnvironmentBRDF(brdfData, indirectDiffuse, indirectSpecular, fresnelTerm);half3 EnvironmentBRDF(BRDFData brdfData, half3 indirectDiffuse, half3 indirectSpecular, half fresnelTerm){    half3 c = indirectDiffuse * brdfData.diffuse;    float surfaceReduction = 1.0 / (brdfData.roughness2 + 1.0);    c += surfaceReduction * indirectSpecular * lerp(brdfData.specular, brdfData.grazingTerm, fresnelTerm);    return c;}
+</note>
+</topic>
+<topic id="448" parent="447" guid="omCET0xUqkWtzdjnA0gmFA" x="2886.00" y="3117.00" text="in"/>
+<topic id="449" parent="448" x="3015.50" y="3078.00" text="结构体BRDFData"/>
+<topic id="450" parent="448" guid="VPp7gBYPqkqfSjEATbSP0A" x="3021.00" y="3104.00" text="half3 indirectDiffuse"/>
+<topic id="451" parent="448" guid="vaG53h873ESFS8mmxufxhQ" x="3028.00" y="3130.00" text="half3 indirectSpecular"/>
+<topic id="452" parent="448" x="3009.50" y="3156.00" text="half fresnelTerm"/>
+<topic id="453" parent="447" guid="kJ4t5b-n4kWIQZUuiU4Cxw" x="2886.00" y="3185.00" text="out"/>
+<topic id="454" parent="453" guid="QhqP4JJsAEygwpzFjQqEWg" x="2991.50" y="3185.00" text="half3 color"/>
+<topic id="455" parent="316" guid="VC8pN_IiRU2AumoOG338pw" x="2571.00" y="3404.00" text="3.5、LightingPhysicallyBased()">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+直接光部分
+</note>
+</text>
+</children>
+<note>
+half3 LightingPhysicallyBased(BRDFData brdfData, half3 lightColor, half3 lightDirectionWS, half lightAttenuation, half3 normalWS, half3 viewDirectionWS){    half NdotL = saturate(dot(normalWS, lightDirectionWS));    half3 radiance = lightColor * (lightAttenuation * NdotL);    return DirectBDRF(brdfData, normalWS, lightDirectionWS, viewDirectionWS) * radiance;}half3 LightingPhysicallyBased(BRDFData brdfData, Light light, half3 normalWS, half3 viewDirectionWS){    return LightingPhysicallyBased(brdfData, light.color, light.direction, light.distanceAttenuation * light.shadowAttenuation, normalWS, viewDirectionWS);}
+</note>
+</topic>
+<topic id="456" parent="455" guid="BzZG_6w4S06n8VAQEr_zPw" x="2742.00" y="3307.00" text="in"/>
+<topic id="457" parent="456" guid="XGQaZqJWtEqXI-HDAqDURQ" x="2871.50" y="3223.00" text="结构体BRDFData"/>
+<topic id="458" parent="457" x="3014.00" y="3223.00" text="brdfData"/>
+<topic id="459" parent="456" guid="fOW8mNsw40uBgskoS4ihCg" x="2855.50" y="3291.00" text="结构体Light"/>
+<topic id="460" parent="459" guid="bXTYHVwNGUuh1qXpB1BQpw" x="2987.00" y="3291.00" text="mainLight"/>
+<topic id="461" parent="460" guid="zg0wOTHd4kC8DGlTIS2VnQ" x="3109.00" y="3252.00" text="light.color"/>
+<topic id="462" parent="460" guid="OwzEzfes80mz8UzQDsoEGg" x="3121.00" y="3278.00" text="light.direction"/>
+<topic id="463" parent="460" guid="fIgsyLuDPUiRdrd-sUK9bg" x="3156.00" y="3304.00" text="light.distanceAttenuation"/>
+<topic id="464" parent="460" guid="Y2I9mv1-tkqO1zS8qwsKhQ" x="3154.00" y="3330.00" text="light.shadowAttenuation"/>
+<topic id="465" parent="456" guid="CEyX5w8-rE2fCvrlQ25U6w" x="2870.00" y="3375.00" text="结构体InputData"/>
+<topic id="466" parent="465" guid="6LhWIcYLvEG7z7Zj0qRz-Q" x="3035.00" y="3362.00" text="half3 normalWS"/>
+<topic id="467" parent="465" guid="idv2kVhDcECKDswkaTs_kA" x="3056.00" y="3388.00" text="half3 viewDirectionWS"/>
+<topic id="468" parent="455" guid="itF3dECVtEqkkCI2YNRnzQ" x="2742.00" y="3420.00" text="out"/>
+<topic id="469" parent="468" x="2847.50" y="3420.00" text="half3 color"/>
+<topic id="470" parent="455" guid="epJ8t5Ab9k2qBojAolNB_Q" x="2778.50" y="3517.00" text="DirectBDRF()">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+BRDF公式说明
+</note>
+</text>
+</children>
+<note>
+//基于极简主义的CookTorrance BRDF//实现与原始推导略有不同：http://www.thetenthplanet.de/archives/255// * NDF [修改] GGX// *修改了Kelemen和Szirmay-Kalos的可见度术语// *菲涅耳近似为1 / LdotHhalf3 DirectBDRF(BRDFData brdfData, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS){#ifndef _SPECULARHIGHLIGHTS_OFF    float3 halfDir = SafeNormalize(float3(lightDirectionWS) + float3(viewDirectionWS));    float NoH = saturate(dot(normalWS, halfDir));    half LoH = saturate(dot(lightDirectionWS, halfDir));    // GGX分布乘以可见性和菲涅耳组合近似    // BRDFspec =（D * V * F）/ 4.0    // D =roughness^ 2 / /（NoH ^ 2 *（roughness^ 2-1-1）+1）^ 2    // V * F = 1.0 /（LoH ^ 2 *（roughness+ 0.5））    //请参阅Siggraph 2015移动移动图形课程中的“优化移动PBR”    // https://community.arm.com/events/1155    //最终的BRDFspec =roughness^ 2 / /（NoH ^ 2 *（roughness2-1-1）+ 1）^ 2 *（LoH ^ 2 *（roughness+ 0.5）* 4.0）    //我们进一步优化了一些轻不变项    // brdfData.normalizationTerm =（roughness+ 0.5）* 4.0改写为roughness* 4.0 + 2.0以适合MAD。    float d = NoH * NoH * brdfData.roughness2MinusOne + 1.00001f;    half LoH2 = LoH * LoH;    half specularTerm = brdfData.roughness2 / ((d * d) * max(0.1h, LoH2) * brdfData.normalizationTerm);    //在一半实际上意味着某物的平台上，分母有溢出的风险    //下面的钳位是专门为“修复”而添加的，但是dx编译器（我们将字节码转换为metal / gles）    //看到 specularTerm 仅具有非负项，因此它在钳位中跳过 max（0，..）（仅保留min（100，...））#if defined (SHADER_API_MOBILE) || defined (SHADER_API_SWITCH)    specularTerm = specularTerm - HALF_MIN;    specularTerm = clamp(specularTerm, 0.0, 100.0); //防止FP16在手机上溢出#endif    half3 color = specularTerm * brdfData.specular + brdfData.diffuse;    return color;#else    return brdfData.diffuse;#endif}
+</note>
+</topic>
+<topic id="471" parent="470" guid="m15OHRIsb0mQUmeloKQA3g" x="2901.00" y="3491.00" text="in"/>
+<topic id="472" parent="471" x="3030.50" y="3452.00" text="结构体BRDFData"/>
+<topic id="473" parent="471" x="3024.00" y="3478.00" text="half3 normalWS"/>
+<topic id="474" parent="471" guid="vLxUzxSrUEOxM_sT_3b-fg" x="3044.00" y="3504.00" text="half3 lightDirectionWS"/>
+<topic id="475" parent="471" x="3045.00" y="3530.00" text="half3 viewDirectionWS"/>
+<topic id="476" parent="470" guid="gWgYhd6gSkyAHEKA8OYJhg" x="2901.00" y="3559.00" text="out"/>
+<topic id="477" parent="476" x="2988.50" y="3559.00" text="half3"/>
+<topic id="478" parent="316" guid="BRYWqD6FoE2cHFhisaVEIQ" x="2574.50" y="3733.00" text="3.6、GetAdditionalLightsCount()">
+<children>
+<text x="0.00" y="-24.00">
+<note>
+多光源项
+</note>
+</text>
+</children>
+<note>
+color += LightingPhysicallyBased(brdfData, mainLight, inputData.normalWS, inputData.viewDirectionWS);
+</note>
+</topic>
+<topic id="479" parent="478" guid="YJ3Mok6-sUqrvrIno3oDOw" x="2749.00" y="3610.00" text="in"/>
+<topic id="480" parent="479" guid="-ORTf6QSpUqFREzav14_QA" x="2867.00" y="3597.00" text="uint lightIndex">
+<parent-relation guid="bUwt78GMqEG_yYqJm7dvpQ"/>
+</topic>
+<topic id="481" parent="479" guid="C7Xv7tB4DU6o3TyCB7fRIw" x="2877.00" y="3623.00" text="结构体InputData"/>
+<topic id="482" parent="481" x="3027.00" y="3623.00" text="positionWS"/>
+<topic id="483" parent="478" guid="RxPhjQHIc0yJ59fLZItGiw" x="2749.00" y="3652.00" text="out"/>
+<topic id="484" parent="483" x="2853.00" y="3652.00" text="Light light"/>
+<topic id="485" parent="478" guid="llslGi_uvkKkgE7m0OSSGg" x="2815.50" y="3694.00" text="GetPerObjectLightIndex()">
+<note>
+int perObjectLightIndex = GetPerObjectLightIndex(i);//返回给定循环索引的每个对象的索引。//这抽象了用于存储灯光/灯光索引的基础数据实现int GetPerObjectLightIndex(uint index){///////////////////////////////////////////////////////////////////////////////////////////////结构化缓冲区路径/// ///灯光和灯光索引存储在StructuredBuffer中。 我们可以索引它们。 ///当前所有非移动平台都采用此路径:( ///移动GPU中使用SSBO受到限制（性能/不支持顶点着色器） //////////////////////////////////////////////////////////////////////////////////////////////#if USE_STRUCTURED_BUFFER_FOR_LIGHT_DATA    uint offset = unity_LightData.x;    return _AdditionalLightsIndices[offset + index];/////////////////////////////////////////////////////////////////////////////////////////////// UBO路径/// ///我们在float4 unity_LightIndices [2]中存储8个光照索引。 ///由于内存对齐，Unity不支持int []或float [] ///即使尝试重新解释将unity_LightIndices强制转换为float []也不起作用///它将强制转换为float4 []并创建额外的寄存器压力。 :(                    //////////////////////////////////////////////////////////////////////////////////////////////#elif !defined(SHADER_API_GLES)    //因为索引是uint着色器，编译器将实现    // div和mod作为位域操作（移位和屏蔽）。    // TODO：我们可以索引float4吗？ 当前编译器是    //用具有单位矩阵的dp4替换unity_LightIndicesX [i]。    // u_xlat16_40 = dot（unity_LightIndices [int（u_xlatu13）]，ImmCB_0_0_0 [u_xlati1]）;;    //这会增加算术压力和寄存器压力。    return unity_LightIndices[index / 4][index % 4];#else    //回退到GLES2。 这里没有位域魔术:(。    //我们将每个对象限制为4个索引，并且仅采样unity_4LightIndices0。    //即使在Mali-400上，条件移动也没有分支    //算术开销很小，但没有来自ImmCB_0_0_0矩阵的额外寄存器压力。    half2 lightIndex2 = (index &lt; 2.0h) ? unity_LightIndices[0].xy : unity_LightIndices[0].zw;    half i_rem = (index &lt; 2.0h) ? index : index - 2.0h;    return (i_rem &lt; 1.0h) ? lightIndex2.x : lightIndex2.y;#endif}
+</note>
+</topic>
+<topic id="486" parent="485" guid="dxrZncEM_UuhFi7YzJQ_cg" x="2968.00" y="3681.00" text="in"/>
+<topic id="487" parent="486" guid="rl3DyuiQZ0ShXbHl4xyPhw" x="3056.00" y="3681.00" text="uint i"/>
+<topic id="488" parent="485" guid="NYUXngkLakCEVd1KwwkCQw" x="2968.00" y="3707.00" text="out"/>
+<topic id="489" parent="488" guid="a85BzLU7DU-62E8URE8Itg" x="3115.00" y="3707.00" text="int perObjectLightIndex"/>
+<topic id="490" parent="478" guid="ZEnBH9m5u0eJpWJnR2Eerw" x="2830.00" y="3791.00" text="GetAdditionalPerObjectLight()">
+<note>
+return GetAdditionalPerObjectLight(perObjectLightIndex, positionWS);Light GetAdditionalPerObjectLight(int perObjectLightIndex, float3 positionWS){    // 光输入常量的抽象#if USE_STRUCTURED_BUFFER_FOR_LIGHT_DATA    float4 lightPositionWS = _AdditionalLightsBuffer[perObjectLightIndex].position;    half3 color = _AdditionalLightsBuffer[perObjectLightIndex].color.rgb;    half4 distanceAndSpotAttenuation = _AdditionalLightsBuffer[perObjectLightIndex].attenuation;    half4 spotDirection = _AdditionalLightsBuffer[perObjectLightIndex].spotDirection;    half4 lightOcclusionProbeInfo = _AdditionalLightsBuffer[perObjectLightIndex].occlusionProbeChannels;#else    float4 lightPositionWS = _AdditionalLightsPosition[perObjectLightIndex];    half3 color = _AdditionalLightsColor[perObjectLightIndex].rgb;    half4 distanceAndSpotAttenuation = _AdditionalLightsAttenuation[perObjectLightIndex];    half4 spotDirection = _AdditionalLightsSpotDir[perObjectLightIndex];    half4 lightOcclusionProbeInfo = _AdditionalLightsOcclusionProbes[perObjectLightIndex];#endif    //方向灯将方向存储在lightPosition.xyz中，并将.w设置为0.0。    //这样，以下代码将同时适用于定向灯和准时灯。    float3 lightVector = lightPositionWS.xyz - positionWS * lightPositionWS.w;    float distanceSqr = max(dot(lightVector, lightVector), HALF_MIN);    half3 lightDirection = half3(lightVector * rsqrt(distanceSqr));    half attenuation = DistanceAttenuation(distanceSqr, distanceAndSpotAttenuation.xy) * AngleAttenuation(spotDirection.xyz, lightDirection, distanceAndSpotAttenuation.zw);    Light light;    light.direction = lightDirection;    light.distanceAttenuation = attenuation;    light.shadowAttenuation = AdditionalLightRealtimeShadow(perObjectLightIndex, positionWS);    light.color = color;    //如果我们使用光探头，则可以从ʻunity_ProbesOcclusion`中采样衰减#if defined(LIGHTMAP_ON) || defined(_MIXED_LIGHTING_SUBTRACTIVE)    //首先从灯光中找到探测通道。    //然后对ʻunity_ProbesOcclusion`进行采样以获取烘焙的遮挡。    //如果不进行烘焙，则通道为-1，我们不需要应用任何遮挡。    // probeChannel是&apos;unity_ProbesOcclusion&apos;中的索引，其中包含正确的遮挡值。    int probeChannel = lightOcclusionProbeInfo.x;    // 如果我们确实在使用探针，则将lightProbeContribution设置为0，否则设置为1。    half lightProbeContribution = lightOcclusionProbeInfo.y;    half probeOcclusionValue = unity_ProbesOcclusion[probeChannel];    light.distanceAttenuation *= max(probeOcclusionValue, lightProbeContribution);#endif    return light;}
+</note>
+</topic>
+<topic id="491" parent="490" guid="LkwWvX3A7kCRPDILqDY0nQ" x="2997.00" y="3739.00" text="in"/>
+<topic id="492" parent="491" x="3144.00" y="3739.00" text="int perObjectLightIndex"/>
+<topic id="493" parent="490" guid="rQBCchaFJkKuDTy7wIoGRQ" x="2997.00" y="3765.00" text="out"/>
+<topic id="494" parent="493" x="3124.50" y="3765.00" text="float3 positionWS"/>
+<topic id="495" parent="490" guid="B7L-X0En0ECjIdPCdhDTKA" x="3050.50" y="3791.00" text="DistanceAttenuation()"/>
+<topic id="496" parent="490" guid="JTbqqvvnHkyMdGNMeT6W0Q" x="3042.00" y="3817.00" text="AngleAttenuation()"/>
+<topic id="497" parent="490" guid="Vqsr1XljFk-hg5N4fYujLg" x="3090.00" y="3843.00" text="AdditionalLightRealtimeShadow()"/>
+<topic id="498" parent="138" guid="V_SCDKfhlkWN9R0GCCGgdg" x="2244.00" y="3997.00" palette="8" colorinfo="8" text="4、MixFog()">
+<note>
+real ComputeFogIntensity(real fogFactor){    real fogIntensity = 0.0h;#if defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2)#if defined(FOG_EXP)    // factor = exp(-density*z)    // fogFactor = density*z compute at vertex    fogIntensity = saturate(exp2(-fogFactor));#elif defined(FOG_EXP2)    // factor = exp(-(density*z)^2)    // fogFactor = density*z compute at vertex    fogIntensity = saturate(exp2(-fogFactor * fogFactor));#elif defined(FOG_LINEAR)    fogIntensity = fogFactor;#endif#endif    return fogIntensity;}half3 MixFogColor(real3 fragColor, real3 fogColor, real fogFactor){#if defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2)    real fogIntensity = ComputeFogIntensity(fogFactor);    fragColor = lerp(fogColor, fragColor, fogIntensity);#endif    return fragColor;}half3 MixFog(real3 fragColor, real fogFactor){    return MixFogColor(fragColor, unity_FogColor.rgb, fogFactor);}
+</note>
+</topic>
+<topic id="499" parent="498" guid="tpCun-KPKkilgyDmREZGcg" x="2362.00" y="3897.00" text="in"/>
+<topic id="500" parent="499" guid="Ki6-j3bESkOYZremIJEvKQ" x="2481.50" y="3884.00" text="real3 fragColor"/>
+<topic id="501" parent="499" guid="Izaf7hHaP0WWDRqPhENd1w" x="2478.50" y="3910.00" text="real fogFactor"/>
+<topic id="502" parent="498" guid="bnbSalAstECXP4V7VAK2zA" x="2362.00" y="3939.00" text="out"/>
+<topic id="503" parent="502" x="2449.50" y="3939.00" text="half3"/>
+<topic id="504" parent="498" guid="aSN-JpnZEkGW-71wSq0vkw" x="2392.50" y="4039.00" text="MixFogColor()"/>
+<topic id="505" parent="504" guid="PfjOW9e_sUuAzHR9rFT8Iw" x="2509.00" y="3997.00" text="in"/>
+<topic id="506" parent="505" x="2628.50" y="3971.00" text="real3 fragColor"/>
+<topic id="507" parent="505" guid="X4xiV68O0EGNwWMoUAwLUw" x="2643.00" y="3997.00" text=" unity_FogColor.rgb"/>
+<topic id="508" parent="505" x="2625.50" y="4023.00" text="real fogFactor"/>
+<topic id="509" parent="504" x="2509.00" y="4052.00" text="out"/>
+<topic id="510" parent="509" x="2596.50" y="4052.00" text="half3"/>
+<topic id="511" parent="504" guid="Gxxd4fScykayqQWRyoRbHg" x="2566.00" y="4094.00" text="ComputeFogIntensity()"/>
+<topic id="512" parent="511" guid="_x_kPHUfTkeOikEmQfiHMA" x="2709.00" y="4081.00" text="in"/>
+<topic id="513" parent="512" guid="X2_mv4Sq5EeD5D92J46gqA" x="2825.50" y="4081.00" text="real fogFactor"/>
+<topic id="514" parent="511" guid="WdW0wU-fNE6BKBRqyTZPsA" x="2709.00" y="4107.00" text="out"/>
+<topic id="515" parent="514" x="2832.00" y="4107.00" text="real fogIntensity"/>
+<topic id="516" parent="-1" guid="xxOTDKaVvkeyDoh66IAEzg" x="246.00" y="868.00" layout="strict-horizontal" layout-direction="right" palette="1" colorinfo="1" text="URP新方法"/>
+<topic id="517" parent="516" guid="Dehkl-HyxESvZ_doJc5HWw" x="432.50" y="795.50" palette="2" colorinfo="2" text="TEXTURE2D_ARGS"/>
+<topic id="518" parent="516" guid="VLTCxdzDpEeQteQ-bilMbA" x="438.00" y="824.50" palette="3" colorinfo="3" text="TEXTURE2D_PARAM"/>
+<topic id="519" parent="516" guid="BTKGZhQqXk6imzBEEDWBog" x="443.00" y="853.50" palette="4" colorinfo="4" text="SAMPLE_TEXTURE2D"/>
+<topic id="520" parent="516" guid="FMj9UpmwVUmFOu0v5CENEw" x="451.50" y="882.50" text="TransformObjectToWorld"/>
+<topic id="521" parent="516" guid="h4iin2WGUUSt5fBN-Wkwww" x="445.50" y="911.50" text="TransformWorldToView"/>
+<topic id="522" parent="516" guid="Tf39s3smYkKHGJ6LZxEVYg" x="448.00" y="940.50" text="TransformWorldToHClip"/>
+<topic id="523" parent="-1" guid="d8ZLWxXnDUq33co_2u_9bQ" x="-540.00" y="900.00" layout="strict-horizontal" layout-direction="right" palette="1" colorinfo="1" text="循环操作"/>
+<topic id="524" parent="-1" guid="2aeEf6e1GkmnHwFESirbXA" x="-391.82" y="795.45" layout="strict-horizontal" layout-direction="right" palette="1" colorinfo="1" text="顶点着色器"/>
+<topic id="525" parent="524" x="-225.32" y="795.45" palette="2" colorinfo="2" text="ClipSpace运算"/>
+<topic id="526" parent="-1" guid="lmwS_xzdPUWSUZulzbCjSA" x="-391.82" y="715.45" layout="strict-horizontal" layout-direction="right" palette="1" colorinfo="1" text="输入结构体"/>
+<topic id="527" parent="526" guid="xCyLPHCjHkmZqQ1Q8eTz5g" x="-218.82" y="715.45" palette="2" colorinfo="2" collapsed="True" text="结构体Attributes">
+<note>
+struct Attributes{    float4 positionOS   : POSITION;    float3 normalOS     : NORMAL;    float4 tangentOS    : TANGENT;    float2 texcoord     : TEXCOORD0;    float2 lightmapUV   : TEXCOORD1;    UNITY_VERTEX_INPUT_INSTANCE_ID};
+</note>
+</topic>
+<topic id="528" parent="527" x="-102.32" y="715.45" text="float4 positionOS"/>
+<topic id="529" parent="527" x="-102.32" y="715.45" text="float3 normalOS"/>
+<topic id="530" parent="527" x="-102.32" y="715.45" text="float4 tangentOS"/>
+<topic id="531" parent="527" x="-102.32" y="715.45" text="float2 texcoord"/>
+<topic id="532" parent="527" x="-102.32" y="715.45" text="float2 lightmapUV"/>
+<topic id="533" parent="-1" guid="wmmIXDugMkWtD7R49Zvzcw" x="-391.82" y="855.45" layout="strict-horizontal" layout-direction="right" palette="1" colorinfo="1" text="输出结构体"/>
+<topic id="534" parent="533" guid="kfK4mnHQakCz_9kruWDS_g" x="-222.32" y="855.45" palette="2" colorinfo="2" collapsed="True" text="结构体Varyings">
+<note>
+struct Varyings{    float2 uv                       : TEXCOORD0;    DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 1);#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)    float3 positionWS               : TEXCOORD2;#endif#ifdef _NORMALMAP    float4 normalWS                 : TEXCOORD3;    // xyz: normal, w: viewDir.x    float4 tangentWS                : TEXCOORD4;    // xyz: tangent, w: viewDir.y    float4 bitangentWS              : TEXCOORD5;    // xyz: bitangent, w: viewDir.z#else    float3 normalWS                 : TEXCOORD3;    float3 viewDirWS                : TEXCOORD4;#endif    half4 fogFactorAndVertexLight   : TEXCOORD6; // x: fogFactor, yzw: vertex light#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)    float4 shadowCoord              : TEXCOORD7;#endif    float4 positionCS               : SV_POSITION;    UNITY_VERTEX_INPUT_INSTANCE_ID    UNITY_VERTEX_OUTPUT_STEREO};
+</note>
+</topic>
+<topic id="535" parent="534" x="-109.32" y="855.45" text="float2 uv"/>
+<topic id="536" parent="534" x="-109.32" y="855.45" text="DECLARE_LIGHTMAP_OR_SH()">
+<note>
+#ifdef LIGHTMAP_ON    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) float2 lmName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT) OUT.xy = lightmapUV.xy * lightmapScaleOffset.xy + lightmapScaleOffset.zw;    #define OUTPUT_SH(normalWS, OUT)#else    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) half3 shName : TEXCOORD##index    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT)    #define OUTPUT_SH(normalWS, OUT) OUT.xyz = SampleSHVertex(normalWS)#endif
+</note>
+</topic>
+<topic id="537" parent="536" x="-59.32" y="855.45" text="lightmapUV"/>
+<topic id="538" parent="534" x="-109.32" y="855.45" text="float3 positionWS"/>
+<topic id="539" parent="534" x="-109.32" y="855.45" text="float4 normalWS"/>
+<topic id="540" parent="534" x="-109.32" y="855.45" text="float4 tangentWS"/>
+<topic id="541" parent="534" x="-109.32" y="855.45" text="float4 bitangentWS"/>
+<topic id="542" parent="534" x="-109.32" y="855.45" text="float3 viewDirWS"/>
+<topic id="543" parent="534" x="-109.32" y="855.45" text="half4 fogFactorAndVertexLight"/>
+<topic id="544" parent="534" x="-109.32" y="855.45" text="float4 shadowCoord"/>
+<topic id="545" parent="534" x="-109.32" y="855.45" text="float4 positionCS"/>
+<topic id="546" parent="-1" guid="2yfEE7NfEUe5tTSoyJvzxA" x="-391.82" y="975.45" layout="strict-horizontal" layout-direction="right" palette="1" colorinfo="1" text="像素着色器"/>
+<topic id="547" parent="-1" guid="iL62kUTr6k6ggchECXfcoQ" x="-391.82" y="1120.00" palette="1" colorinfo="1" text="输出最终颜色"/>
+<topic id="548" parent="-1" guid="it9MblYT50COV8DZjhRyIA" x="1530.50" y="378.00" text="if _NORMALMAP"/>
+<topic id="549" parent="548" x="1704.67" y="375.33" text="else"/>
+<topic id="550" parent="-1" guid="SyWUgYl0HUyY932jU0DuaQ" x="740.00" y="1282.00" text="输出"/>
+<topic id="551" parent="-1" guid="SdprXP0xzkqw99JFZVwe8Q" x="200.00" y="1273.00" layout="strict-horizontal" layout-direction="right" text="vertex function"/>
+<topic id="552" parent="551" guid="pQYu2_njf02zsZzKN_UGRw" x="346.50" y="1273.00" text="输入"/>
+<topic id="553" parent="552" guid="_5Kx-flIyECdtGVJXxH4WA" x="491.50" y="1182.00" text="打包 法线数据输入"/>
+<topic id="554" parent="552" guid="3HvYnL-uWEuTwG2LUD6AwA" x="491.50" y="1208.00" text="打包 顶点数据输入"/>
+<topic id="555" parent="552" guid="xqIta54LkEKy_4WqRvy2Iw" x="447.50" y="1234.00" text="UV信息"/>
+<topic id="556" parent="552" guid="TL-O2TfYuUqRfGc6dro-kg" x="464.00" y="1260.00" text="相机视向量"/>
+<topic id="557" parent="552" guid="hJEo1F2TF0Surw00-wI1Wg" x="464.00" y="1286.00" text="灯光和雾气"/>
+<topic id="558" parent="552" guid="lah6wQ9dJEWawqlBdAZzUQ" x="498.00" y="1312.00" text="顶点转到世界的坐标"/>
+<topic id="559" parent="552" guid="aqcMGcpKmUyKDQnq-bleLw" x="438.50" y="1338.00" text="阴影"/>
+<topic id="560" parent="552" guid="VWpROztQPEq20c_u_r3JKw" x="503.50" y="1364.00" text="顶点到裁剪空间clippos"/>
+<topic id="561" parent="-1" guid="Gt137I1ucEm2ZibhvR8alA" x="1913.85" y="1166.00" text="初始化表面数据信息SurfaceData"/>
+<topic id="562" parent="-1" guid="Q_3klXFVJUyfFITsYMvKaw" x="1913.85" y="1220.00" text="初始化顶点传递过来的数据信息InputData"/>
+<topic id="563" parent="-1" guid="YejAKqtPQ0SzBVWX3S1ocQ" x="1913.85" y="1280.00" text="UniversalFragmentPBR"/>
+<topic id="564" parent="-1" guid="0htyu9NXbUC7CgqVsINsyw" x="1913.85" y="1397.00" text="最终color"/>
+<topic id="565" parent="-1" guid="KcVdlgc5OkKLmyb0PaORug" x="1913.85" y="1340.00" text="雾气"/>
+</topics>
+<relations>
+<relation guid="j5DNcfkc2Um-YdlJAJNndA" source="33" target="53">
+<path>
+<custom-point x="218.92" y="7.83"/>
+</path>
+</relation>
+<relation guid="YzRUhK1TNEaGrz7888qtPA" source="46" target="55">
+<path>
+<custom-point x="74.25" y="27.00"/>
+</path>
+</relation>
+<relation guid="DWwyEXyk50-2NXI7uBQlOw" source="55" target="65">
+<path>
+<custom-point x="110.50" y="11.17"/>
+</path>
+</relation>
+<relation guid="diwJRFLik0KpbvAejQrDyg" source="164" target="151">
+<path>
+<custom-point x="48.71" y="17.57"/>
+</path>
+</relation>
+<relation guid="sOUKVFYf3kmJgf8VylMeHA" source="240" target="226">
+<path>
+<custom-point x="-36.75" y="44.46"/>
+</path>
+</relation>
+<relation guid="IV06xhxJWUiF_1m73YgrpA" source="226" target="318"/>
+<relation guid="w-HtFzgpMEKgSw_KTsT38w" source="433" target="438">
+<path>
+<custom-point x="115.83" y="25.17"/>
+</path>
+</relation>
+<relation source="526" target="524"/>
+<relation source="524" target="533"/>
+<relation source="533" target="546"/>
+<relation source="546" target="547"/>
+<relation source="19" target="548"/>
+<relation source="20" target="548"/>
+<relation source="21" target="548"/>
+<relation guid="DD-eaNfxUUuOG2mo5TFCRw" source="19" target="549">
+<path>
+<custom-point x="0.42" y="-15.00"/>
+</path>
+</relation>
+<relation guid="OACIb59PUk-TcFGF4sBeHg" source="22" target="549">
+<path>
+<custom-point x="59.00" y="11.33"/>
+</path>
+</relation>
+<relation guid="0bTEean8SUyY_BLmCaeifg" source="553" target="550">
+<path>
+<custom-point x="54.50" y="4.83"/>
+</path>
+</relation>
+<relation guid="ETEjH_-nX0-5AARY-P10yA" source="554" target="550">
+<path>
+<custom-point x="41.17" y="4.33"/>
+</path>
+</relation>
+<relation source="557" target="550"/>
+<relation source="558" target="550"/>
+<relation guid="6l5_UjxmWkGbcSFLR75CQA" source="559" target="550">
+<path>
+<custom-point x="31.67" y="16.33"/>
+</path>
+</relation>
+<relation guid="3LZ1xo2LBkOun_krk1HZvQ" source="560" target="550">
+<path>
+<custom-point x="35.75" y="22.50"/>
+</path>
+</relation>
+<relation source="555" target="550"/>
+<relation guid="-YXw3ShVu06F4-XF5USJ-Q" source="556" target="550">
+<path>
+<custom-point x="-52.00" y="-5.42"/>
+</path>
+</relation>
+<relation source="561" target="562"/>
+<relation source="562" target="563"/>
+<relation source="563" target="565"/>
+<relation source="565" target="564"/>
+<relation source="138" target="561"/>
+<relation guid="uXpR47e-10KNAvJST4qyjw" source="346" target="329">
+<path>
+<custom-point x="-66.56" y="43.46"/>
+</path>
+</relation>
+<relation source="440" target="443"/>
+<relation guid="E7W3Rr-l0UqD6VTh0mv1BQ" source="263" target="233">
+<path>
+<custom-point x="251.17" y="-30.17"/>
+</path>
+</relation>
+</relations>
+</mindmap>
+</simplemind-mindmaps>

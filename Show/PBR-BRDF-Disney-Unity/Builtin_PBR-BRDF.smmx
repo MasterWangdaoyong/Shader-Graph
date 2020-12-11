@@ -1,0 +1,825 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE simplemind-mindmaps>
+<simplemind-mindmaps generator="SimpleMindWin32" gen-version="1.15.0" doc-version="3">
+<mindmap>
+<meta>
+<guid guid="A8BCFE5F39334BA0846D3FEC1ED30992"/>
+<title text="Builtin_PBR-BRDF" customized="True"/>
+<style key="system.natural-gray-scale"/>
+<auto-numbering style="disabled"/>
+<scrollstate zoom="25" x="-448" y="-198"/>
+<main-centraltheme id="0"/>
+</meta>
+<topics>
+<topic id="0" parent="-1" guid="H21j94Kmhk6x3LyCMbLs-Q" x="240.00" y="80.00" layout="strict-horizontal" palette="1" colorinfo="1" text="PBR-BRDF"/>
+<topic id="1" parent="-1" guid="gkWWMMV-zkiXutvVRFXF-A" x="104.50" y="80.00" palette="1" colorinfo="1" text="20201018"/>
+<topic id="2" parent="-1" guid="BImzdFoj60SIsPYXPG98JA" x="884.50" y="640.00" layout="top-down" palette="1" colorinfo="1" text="vertBase"/>
+<topic id="3" parent="2" guid="06s_m1V6wEKQVa35joialA" x="400.00" y="725.50" text="输入结构体VertexInput">
+<note>
+struct VertexInput //1.00{    float4 vertex   : POSITION;     half3 normal    : NORMAL;    float2 uv0      : TEXCOORD0;    float2 uv1      : TEXCOORD1;    #if defined(DYNAMICLIGHTMAP_ON) || defined(UNITY_PASS_META)        float2 uv2      : TEXCOORD2;     #endif    #ifdef _TANGENT_TO_WORLD        half4 tangent   : TANGENT;     #endif    UNITY_VERTEX_INPUT_INSTANCE_ID };
+</note>
+</topic>
+<topic id="4" parent="3" guid="CKiy0wKvyk2EPlSrTLLPOQ" x="383.50" y="753.00" text="float4 vertex"/>
+<topic id="5" parent="3" guid="Sa_E4hSqNkCUKpuwuADaHQ" x="386.00" y="779.00" text="half3  normal"/>
+<topic id="6" parent="3" guid="GDSd-Ud3l0CEWjQljqaUPQ" x="374.50" y="805.00" text="float2 uv0"/>
+<topic id="7" parent="3" guid="2odwYyUyZUCQhpbdpTgvjA" x="374.50" y="831.00" text="float2 uv1"/>
+<topic id="8" parent="3" guid="lfFM9HuPRk2cWkZUuDHq0A" x="374.50" y="857.00" text="float2 uv2"/>
+<topic id="9" parent="3" x="385.50" y="883.00" text="half4 tangent"/>
+<topic id="10" parent="2" guid="ZK-HyX5qhE6a4I-FRxP9Sw" x="622.50" y="725.50" palette="4" colorinfo="4" text="顶点着色器vertForwardBase">
+<note>
+VertexOutputForwardBase vertForwardBase (VertexInput v) //顶点着色器{    //输入 VertexInput     //输出 VertexOutputForwardBase     UNITY_SETUP_INSTANCE_ID(v);     VertexOutputForwardBase o;    UNITY_INITIALIZE_OUTPUT(VertexOutputForwardBase, o);    UNITY_TRANSFER_INSTANCE_ID(v, o);    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o); //VR    //GPU instance    float4 posWorld = mul(unity_ObjectToWorld, v.vertex);    #if UNITY_REQUIRE_FRAG_WORLDPOS    //如果片元要记录它在世界空间中的坐标            #if UNITY_PACK_WORLDPOS_WITH_TANGENT        //使用法线和高度视差效果时，需要切线矩阵        //寄存在矩阵W项中            o.tangentToWorldAndPackedData[0].w = posWorld.x;            o.tangentToWorldAndPackedData[1].w = posWorld.y;            o.tangentToWorldAndPackedData[2].w = posWorld.z;        #else            o.posWorld = posWorld.xyz;            //否则直接寄存在posworld寄存插槽中        #endif    #endif    o.pos = UnityObjectToClipPos(v.vertex);    //裁剪变换    o.tex = TexCoords(v);    o.eyeVec.xyz = NormalizePerVertexNormal(posWorld.xyz - _WorldSpaceCameraPos);    // _WorldSpaceCameraPos相机坐标    // 单位化片元到相机连线向量    float3 normalWorld = UnityObjectToWorldNormal(v.normal);    //顶点法线（非法线图）变换到世界空间    #ifdef _TANGENT_TO_WORLD    //如果定义 切线到世界        float4 tangentWorld = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);        //切线判断        float3x3 tangentToWorld = CreateTangentToWorldPerVertex(normalWorld, tangentWorld.xyz, tangentWorld.w);//1.3        //构建切线空间到世界空间 变换矩阵        o.tangentToWorldAndPackedData[0].xyz = tangentToWorld[0];        o.tangentToWorldAndPackedData[1].xyz = tangentToWorld[1];        o.tangentToWorldAndPackedData[2].xyz = tangentToWorld[2];    #else    //否则        o.tangentToWorldAndPackedData[0].xyz = 0;        o.tangentToWorldAndPackedData[1].xyz = 0;        o.tangentToWorldAndPackedData[2].xyz = normalWorld;        //只存顶点法线在世空间下的信息    #endif    //接收阴影 内含不同的判断     UNITY_TRANSFER_LIGHTING(o, v.uv1); //阴影    o.ambientOrLightmapUV = VertexGIForward(v, posWorld, normalWorld); //1.5    //顶点着色器内的顶点灯光计算    #ifdef _PARALLAXMAP//曲面细分 视差效果 略过（端游才用得上）        TANGENT_SPACE_ROTATION;        half3 viewDirForParallax = mul (rotation, ObjSpaceViewDir(v.vertex));        o.tangentToWorldAndPackedData[0].w = viewDirForParallax.x;        o.tangentToWorldAndPackedData[1].w = viewDirForParallax.y;        o.tangentToWorldAndPackedData[2].w = viewDirForParallax.z;    #endif    UNITY_TRANSFER_FOG_COMBINED_WITH_EYE_VEC(o,o.pos);    //fog 项 雾效    return o;}
+</note>
+</topic>
+<topic id="11" parent="10" guid="Oq2vnYktVEKxF8YPOZ-uPg" x="597.00" y="753.00" text="1、TexCoords(v)">
+<note>
+float4 TexCoords(VertexInput v) //1.1{    float4 texcoord;    texcoord.xy = TRANSFORM_TEX(v.uv0, _MainTex); // Always source from uv0    //UV0 主贴图纹理    texcoord.zw = TRANSFORM_TEX(((_UVSec == 0) ? v.uv0 : v.uv1), _DetailAlbedoMap);    //detail 纹理 经过面板选择用uv0 还是uv1    return texcoord;}
+</note>
+</topic>
+<topic id="12" parent="11" guid="dr_vxnCXpkKPfDj7uraZ6A" x="588.00" y="779.00" text="in"/>
+<topic id="13" parent="12" guid="7s1Y8FyfZUmurGu99SafGQ" x="639.50" y="805.00" text="float2 v.uv0"/>
+<topic id="14" parent="12" guid="7WJrfpr-ikCGSBr-FHqRsQ" x="639.50" y="831.00" text="float2 v.uv1"/>
+<topic id="15" parent="11" guid="GxAHNq1YN0SeDRxuwTXPvg" x="588.00" y="857.00" text="out"/>
+<topic id="16" parent="15" guid="OoJNqhMxNUGlBGJaNXhrPw" x="639.50" y="883.00" text="float4 o.tex"/>
+<topic id="17" parent="10" guid="Q3Ei6T5mS0WcIad2lXix2Q" x="647.00" y="909.00" text="2、NormalizePerVertexNormal()">
+<note>
+// NormalizePerPixelNormal的对应项//跳过每个顶点的归一化，并期望每个像素进行归一化half3 NormalizePerVertexNormal (float3 n) // takes float to avoid overflow//进行浮点运算以避免溢出{   //1.2    #if (SHADER_TARGET &lt; 30) || UNITY_STANDARD_SIMPLE    //如果shader model 小于3.0 或者simple开启        return normalize(n);        //返回归一化计算    #else    //如果shader model 小于3.0 或者simple开启 以外        return n; // will normalize per-pixel instead        //返回原数据，打算在fragment (pixel) 里面计算    #endif}
+</note>
+</topic>
+<topic id="18" parent="17" guid="RGV4049EIUKYYSBKvm9rZA" x="588.00" y="935.00" text="in"/>
+<topic id="19" parent="18" guid="Y7kr7dLR0E6QPjP-Lg0BtQ" x="751.50" y="961.00" text="float3 posWorld.xyz - _WorldSpaceCameraPos"/>
+<topic id="20" parent="17" guid="DVXu1on0RUyA9700Tf73Eg" x="588.00" y="987.00" text="out"/>
+<topic id="21" parent="20" guid="hO5Bp-9XAUyVaDAsv62WfA" x="663.50" y="1013.00" text="half3 o.eyeVec.xyz"/>
+<topic id="22" parent="21" guid="QXmXEiV0j0eAYVVfRojMSQ" x="648.00" y="1039.00" text="OR"/>
+<topic id="23" parent="22" guid="670P2hbUs0Oqc8OsCS1JcA" x="706.00" y="1065.00" text="normalize(n);"/>
+<topic id="24" parent="22" guid="qUepkW-In0CmpXvn2F2-6Q" x="678.00" y="1091.00" text="n;"/>
+<topic id="25" parent="10" guid="NWb7MxRoAkCooNAtWzGZCA" x="664.50" y="1117.00" text="3、CreateTangentToWorldPerVertex()">
+<note>
+half3x3 CreateTangentToWorldPerVertex(half3 normal, half3 tangent, half tangentSign) {   //1.3    // For odd-negative scale transforms we need to flip the sign    //对于奇数负比例变换，我们需要翻转符号    half sign = tangentSign * unity_WorldTransformParams.w;    // w is usually 1.0, or -1.0 for odd-negative scale transforms    //w通常为1.0，对于奇数负比例转换，通常为-1.0    half3 binormal = cross(normal, tangent) * sign;    //叉积 判断正反    return half3x3(tangent, binormal, normal);    //返回矩阵数据}
+</note>
+</topic>
+<topic id="26" parent="25" guid="217shzU7n0K-vkZPTuoaNQ" x="588.00" y="1143.00" text="in"/>
+<topic id="27" parent="26" guid="QGU9vgJHQkixdLVXFUYLcg" x="663.00" y="1169.00" text="half3 normalWorld"/>
+<topic id="28" parent="27" x="822.50" y="1195.00" text="float3 normalWorld = UnityObjectToWorldNormal(v.normal);"/>
+<topic id="29" parent="26" guid="6aYM_zdr5U6zXBwZ2TTDqQ" x="677.50" y="1221.00" text="half3 tangentWorld.xyz"/>
+<topic id="30" parent="29" guid="dUMVgHhCck6GOFPp4bCfLw" x="886.50" y="1247.00" text="float4 tangentWorld = float4(UnityObjectToWorldDir(v.tangent.xyz), v.tangent.w);"/>
+<topic id="31" parent="26" guid="5g9xu_1BRUCpf8UtQSRSxQ" x="668.50" y="1273.00" text="half tangentWorld.w"/>
+<topic id="32" parent="25" guid="sQm-PTMe1UGRgiXc24pFNQ" x="588.00" y="1299.00" text="out"/>
+<topic id="33" parent="32" x="681.50" y="1325.00" text="float3x3 tangentToWorld"/>
+<topic id="34" parent="33" guid="6b2bOy0INkuL62oBy52QbQ" x="744.00" y="1351.00" text="half3x3(tangent, binormal, normal)"/>
+<topic id="35" parent="10" guid="gmYG2HI6V0W5NKjVRT6edQ" x="651.50" y="1377.00" text="4、UNITY_TRANSFER_LIGHTING()"/>
+<topic id="36" parent="10" guid="vPeQPSdOVUqH_zFNgdHNeA" x="614.00" y="1403.00" text="5、VertexGIForward()">
+<note>
+inline half4 VertexGIForward(VertexInput v, float3 posWorld, half3 normalWorld) {   //1.5    half4 ambientOrLightmapUV = 0;       #ifdef LIGHTMAP_ON    //如果定义LIGHTMAP_ON         ambientOrLightmapUV.xy = v.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;        //xy输入lightmap uv        ambientOrLightmapUV.zw = 0;    //仅针对动态对象的采样光探针（无静态或动态光照贴图）    #elif UNITY_SHOULD_SAMPLE_SH    //否则如果 SH         #ifdef VERTEXLIGHT_ON        //顶点光照开启                        //非重要点光源的近似照度 用一个数组 存各灯光的储数据            ambientOrLightmapUV.rgb = Shade4PointLights (                unity_4LightPosX0, unity_4LightPosY0, unity_4LightPosZ0,                unity_LightColor[0].rgb, unity_LightColor[1].rgb, unity_LightColor[2].rgb, unity_LightColor[3].rgb,                unity_4LightAtten0, posWorld, normalWorld);         #endif        ambientOrLightmapUV.rgb = ShadeSHPerVertex (normalWorld, ambientOrLightmapUV.rgb);        //如果有启用VERTEXLIGHT_ON ShadeSHPerVertex SH光照    #endif    #ifdef DYNAMICLIGHTMAP_ON    //动态lightmap        ambientOrLightmapUV.zw = v.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;    #endif    return ambientOrLightmapUV;}
+</note>
+</topic>
+<topic id="37" parent="36" guid="edhMTY02oUqCT9AwR5xyQA" x="588.00" y="1429.00" text="in"/>
+<topic id="38" parent="37" guid="pP48JkYsS0Od0VF5orYoEg" x="646.00" y="1455.00" text="VertexInput v"/>
+<topic id="39" parent="38" x="669.50" y="1481.00" text="float2 v.uv1"/>
+<topic id="40" parent="38" guid="AJWtn_-Ea0iBOiCBjgXY_g" x="669.50" y="1507.00" text="float2 v.uv2"/>
+<topic id="41" parent="37" x="653.50" y="1533.00" text="float3 posWorld"/>
+<topic id="42" parent="37" guid="hwZj_bdJjkq555caJFXaDA" x="663.00" y="1559.00" text="half3 normalWorld"/>
+<topic id="43" parent="42" x="822.50" y="1585.00" text="float3 normalWorld = UnityObjectToWorldNormal(v.normal);"/>
+<topic id="44" parent="36" guid="SDSXJfhlLUmykG7C1NRu4g" x="588.00" y="1611.00" text="out"/>
+<topic id="45" parent="44" guid="_hXqZwDLJkCJGaOiqMnL9w" x="700.00" y="1637.00" text="half4 o.ambientOrLightmapUV"/>
+<topic id="46" parent="36" guid="DCktLS44yEizySwHmwR2zw" x="656.50" y="1663.00" collapsed="True" text="5.1、ShadeSHPerVertex()">
+<note>
+half3 ShadeSHPerVertex (half3 normal, half3 ambient){    #if UNITY_SAMPLE_FULL_SH_PER_PIXEL        // Completely per-pixel        // nothing to do here    #elif (SHADER_TARGET &lt; 30) || UNITY_STANDARD_SIMPLE        // Completely per-vertex        ambient += max(half3(0,0,0), ShadeSH9 (half4(normal, 1.0)));    #else        // L2 per-vertex, L0..L1 &amp; gamma-correction per-pixel        // NOTE: SH data is always in Linear AND calculation is split between vertex &amp; pixel        // Convert ambient to Linear and do final gamma-correction at the end (per-pixel)        #ifdef UNITY_COLORSPACE_GAMMA            ambient = GammaToLinearSpace (ambient);        #endif        ambient += SHEvalLinearL2 (half4(normal, 1.0));     // no max since this is only L2 contribution    #endif    return ambient;}
+</note>
+</topic>
+<topic id="47" parent="46" guid="NYTGmn2TXUuncno445LVEg" x="618.00" y="1689.00" text="in"/>
+<topic id="48" parent="47" guid="5mdgl71CbUa6qI83Ar-x2g" x="935.00" y="1169.00" text="normalWorld"/>
+<topic id="49" parent="47" guid="Zs5f7Eq50kCv0HNCt4WzKQ" x="978.00" y="1195.00" text="ambientOrLightmapUV.rgb"/>
+<topic id="50" parent="46" guid="mlqmoPjxZEirRtMaffAj8g" x="618.00" y="1689.00" text="out"/>
+<topic id="51" parent="50" x="978.00" y="1247.00" text="ambientOrLightmapUV.rgb"/>
+<topic id="52" parent="46" guid="wefrTomOO06SUaoV5_4P8Q" x="681.50" y="1689.00" collapsed="True" text="5.1.1、SHEvalLinearL2()">
+<note>
+// 正常应标准化，w = 1.0half3 SHEvalLinearL2 (half4 normal){    half3 x1, x2;    // 二次（L2）多项式中的4个    half4 vB = normal.xyzz * normal.yzzx;    x1.r = dot(unity_SHBr,vB);    x1.g = dot(unity_SHBg,vB);    x1.b = dot(unity_SHBb,vB);    // 最终（第5次）二次（L2）多项式    half vC = normal.x*normal.x - normal.y*normal.y;    x2 = unity_SHC.rgb * vC;    return x1 + x2;}
+</note>
+</topic>
+<topic id="53" parent="52" guid="4Lpv5uUQr0yJyT7ufXp2HQ" x="907.50" y="1299.00" text="in"/>
+<topic id="54" parent="53" guid="yRgkhXRa70GowinpHSUU8Q" x="963.50" y="1325.00" text="half4 normal"/>
+<topic id="55" parent="52" guid="y7qK4QmFM0CMa-flDk95Rw" x="907.50" y="1351.00" text="out"/>
+<topic id="56" parent="55" guid="CQxX-tJ2UkScSbeDSi7-cQ" x="939.00" y="1377.00" text="half3"/>
+<topic id="57" parent="2" guid="KogTEpAfDkSzPnJxHJOshA" x="1311.00" y="725.50" text="输出结构体VertexOutputForwardBase">
+<note>
+struct VertexOutputForwardBase  //1.01   v2f{    UNITY_POSITION(pos);     // On D3D reading screen space coordinates from fragment shader requires SM3.0    //在D3D上，从片段着色器读取屏幕空间坐标需要SM3.0    //#define UNITY_POSITION(pos) float4 pos : SV_POSITION    //声明Clippos    float4 tex                            : TEXCOORD0;     //UV    float4 eyeVec                         : TEXCOORD1;    // eyeVec.xyz | fogCoord 相机到片元的vector    float4 tangentToWorldAndPackedData[3] : TEXCOORD2;    // [3x3:tangentToWorld | 1x3:viewDirForParallax or worldPos]  //切线矩阵 worldpos    half4 ambientOrLightmapUV             : TEXCOORD5;    // SH or Lightmap UV     UNITY_LIGHTING_COORDS(6,7)       //在AutoLight.cginc  里面有判断灯光模式 和 阴影模式    //6 _LightCoord 灯光数据  DECLARE_LIGHT_COORDS    //7 _ShadowCoord 阴影数据 UNITY_SHADOW_COORDS    // next ones would not fit into SM2.0 limits, but they are always for SM3.0+    //下一个不符合SM2.0限制，但始终适用于SM3.0 +    #if UNITY_REQUIRE_FRAG_WORLDPOS &amp;&amp; !UNITY_PACK_WORLDPOS_WITH_TANGENT        float3 posWorld                     : TEXCOORD8;    #endif    UNITY_VERTEX_INPUT_INSTANCE_ID //GPU instance    UNITY_VERTEX_OUTPUT_STEREO //VR};
+</note>
+</topic>
+<topic id="58" parent="57" guid="KzP04MfwaEO9w93yWZ0Cug" x="1266.00" y="753.00" text="UNITY_POSITION(pos)">
+<note>
+// 在D3D上，从片段着色器读取屏幕空间坐标需要SM3.0#define UNITY_POSITION(pos) float4 pos : SV_POSITION
+</note>
+</topic>
+<topic id="59" parent="58" guid="IQ0vKeDZPUevu8xStDXkOg" x="1257.50" y="779.00" text="float4 pos"/>
+<topic id="60" parent="57" guid="i7K8uc_rZUq9DVIvAsNx9A" x="1226.50" y="805.00" text="float4 tex"/>
+<topic id="61" parent="57" guid="kzkwSXJ-8kG4QS5_S1k-yg" x="1239.50" y="831.00" text="float4 eyeVec"/>
+<topic id="62" parent="57" guid="lfIOABn5SECye6brenvrSg" x="1305.50" y="865.00" text="float4\NtangentToWorldAndPackedData[3]"/>
+<topic id="63" parent="57" guid="b2kjGwAmr0WdxfFl-W45fQ" x="1287.00" y="899.00" text="half4 ambientOrLightmapUV"/>
+<topic id="64" parent="57" guid="mAvB-Mp-2EGxnUgGjngP0A" x="1295.00" y="925.00" text="UNITY_LIGHTING_COORDS(6,7)"/>
+<topic id="65" parent="57" x="1246.50" y="951.00" text="float3 posWorld"/>
+<topic id="66" parent="-1" guid="eGf2e5qtq0SLacD50tiI_g" x="1540.00" y="640.00" layout="strict-horizontal" layout-direction="right" palette="1" colorinfo="1" text="fragBase"/>
+<topic id="67" parent="66" guid="FbkeRXpMrUyjySbmIdZShw" x="1791.00" y="-1333.00" palette="2" colorinfo="2" text="输入结构体VertexOutputForwardBase v"/>
+<topic id="68" parent="66" guid="2RQrFKxt6kG9ceVf5_MLqQ" x="1735.50" y="654.50" palette="3" colorinfo="3" text="片元着色器half4\NfragForwardBaseInternal"/>
+<topic id="69" parent="68" guid="ZAuVXCsWBkavHLIayUuKAg" x="2042.50" y="-1257.50" text="1、UNITY_APPLY_DITHER_CROSSFADE(i.pos.xy)">
+<note>
+#ifdef LOD_FADE_CROSSFADE  //2.1    #define UNITY_APPLY_DITHER_CROSSFADE(vpos)  UnityApplyDitherCrossFade(vpos)    sampler2D unity_DitherMask;    void UnityApplyDitherCrossFade(float2 vpos)    {        vpos /= 4;        //抖动蒙版纹理为4x4        float mask = tex2D(unity_DitherMask, vpos).a;        float sgn = unity_LODFade.x &gt; 0 ? 1.0f : -1.0f;        clip(unity_LODFade.x - mask * sgn);    }#else    #define UNITY_APPLY_DITHER_CROSSFADE(vpos)#endif
+</note>
+</topic>
+<topic id="70" parent="69" guid="ZNTJzkJ8OkCjD7Mgl-6QuQ" x="2268.50" y="-1299.50" text="in">
+<parent-relation guid="XoVeN0MN10GitOeh2kRvNg"/>
+</topic>
+<topic id="71" parent="70" x="2365.00" y="-1299.50" text="i.pos.xy"/>
+<topic id="72" parent="69" guid="pmPLj5392UC1vXRqHgTwGA" x="2268.50" y="-1273.50" text="out"/>
+<topic id="73" parent="72" guid="AIP-DKrwh0CZqS2662F5sw" x="2354.50" y="-1273.50" text="void"/>
+<topic id="74" parent="73" x="2440.50" y="-1273.50" text="clip"/>
+<topic id="75" parent="69" guid="qCcJl-0ZtEGW5w4I1HSQGQ" x="2362.00" y="-1231.50" text="1.1、UnityApplyDitherCrossFade()">
+<note>
+sampler2D unity_DitherMask;    void UnityApplyDitherCrossFade(float2 vpos)    {        vpos /= 4; // the dither mask texture is 4x4        //抖动蒙版纹理为4x4        float mask = tex2D(unity_DitherMask, vpos).a;        float sgn = unity_LODFade.x &gt; 0 ? 1.0f : -1.0f;        clip(unity_LODFade.x - mask * sgn);    }
+</note>
+</topic>
+<topic id="76" parent="75" guid="IiWbt-WIBkSSzYqQD5cwIQ" x="2619.00" y="-1244.50" text="sampler2D unity_DitherMask;"/>
+<topic id="77" parent="75" x="2576.00" y="-1218.50" text="unity_LODFade"/>
+<topic id="78" parent="68" guid="yl5Tpwlg7k-9pN5aoyTIkA" x="1968.50" y="-358.50" text="2、FRAGMENT_SETUP(s)">
+<note>
+#define FRAGMENT_SETUP(x) FragmentCommonData x = \       FragmentSetup(i.tex, i.eyeVec.xyz, IN_VIEWDIR4PARALLAX(i), i.tangentToWorldAndPackedData, IN_WORLDPOS(i));
+</note>
+</topic>
+<topic id="79" parent="78" guid="GTx9JLj9k0ORaJ_Ufp-AbA" x="2171.50" y="-358.50" text="2、FragmentSetup()">
+<note>
+inline FragmentCommonData FragmentSetup (inout float4 i_tex, float3 i_eyeVec, half3 i_viewDirForParallax, float4 tangentToWorld[3], float3 i_posWorld){   //2.2    // 输入 2.2.00    // 输出 FragmentCommonData 2.2.01    // 输出 inout float4 i_tex 2.2.02    i_tex = Parallax(i_tex, i_viewDirForParallax);    //高度图  //2.2.1    half alpha = Alpha(i_tex.xy); //透明信息计算 //2.2.2    #if defined(_ALPHATEST_ON)        clip (alpha - _Cutoff); //如果是alpha test  丢弃使用    #endif    FragmentCommonData o = UNITY_SETUP_BRDF_INPUT (i_tex); //2.2.3 //MetallicSetup     //检测金属流还是高光流 不同的shader线路切换 一系列的函数调用都不再相同 得到metallic 计算后的相关数据    o.normalWorld = PerPixelWorldNormal(i_tex, tangentToWorld); //2.2.4    //如果有法线图就得到转换过后的法线图信息 如果没有就使用归一化后的顶点法线 两种方案    o.eyeVec = NormalizePerPixelNormal(i_eyeVec); //2.2.5    //判断平台后 归一化    o.posWorld = i_posWorld;    // NOTE: shader relies on pre-multiply alpha-blend (_SrcBlend = One, _DstBlend = OneMinusSrcAlpha)    //注意：着色器依赖于预乘alpha混合（_SrcBlend = One，_DstBlend = OneMinusSrcAlpha）    //alpha Reflectivity metallic 值都会影响abledo     o.diffColor = PreMultiplyAlpha (o.diffColor, alpha, o.oneMinusReflectivity, /*out*/ o.alpha); //2.2.6    return o;}
+</note>
+</topic>
+<topic id="80" parent="79" guid="3Z2lKWUDUkyPfo-ZMiU0fA" x="2347.50" y="-1183.50" text="inout float4 i_tex"/>
+<topic id="81" parent="79" guid="gemUTp6nCk23wTFU_tgQ0Q" x="2308.50" y="-1070.50" text="in"/>
+<topic id="82" parent="81" guid="E56Zn-RkIkCk-LzI1-Vmag" x="2394.50" y="-1154.50" text="i.tex"/>
+<topic id="83" parent="81" guid="O2uG0du8n0-vINFrjHSpbw" x="2420.50" y="-1128.50" text="i.eyeVec.xyz"/>
+<topic id="84" parent="81" guid="z4v59j82vEqXBZwX53Cszw" x="2483.50" y="-1086.50" text="2.00、IN_VIEWDIR4PARALLAX(i)">
+<note>
+#ifdef _PARALLAXMAP  //112a2    #define IN_VIEWDIR4PARALLAX(i) NormalizePerPixelNormal(half3(i.tangentToWorldAndPackedData[0].w,i.tangentToWorldAndPackedData[1].w,i.tangentToWorldAndPackedData[2].w))    #define IN_VIEWDIR4PARALLAX_FWDADD(i) NormalizePerPixelNormal(i.viewDirForParallax.xyz)#else    #define IN_VIEWDIR4PARALLAX(i) half3(0,0,0)    #define IN_VIEWDIR4PARALLAX_FWDADD(i) half3(0,0,0)#endif
+</note>
+</topic>
+<topic id="85" parent="84" guid="rT9Z4ifJAk-40bZI7hnuPg" x="2663.50" y="-1086.50" text="if else"/>
+<topic id="86" parent="85" guid="JQg9Z8YYAUyi27A22ePPWA" x="2827.50" y="-1099.50" text="NormalizePerPixelNormal()">
+<note>
+NormalizePerPixelNormal(half3(i.tangentToWorldAndPackedData[0].w,i.tangentToWorldAndPackedData[1].w,i.tangentToWorldAndPackedData[2].w))
+</note>
+</topic>
+<topic id="87" parent="85" guid="hvR-C5gdn0efwxCr7yU4yg" x="2774.50" y="-1073.50" text="half3(0,0,0)"/>
+<topic id="88" parent="81" guid="nUR1bJ4JQEGoUb3Tgg5IhQ" x="2485.50" y="-1044.50" text="i.tangentToWorldAndPackedData"/>
+<topic id="89" parent="81" guid="wBcSynwXc0qpxlf-JgErJQ" x="2456.00" y="-1002.50" text="2.01、IN_WORLDPOS(i)">
+<note>
+#if UNITY_REQUIRE_FRAG_WORLDPOS  //112a3    #if UNITY_PACK_WORLDPOS_WITH_TANGENT        #define IN_WORLDPOS(i) half3(i.tangentToWorldAndPackedData[0].w,i.tangentToWorldAndPackedData[1].w,i.tangentToWorldAndPackedData[2].w)    #else        #define IN_WORLDPOS(i) i.posWorld    #endif    #define IN_WORLDPOS_FWDADD(i) i.posWorld#else    #define IN_WORLDPOS(i) half3(0,0,0)    #define IN_WORLDPOS_FWDADD(i) half3(0,0,0)#endif
+</note>
+</topic>
+<topic id="90" parent="89" guid="8wLTrPR2Z0uRZo46E-L25A" x="2608.50" y="-1002.50" text="if else"/>
+<topic id="91" parent="90" x="2719.50" y="-1015.50" text="i.posWorld"/>
+<topic id="92" parent="90" x="2719.50" y="-989.50" text="half3(0,0,0)"/>
+<topic id="93" parent="79" guid="_3nDyZpw2UGSd4SkXzfS7A" x="2308.50" y="-863.50" text="out"/>
+<topic id="94" parent="93" guid="3W1T7GSRh0adJgimdOA6pw" x="2500.50" y="-863.50" text="2.02、结构体FragmentCommonData">
+<note>
+出现第一次
+</note>
+</topic>
+<topic id="95" parent="94" guid="ahum2259bEqIPhJggkrKvA" x="2765.00" y="-954.50" text="half3 diffColor， specColor"/>
+<topic id="96" parent="94" guid="38fkxK4Tq0eHeNnrwshmmQ" x="2807.50" y="-928.50" text="half oneMinusReflectivity，  smoothness"/>
+<topic id="97" parent="94" guid="6_GQGvud606mYwqrX5HnKQ" x="2739.50" y="-902.50" text="float3 normalWorld"/>
+<topic id="98" parent="94" guid="n83XP8vNBkKgcc4gNcnLkg" x="2721.00" y="-876.50" text="float3 eyeVec"/>
+<topic id="99" parent="94" guid="ykWifwTnXUm2nVTKEcaK5g" x="2710.50" y="-850.50" text="half alpha"/>
+<topic id="100" parent="94" guid="28pT_128jEySMBoPahfpfA" x="2728.00" y="-824.50" text="float3 posWorld"/>
+<topic id="101" parent="94" guid="0mmuDLNFE0unk0nLzQ2K6Q" x="2722.00" y="-798.50" text="half3 reflUVW"/>
+<topic id="102" parent="94" guid="tj6FPhwC_EGG5wewuUGa2g" x="2763.00" y="-772.50" text="half3 tangentSpaceNormal"/>
+<topic id="103" parent="79" guid="6pfUMEirQE21oDp4NuqNfQ" x="2328.50" y="-138.50" text="内部函数"/>
+<topic id="104" parent="103" guid="DyXd7-g7dEOua68RhFwCTg" x="2469.00" y="-708.50" text="2.1、Parallax()">
+<note>
+float4 Parallax (float4 texcoords, half3 viewDir)  //2.2.1{    #if !defined(_PARALLAXMAP) || (SHADER_TARGET &lt; 30)        // Disable parallax on pre-SM3.0 shader target models        return texcoords;    #else        half h = tex2D (_ParallaxMap, texcoords.xy).g;        float2 offset = ParallaxOffset1Step (h, _Parallax, viewDir);        return float4(texcoords.xy + offset, texcoords.zw + offset);    #endif}
+</note>
+</topic>
+<topic id="105" parent="104" guid="vUKJow1jAUi4zuQ-tjJN5A" x="2589.50" y="-721.50" text="in"/>
+<topic id="106" parent="105" guid="uh3ZFD5s8Ui03wITyt0Cbw" x="2712.00" y="-734.50" text="float4 texcoords"/>
+<topic id="107" parent="106" guid="eYt02q78mkmcEwffv9qqaA" x="2836.00" y="-734.50" text="i_tex"/>
+<topic id="108" parent="105" guid="5y_V3Wgg9EeAfAhwo3hRmg" x="2703.00" y="-708.50" text="half3 viewDir"/>
+<topic id="109" parent="108" x="2869.50" y="-708.50" text="i_viewDirForParallax"/>
+<topic id="110" parent="104" guid="dmOxv09NxUCPIcHaE3sPKA" x="2589.50" y="-679.50" text="out"/>
+<topic id="111" parent="110" guid="lBmkOoxmakCw3X7Zdciqzg" x="2679.00" y="-679.50" text="float4"/>
+<topic id="112" parent="103" guid="JK3RjdUQIkSiDGgYOUfx3Q" x="2460.50" y="-634.50" text="2.2、Alpha()">
+<note>
+half Alpha(float2 uv)  //2.2.2{    #if defined(_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A)        return _Color.a;    #else        return tex2D(_MainTex, uv).a * _Color.a;    #endif}
+</note>
+</topic>
+<topic id="113" parent="112" guid="PkgVbyeOUEOwF7WFheit8w" x="2572.50" y="-647.50" text="in"/>
+<topic id="114" parent="113" x="2669.50" y="-647.50" text="i_tex.xy"/>
+<topic id="115" parent="112" guid="nDtj97zpfEe0_JPeql3xtA" x="2572.50" y="-621.50" text="out"/>
+<topic id="116" parent="115" guid="cMT0aPMxckyXKLNilLol6w" x="2676.50" y="-621.50" text="half alpha"/>
+<topic id="117" parent="103" guid="g4A8gp-Sb0W01D0x-YX-Uw" x="2530.00" y="-270.50" text="2.3、UNITY_SETUP_BRDF_INPUT()"/>
+<topic id="118" parent="117" guid="EMV1Kps7fU6YhYIq09T9Og" x="2711.50" y="-589.50" text="in"/>
+<topic id="119" parent="118" x="2799.00" y="-589.50" text="i_tex"/>
+<topic id="120" parent="117" guid="SM6hPCxb2keA_HGEI6hvXQ" x="2711.50" y="-563.50" text="out "/>
+<topic id="121" parent="120" guid="anH43HxLhE-ab_uJeWasyw" x="2882.50" y="-563.50" text="结构体FragmentCommonData"/>
+<topic id="122" parent="117" guid="igTXnJJa6Uq4iWQiR3Bupg" x="2762.50" y="-244.50" text="2.3、MetallicSetup()">
+<note>
+inline FragmentCommonData MetallicSetup (float4 i_tex)  ////112a6{    half2 metallicGloss = MetallicGloss(i_tex.xy);     //002a   //函数调取    //得到metallic roughness值    half metallic = metallicGloss.x; //重声明临时变量     half smoothness = metallicGloss.y; //重声明临时变量// this is 1 minus the square root of real roughness m.    //这是1减去实际粗糙度m的平方根  1-CookTorrance_roughness 平方根 平方根概念：比如 9 的平方根是3和-3。    half oneMinusReflectivity; //变量声明    half3 specColor;   //变量声明    half3 diffColor = DiffuseAndSpecularFromMetallic (Albedo(i_tex), metallic, /*out*/ specColor, /*out*/ oneMinusReflectivity); //003a                                                                                                            //003a1    FragmentCommonData o = (FragmentCommonData)0; //结构体声明，及给上0参。 //004a    o.diffColor = diffColor; //赋值 //漫反射颜色部分     o.specColor = specColor; //赋值 //F0 漫反射高光    o.oneMinusReflectivity = oneMinusReflectivity;  //1-F0 值域为0的反向漫反射高光    o.smoothness = smoothness; //roughness     return o;}
+</note>
+</topic>
+<topic id="123" parent="122" guid="QtpeXCC7GE67uB8a0uRfTg" x="2899.50" y="-534.50" text="in"/>
+<topic id="124" parent="123" x="3006.50" y="-534.50" text="float4 i_tex"/>
+<topic id="125" parent="122" guid="Sgblh3J6zUqR-8hfBKwCQw" x="2899.50" y="-453.50" text="out"/>
+<topic id="126" parent="125" guid="ySxRUHCnrkyiqRCainxjzQ" x="3070.50" y="-453.50" text="结构体FragmentCommonData"/>
+<topic id="127" parent="126" guid="gybHW3xOTEOPlWRlHaVh5A" x="3308.50" y="-505.50" text="(FragmentCommonData)0"/>
+<topic id="128" parent="126" x="3295.50" y="-479.50" text="o.diffColor = diffColor"/>
+<topic id="129" parent="126" guid="Y8H9a5R_JkOaga_c-qdvyw" x="3304.50" y="-453.50" text="o.specColor = specColor"/>
+<topic id="130" parent="126" guid="L7LRgxhbq0CP-3xd6jpptg" x="3372.50" y="-427.50" text="o.oneMinusReflectivity = oneMinusReflectivity"/>
+<topic id="131" parent="126" x="3315.50" y="-401.50" text="o.smoothness = smoothness"/>
+<topic id="132" parent="122" guid="7_zBuohEVEC3Y78VVHv9Ug" x="2954.50" y="-324.50" text="2.3.4、MetallicGloss()">
+<note>
+half2 MetallicGloss(float2 uv)  //002a{    // 输入 float2  i_tex.xy    // 输出 half2 metallic roughness贴图信息    half2 mg; //变量声明    #ifdef _METALLICGLOSSMAP    //如果启用了金属纹理 注意这里判断的是被赋值纹理图        #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A        //如果roughness在albedo A通道            mg.r = tex2D(_MetallicGlossMap, uv).r; //mg.r 为金属度，使用资源metallic图R通道            mg.g = tex2D(_MainTex, uv).a; // mg.g 为roughness，使用资源的Albedo图A通道        #else        //否则，直接使用资源metallic图RA通道，mg.rg 赋值不变            mg = tex2D(_MetallicGlossMap, uv).ra;        #endif        mg.g *= _GlossMapScale; //roughness 面板参数0-1强度控制     #else    //如果没有启用金属纹理         mg.r = _Metallic; //直接 使用面板参数 0-1强度控制        #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A           //如果roughness在albedo A通道            mg.g = tex2D(_MainTex, uv).a * _GlossMapScale;            // mg.g 为roughness，使用资源的Albedo图A通道 并添加面板参数0-1强度控制         #else         //否则             mg.g = _Glossiness; //直接 使用面板参数 0-1强度控制        #endif    #endif    return mg;  //返回 mg.r 为metallic mg.g 为roughness}
+</note>
+</topic>
+<topic id="133" parent="132" guid="4JK2uw_UdESz6V25kXunDg" x="3095.50" y="-337.50" text="in"/>
+<topic id="134" parent="133" x="3192.50" y="-366.50" text="i_tex.xy"/>
+<topic id="135" parent="133" guid="ROH-hYJ2EEe9i1Ip9fnnZw" x="3186.50" y="-324.50" text="if else"/>
+<topic id="136" parent="135" guid="SESXxKd3hEmKnrkOFldGAg" x="3294.00" y="-337.50" text="_MainTex"/>
+<topic id="137" parent="135" guid="tSb7VnNN2UKEKOyOURnwNA" x="3322.50" y="-311.50" text="_MetallicGlossMap"/>
+<topic id="138" parent="132" guid="aANbwJGb2EmGTuEw8OxrPw" x="3095.50" y="-279.50" text="out"/>
+<topic id="139" parent="138" guid="UrT4Xmefw0i37P5iG2InNw" x="3231.00" y="-279.50" text="half2 metallicRough"/>
+<topic id="140" parent="122" guid="sPdS7ndS50GdWt7SqUIqgA" x="3016.50" y="-102.50" text="2.3.5、DiffuseAndSpecularFromMetallic()">
+<note>
+inline half3 DiffuseAndSpecularFromMetallic (half3 albedo, half metallic, out half3 specColor, out half oneMinusReflectivity) //003a{        specColor = lerp (unity_ColorSpaceDielectricSpec.rgb, albedo, metallic);    //specColor 镜面反射率。使用金属度去混合电介质与albedo颜色    //gamma #define unity_ColorSpaceDielectricSpec half4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301)    //linear #define unity_ColorSpaceDielectricSpec half4(0.04, 0.04, 0.04, 1.0 - 0.04) // standard dielectric reflectivity coef at incident angle (= 4%)    //颜色空间不一样 计算方式不一样 结果顺理就不一样了    //metallic 值越大镜面反射率就是 albedo，值越小就是 unity_ColorSpaceDielectricSpec    //工作流中 PBR 资源制作时 正常情况下会及少画非金属 也就是说只画金属与非金属 非1即0 中间值是半导体 又是金属又是非金 Substance流中可以自动化检测        oneMinusReflectivity = OneMinusReflectivityFromMetallic(metallic); //003a2    //oneMinusReflectivity 漫反射率    //如果 metallic = 0 非金属 在gamma空间中漫反射 ＝ albedo * 0.779083699 接近1，漫反射颜色接近白色。结果差不多是albedo的直接颜色 （不同的颜色空间颜色不一样，切记）    //如果 metallic = 1 金属  在gamma空间中的漫反射 ＝ albedo * 0 完全没有漫反射颜色 黑色    //如果 metallic 介于之间 就使用上述插值     return albedo * oneMinusReflectivity;    //返回 漫反射颜色部分}
+</note>
+</topic>
+<topic id="141" parent="140" guid="jyoX6TEi0UyrRzMIz8NkdA" x="3219.50" y="-173.50" text="in"/>
+<topic id="142" parent="141" guid="UCxofsTAfEiDL6XQ6Q43jA" x="3346.50" y="-186.50" text="2.3.5.0、Albedo()">
+<note>
+half3 Albedo(float4 texcoords) //003a1{ //参数为float4 两个UV信息// 输入 i_tex.xyzw// 输出 half3 albedo    half3 albedo = _Color.rgb * tex2D (_MainTex, texcoords.xy).rgb;    //获取abledo贴图 并且混合面板颜色    #if _DETAIL    //如果启用面板细节 detail mask属性        #if (SHADER_TARGET &lt; 30)        //如果shader model 小于3.0            // SM20: instruction count limitation            // SM20: no detail mask            half mask = 1; //shader model条件限制 所以直接使用1 不使用Detail mask功能        #else        //否则shader model 不小于3.0 那么            half mask = DetailMask(texcoords.xy); //函数调用  return tex2D (_DetailMask, uv).a;            //mask 值为 面板纹理_DetailMask 的A通道        #endif        half3 detailAlbedo = tex2D (_DetailAlbedoMap, texcoords.zw).rgb;        //获取detail albedo.rgb        #if _DETAIL_MULX2            albedo *= LerpWhiteTo (detailAlbedo * unity_ColorSpaceDouble.rgb, mask); //函数调用            //(1-t) + b * t  LerpWhiteTo(half3 b, half t)            //linear #define unity_ColorSpaceDouble fixed4(4.59479380, 4.59479380, 4.59479380, 2.0)            //gamma #define unity_ColorSpaceDouble fixed4(2.0, 2.0, 2.0, 2.0)            //管线不同值不同        #elif _DETAIL_MUL            albedo *= LerpWhiteTo (detailAlbedo, mask);            //(1-t) + b * t  LerpWhiteTo(half3 b, half t)            //普通相乘        #elif _DETAIL_ADD            albedo += detailAlbedo * mask;            //普通相加        #elif _DETAIL_LERP            //普通lerp            albedo = lerp (albedo, detailAlbedo, mask);        #endif    #endif    return albedo;    //返回最终aldedo}
+</note>
+</topic>
+<topic id="143" parent="142" guid="g5ei-B66TkejTTr3mBiryg" x="3473.50" y="-199.50" text="in"/>
+<topic id="144" parent="143" x="3561.00" y="-238.50" text="i_tex"/>
+<topic id="145" parent="143" x="3576.00" y="-212.50" text="_MainTex"/>
+<topic id="146" parent="143" x="3603.50" y="-186.50" text="_DetailAlbedoMap"/>
+<topic id="147" parent="143" x="3636.50" y="-160.50" text="unity_ColorSpaceDouble.rgb"/>
+<topic id="148" parent="142" guid="2ul5-30SWEW1eXbI2y3chg" x="3473.50" y="-131.50" text="out"/>
+<topic id="149" parent="148" guid="Gp0VDvCpyUKJ4Qzgb92ngg" x="3585.00" y="-131.50" text="half3 albedo"/>
+<topic id="150" parent="141" guid="W9j4xEh7p0Sl3g04T9DLQw" x="3317.00" y="-102.50" text="metallic"/>
+<topic id="151" parent="150" guid="CcDpkioVFUuwRKyUDBJPmg" x="3451.00" y="-102.50" text=" metallicGloss.x"/>
+<topic id="152" parent="140" guid="MClsdaOHcEiIo7C7dUvU3g" x="3219.50" y="-44.50" text="out"/>
+<topic id="153" parent="152" guid="EqFv_-1Zz0CsFjis2LpAgA" x="3344.00" y="-70.50" text="/*out*/ specColor"/>
+<topic id="154" parent="152" guid="Sl2sBLmALEO1l9-clh7daQ" x="3378.00" y="-44.50" text="/*out*/ oneMinusReflectivity"/>
+<topic id="155" parent="152" guid="zUpwOL47-E-z8WlkE_KBWQ" x="3336.00" y="-18.50" text="half3 diffColor"/>
+<topic id="156" parent="140" guid="znLfPvgN1065RSN47Gezig" x="3346.00" y="26.50" text="2.3.5.1、OneMinusReflectivityFromMetallic()">
+<note>
+inline half OneMinusReflectivityFromMetallic(half metallic) //003a2{   // 输入 金属贴图信息 输出 反向金属贴图信息    // We&apos;ll need oneMinusReflectivity, so    //   1-reflectivity = 1-lerp(dielectricSpec, 1, metallic) = lerp(1-dielectricSpec, 0, metallic)    // store (1-dielectricSpec) in unity_ColorSpaceDielectricSpec.a, then    //   1-reflectivity = lerp(alpha, 0, metallic) = alpha + metallic*(0 - alpha) =    //                  = alpha - metallic * alpha    //gamma #define unity_ColorSpaceDielectricSpec half4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301)    //linear #define unity_ColorSpaceDielectricSpec half4(0.04, 0.04, 0.04, 1.0 - 0.04) // standard dielectric reflectivity coef at incident angle (= 4%)    half oneMinusDielectricSpec = unity_ColorSpaceDielectricSpec.a;    //gamma 1.0 - 0.220916301 = 0.779083699    //linear 1.0 - 0.04 = 0.96    //取值    return oneMinusDielectricSpec - metallic * oneMinusDielectricSpec;    //gamma 0.779083699 - metallic * 0.779083699    //linear 0.96 - metallic * 0.96}
+</note>
+</topic>
+<topic id="157" parent="156" guid="fBTeIHxTmE-ZfkGxVc0KtQ" x="3558.50" y="13.50" text="in"/>
+<topic id="158" parent="157" guid="8AG7BepfIUSsZ1RVV76uNg" x="3656.00" y="13.50" text="metallic"/>
+<topic id="159" parent="156" guid="gvqEfrnvd0asA4kG-wDjYg" x="3558.50" y="39.50" text="out"/>
+<topic id="160" parent="159" guid="5AMuRlKYzEy9189ZG-emFA" x="3722.00" y="39.50" text="out half oneMinusReflectivity"/>
+<topic id="161" parent="103" guid="CRvWH8Xez0-iYYqUWMBbJw" x="2511.50" y="167.50" text="2.4、PerPixelWorldNormal()">
+<note>
+float3 PerPixelWorldNormal(float4 i_tex, float4 tangentToWorld[3]){//2.2.4    #ifdef _NORMALMAP    // 如果材质球使用了法线贴图        half3 tangent = tangentToWorld[0].xyz; //切线        half3 binormal = tangentToWorld[1].xyz; //副法线        half3 normal = tangentToWorld[2].xyz; //法线        #if UNITY_TANGENT_ORTHONORMALIZE        //如果需要对切线空间的3个坐标值进行正交单位化            normal = NormalizePerPixelNormal(normal);            // ortho-normalize Tangent 单位化法向量            tangent = normalize (tangent - normal * dot(tangent, normal));            // recalculate Binormal 如果原本切线与法线相互垂直，则dot(tangent, normal)为0            // 如果不垂直，则切线等于三角形斜边，法线为一个直角边            // tangent - normal * dot(tanget, normal) 为另一边            half3 newB = cross(normal, tangent);            // 调整法线和切线使之相互垂直之后，重新计算副法线            binormal = newB * sign (dot (newB, binormal));        #endif        half3 normalTangent = NormalInTangentSpace(i_tex);        // 切线空间下的法向量        float3 normalWorld = NormalizePerPixelNormal(tangent * normalTangent.x + binormal * normalTangent.y + normal * normalTangent.z);         // @TODO: see if we can squeeze this normalize on SM2.0 as well        // @TODO：看看我们是否也可以在SM2.0上进行压缩        //法线贴图 从切线空间转到世界空间 单位化法向量    #else        float3 normalWorld = normalize(tangentToWorld[2].xyz);        //顶点法线的归一化    #endif    return normalWorld;}
+</note>
+</topic>
+<topic id="162" parent="161" guid="w5LqhatMDUyQVZqJi16-4w" x="2674.50" y="96.50" text="in"/>
+<topic id="163" parent="162" guid="nromMVCcoEOEDzfpwGJOdQ" x="2762.00" y="83.50" text="i_tex"/>
+<topic id="164" parent="162" x="2824.00" y="109.50" text="float4 tangentToWorld[3]"/>
+<topic id="165" parent="161" guid="aBudFq2hyUOTUgXvI3Bd2Q" x="2674.50" y="138.50" text="out"/>
+<topic id="166" parent="165" x="2794.00" y="138.50" text="o.normalWorld"/>
+<topic id="167" parent="161" guid="Nym1_ijXx06o5br27Ap9Zw" x="2770.50" y="180.50" text="2.4.1、NormalizePerPixelNormal()">
+<note>
+half3 normalTangent = NormalInTangentSpace(i_tex);
+</note>
+</topic>
+<topic id="168" parent="167" guid="zl12R20GLEulMfnCcqj18g" x="2952.50" y="167.50" text="in"/>
+<topic id="169" parent="167" guid="rWA-4oD4ZkyDH-0awp-X1Q" x="2952.50" y="193.50" text="out"/>
+<topic id="170" parent="169" x="3090.00" y="193.50" text="half3 normalTangent"/>
+<topic id="171" parent="161" guid="rS9lVBnR70-YSy8VdtXQTQ" x="2762.00" y="238.50" text="2.4.2、NormalInTangentSpace()">
+<note>
+float3 normalWorld = NormalizePerPixelNormal(tangent * normalTangent.x + binormal * normalTangent.y + normal * normalTangent.z);
+</note>
+</topic>
+<topic id="172" parent="171" guid="vGsLN7nk9UKS8-uAW02SkA" x="2935.50" y="225.50" text="in"/>
+<topic id="173" parent="171" guid="NUYw-bM7Q0qjKgOLZj9gWA" x="2935.50" y="251.50" text="out"/>
+<topic id="174" parent="173" x="3068.50" y="251.50" text="float3 normalWorld"/>
+<topic id="175" parent="103" guid="el1teEmz40KI-ChSUOxdcA" x="2521.00" y="299.50" text="2.5、NormalizePerPixelNormal">
+<note>
+float3 NormalizePerPixelNormal (float3 n){    #if (SHADER_TARGET &lt; 30) || UNITY_STANDARD_SIMPLE        return n;    #else        return normalize((float3)n); // takes float to avoid overflow    #endif}
+</note>
+</topic>
+<topic id="176" parent="175" guid="o04JiLyCS0a89MdOw3R1Hg" x="2693.50" y="286.50" text="in"/>
+<topic id="177" parent="176" x="2794.00" y="286.50" text="i_eyeVec"/>
+<topic id="178" parent="175" guid="kIfQvbnHH02EhGlKWWed6g" x="2693.50" y="312.50" text="out"/>
+<topic id="179" parent="178" x="2794.50" y="312.50" text="o.eyeVec"/>
+<topic id="180" parent="103" guid="VXZwBnBQWUSQNNbY6MF9cg" x="2492.50" y="402.50" text="2.6、PreMultiplyAlpha">
+<note>
+inline half3 PreMultiplyAlpha (half3 diffColor, half alpha, half oneMinusReflectivity, out half outModifiedAlpha){   //2.2.6    // 输入     // half3 diffColor    // half alpha    // half oneMinusReflectivity    // 输出 half3 颜色    // 输出 half outModifiedAlpha     #if defined(_ALPHAPREMULTIPLY_ON)        // NOTE: shader relies on pre-multiply alpha-blend (_SrcBlend = One, _DstBlend = OneMinusSrcAlpha)        //注意：着色器依赖于预乘alpha混合（_SrcBlend = One，_DstBlend = OneMinusSrcAlpha）          // Transparency &apos;removes&apos; from Diffuse component        //透明度从“漫反射”组件中“删除”        diffColor *= alpha;        #if (SHADER_TARGET &lt; 30)            // SM2.0: instruction count limitation            // Instead will sacrifice part of physically based transparency where amount Reflectivity is affecting Transparency            // SM2.0: uses unmodified alpha            // SM2.0：指令计数限制            //相反，它会牺牲部分基于物理的透明度，其中反射率会影响透明度            // SM2.0：使用未修改的Alpha            outModifiedAlpha = alpha;        #else            // Reflectivity &apos;removes&apos; from the rest of components, including Transparency            //反射率从其他组件中“消除”，包括透明度            // outAlpha = 1-(1-alpha)*(1-reflectivity) = 1-(oneMinusReflectivity - alpha*oneMinusReflectivity) =            //          = 1-oneMinusReflectivity + alpha*oneMinusReflectivity            outModifiedAlpha = 1 - oneMinusReflectivity + alpha * oneMinusReflectivity;        #endif    #else        outModifiedAlpha = alpha;    #endif    return diffColor;}
+</note>
+</topic>
+<topic id="181" parent="180" guid="Avmx_MIYdE-7u-qKXgxt3Q" x="2636.50" y="373.50" text="in"/>
+<topic id="182" parent="181" guid="yldinU8zG0u3VNJe8Pg-Lw" x="2741.50" y="347.50" text="o.diffColor"/>
+<topic id="183" parent="181" guid="ak8sNUE8TUyd2LyKc_UACA" x="2726.50" y="373.50" text="alpha"/>
+<topic id="184" parent="181" guid="sz1k29utRE2rGHld8QG3WQ" x="2780.00" y="399.50" text="o.oneMinusReflectivity"/>
+<topic id="185" parent="180" guid="064Qi2YfZUqHXr2y6I8KAQ" x="2636.50" y="444.50" text="out"/>
+<topic id="186" parent="185" guid="MyS-M0c380WrwxY1w9zGnA" x="2755.50" y="431.50" text="/*out*/ o.alpha)"/>
+<topic id="187" parent="185" guid="qXwqq58LB0i8PVsKtcyExg" x="2741.50" y="457.50" text="o.diffColor"/>
+<topic id="188" parent="68" guid="fi-GQ9L8DkGQI6L7JZp6Aw" x="1936.00" y="556.50" text="3、MainLight()">
+<note>
+UnityLight MainLight () //113a{    UnityLight l;    l.color = _LightColor0.rgb;    l.dir = _WorldSpaceLightPos0.xyz;     return l;}
+</note>
+</topic>
+<topic id="189" parent="188" guid="-X38Vddu4kOYmT5AAchU1g" x="2099.00" y="527.50" text="结构体UnityLight"/>
+<topic id="190" parent="189" guid="zI7Iw8mm40qR2nzgszNPuQ" x="2248.00" y="501.50" text="half3 color"/>
+<topic id="191" parent="189" x="2240.50" y="527.50" text="half3 dir"/>
+<topic id="192" parent="189" x="2246.50" y="553.50" text="half  ndotl"/>
+<topic id="193" parent="188" guid="tiJ6PY7Lu064rWecH8F2Zw" x="2055.50" y="598.50" text="out"/>
+<topic id="194" parent="193" guid="Onpqkn5ENEe8mcw4iy1mlA" x="2191.00" y="598.50" text="UnityLight 结构体 l"/>
+<topic id="195" parent="194" guid="5NMtrBq5NEGc4oqmYCpTlw" x="2338.00" y="598.50" text="初始化"/>
+<topic id="196" parent="195" guid="z55mpIDJ5ECxMD_d-HCUiQ" x="2502.00" y="585.50" text="l.color = _LightColor0.rgb"/>
+<topic id="197" parent="195" x="2528.50" y="611.50" text="l.dir = _WorldSpaceLightPos0.xyz"/>
+<topic id="198" parent="68" guid="e_HNo-N3d02ajlena53rbg" x="1994.50" y="659.50" text="4、UNITY_LIGHT_ATTENUATION()"/>
+<topic id="199" parent="198" x="2172.50" y="646.50" text="in"/>
+<topic id="200" parent="198" x="2172.50" y="672.50" text="out"/>
+<topic id="201" parent="68" guid="eA3rKwDRdUGyVZNPhPYCAA" x="1935.50" y="733.50" text="5、Occlusion()">
+<note>
+half Occlusion(float2 uv) //115a{    #if (SHADER_TARGET &lt; 30)        // SM20: instruction count limitation        // SM20: simpler occlusion        // SM20：指令计数限制        // SM20：更简单的遮挡        return tex2D(_OcclusionMap, uv).g;    #else        half occ = tex2D(_OcclusionMap, uv).g;        return LerpOneTo (occ, _OcclusionStrength);        //控制条反向下     #endif}
+</note>
+</topic>
+<topic id="202" parent="201" guid="FvuHvliTnUakzFI-a1MdHQ" x="2054.50" y="720.50" text="in"/>
+<topic id="203" parent="202" x="2150.00" y="707.50" text="i.tex.xy"/>
+<topic id="204" parent="202" guid="THFSBfnQ1kGQI5NXktsXeg" x="2174.50" y="733.50" text="_OcclusionMap"/>
+<topic id="205" parent="201" guid="XkYPbIe_oUW-OyACC57pPA" x="2054.50" y="762.50" text="out"/>
+<topic id="206" parent="205" x="2170.50" y="762.50" text="half occlusion"/>
+<topic id="207" parent="68" guid="yw6qK12BGUSZEb9rM8E4rg" x="1942.00" y="1230.50" text="6、FragmentGI()">
+<note>
+inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light, bool reflections) {   //2.6    // 输入 2.6.00    // s 为FragmentCommonData结构体 包含    // {    //     half3 diffColor, specColor;    //     half oneMinusReflectivity, smoothness;    //     float3 normalWorld;    //     float3 eyeVec;    //     half alpha;    //     float3 posWorld;    //     half3 reflUVW;    //     half3 tangentSpaceNormal;    // } 在 FRAGMENT_SETUP(s) 里面已完成的计算    // half occlusion    // half4 i_ambientOrLightmapUV    // half atten    // UnityLight light //2.6.01    // bool reflections //2.6.02        // 输出结构体 UnityGI //2.6.03    // struct UnityGI //结构体中包含结构体    // {//定义结构体    //     UnityLight light;    //     //UnityLight 结构体 包含 color dir ndotl    //     //基本是直接光    //     UnityIndirect indirect;    //     //UnityIndirect 结构体 diffuse specular    //     //基本是间接光    // };    d.light = light;    d.worldPos = s.posWorld;    d.worldViewDir = -s.eyeVec; //worldspace 相机向量    d.atten = atten;    //光照衰减    #if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)    //如果静态lightmap或者动态lightmap开启        d.ambient = 0;         d.lightmapUV = i_ambientOrLightmapUV;    #else //如果静态lightmap或者动态lightmap开启 之外        d.ambient = i_ambientOrLightmapUV.rgb;        // i_ambientOrLightmapUV.rgb 环境光照RGB颜色        d.lightmapUV = 0;    #endif    //两个反射探针（反射球）各项属性    d.probeHDR[0] = unity_SpecCube0_HDR;//记录全局光照所要使用的光探针    d.probeHDR[1] = unity_SpecCube1_HDR;    #if defined(UNITY_SPECCUBE_BLENDING) || defined(UNITY_SPECCUBE_BOX_PROJECTION)      d.boxMin[0] = unity_SpecCube0_BoxMin; // .w holds lerp value for blending      // .w保留lerp值以进行混合    #endif    #ifdef UNITY_SPECCUBE_BOX_PROJECTION      d.boxMax[0] = unity_SpecCube0_BoxMax;      d.probePosition[0] = unity_SpecCube0_ProbePosition;      d.boxMax[1] = unity_SpecCube1_BoxMax;      d.boxMin[1] = unity_SpecCube1_BoxMin;      d.probePosition[1] = unity_SpecCube1_ProbePosition;    #endif    if(reflections)    {//如果反射        Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.smoothness, -s.eyeVec, s.normalWorld, s.specColor);  //2.6.1        // 获取IBL计算所需的结构体         //s.specColor ＝ fresnel0 参数都没用上        // Replace the reflUVW if it has been compute in Vertex shader. Note: the compiler will optimize the calcul in UnityGlossyEnvironmentSetup itself        //如果reflUVW已在Vertex着色器中计算，则将其替换。 注意：编译器将在UnityGlossyEnvironmentSetup自身中优化计算        //结构体 Unity_GlossyEnvironmentData 返回两个数据 half roughness，half3 reflUVW        #if UNITY_STANDARD_SIMPLE        //如果是简化版 就直接使用simple版本的            g.reflUVW = s.reflUVW;        #endif        return UnityGlobalIllumination (d, occlusion, s.normalWorld, g); //2.6.2        // 间接照明的漫反射 + 镜面反射部分    }    else //否则     {        return UnityGlobalIllumination (d, occlusion, s.normalWorld); //2.6.3        // 间接照明的漫反射    }}inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light) //2.6{    return FragmentGI(s, occlusion, i_ambientOrLightmapUV, atten, light, true); //2.6}
+</note>
+</topic>
+<topic id="208" parent="207" guid="llohQV_oK02dU0f9sb2YZQ" x="2067.50" y="1024.50" text="in"/>
+<topic id="209" parent="208" guid="mfJFlXIcvk69Bt7i1QASlg" x="2220.00" y="972.50" text="FragmentCommonData  s"/>
+<topic id="210" parent="209" guid="yB9Opy1qbEiUxtjpEZnSrg" x="2457.50" y="894.50" text="结构体FragmentCommonData">
+<note>
+出现第一次
+</note>
+</topic>
+<topic id="211" parent="210" x="2701.00" y="803.50" text="half3 diffColor， specColor"/>
+<topic id="212" parent="210" x="2743.50" y="829.50" text="half oneMinusReflectivity，  smoothness"/>
+<topic id="213" parent="210" x="2675.50" y="855.50" text="float3 normalWorld"/>
+<topic id="214" parent="210" x="2657.00" y="881.50" text="float3 eyeVec"/>
+<topic id="215" parent="210" x="2646.50" y="907.50" text="half alpha"/>
+<topic id="216" parent="210" x="2664.00" y="933.50" text="float3 posWorld"/>
+<topic id="217" parent="210" x="2658.00" y="959.50" text="half3 reflUVW"/>
+<topic id="218" parent="210" x="2699.00" y="985.50" text="half3 tangentSpaceNormal"/>
+<topic id="219" parent="209" guid="lMms4z6tHE62zsbI5DXsIw" x="2393.50" y="1014.50" text="s.posWorld"/>
+<topic id="220" parent="209" x="2388.50" y="1040.50" text="-s.eyeVec"/>
+<topic id="221" parent="209" guid="WEkJo9oKuEihROkQHz1u7Q" x="2400.50" y="1066.50" text="s.smoothness"/>
+<topic id="222" parent="209" guid="qQDraL_ikUybYyriDhKi9g" x="2405.00" y="1092.50" text="s.normalWorld"/>
+<topic id="223" parent="209" x="2395.00" y="1118.50" text="s.specColor"/>
+<topic id="224" parent="209" guid="uB7v-twcDECGPqPFnaCFgg" x="2389.50" y="1144.50" text="s.reflUVW"/>
+<topic id="225" parent="208" guid="WkzGjN9J5U6yojB6mQlxJg" x="2169.50" y="1173.50" text="occlusion"/>
+<topic id="226" parent="208" guid="DGru1ef1o0SisbXsbmbbWg" x="2216.00" y="1199.50" text="i.ambientOrLightmapUV"/>
+<topic id="227" parent="208" x="2155.50" y="1225.50" text="atten"/>
+<topic id="228" parent="208" guid="YdHrsi_eGUm122p0D-4xiA" x="2171.50" y="1251.50" text="mainLight"/>
+<topic id="229" parent="228" x="2323.00" y="1251.50" text="结构体 UnityLight "/>
+<topic id="230" parent="207" guid="RQ9lTfQ6nEevIxoBlIO1ng" x="2067.50" y="1341.50" text="out"/>
+<topic id="231" parent="230" guid="l5i9To6u_EqvD0ruFmHKFg" x="2209.00" y="1341.50" text="6.00、结构体UnityGI">
+<note>
+struct UnityLight{   //2.6.01    half3 color;    half3 dir;    half  ndotl; // Deprecated: Ndotl is now calculated on the fly and is no longer stored. Do not used it.    //不推荐使用：Ndotl现在可以即时计算，不再存储。 不要使用它。};struct UnityIndirect{    half3 diffuse;    half3 specular;};struct UnityGI //结构体中包含结构体{   //2.6.03    UnityLight light;    //UnityLight 结构体 包含half3 color; half3 dir; half  ndotl;    UnityIndirect indirect;    //UnityIndirect 结构体 包含half3 diffuse; half3 specular;};
+</note>
+</topic>
+<topic id="232" parent="231" guid="GdO8xt8R6U2QetaUu7hC9A" x="2402.50" y="1312.50" text="含结构体UnityLight"/>
+<topic id="233" parent="232" guid="LgeyTU7naUuq4_3I88M-Nw" x="2560.00" y="1286.50" text="half3 color"/>
+<topic id="234" parent="232" guid="-svcRfiYykSnutKOyB8DuA" x="2552.50" y="1312.50" text="half3 dir"/>
+<topic id="235" parent="232" guid="IIxK8Mb00UG1W6Gd5DDlFQ" x="2558.50" y="1338.50" text="half  ndotl"/>
+<topic id="236" parent="231" guid="PtiY5htLF0m4_-d3GcpQPg" x="2410.50" y="1383.50" text="含结构体UnityIndirect"/>
+<topic id="237" parent="236" guid="6BcUqFFXWU6rOpTZm7Tpyg" x="2581.00" y="1370.50" text="half3 diffuse"/>
+<topic id="238" parent="236" guid="BuO_wxMJL02JjOEDReB4LA" x="2587.00" y="1396.50" text="half3 specular"/>
+<topic id="239" parent="207" guid="Dr5WTATSqkmAAfyn4ldmPw" x="2170.00" y="1531.50" text="6.1、UnityGlossyEnvironmentSetup()">
+<note>
+Unity_GlossyEnvironmentData UnityGlossyEnvironmentSetup(half Smoothness, half3 worldViewDir, half3 Normal, half3 fresnel0){   // 2.6.1    //输入     // half Smoothness     // half3 worldViewDir    // half3 Normal    // half3 fresnel0    //输出结构体 Unity_GlossyEnvironmentData 返回两个数据 half roughness ，half3 reflUVW    Unity_GlossyEnvironmentData g; //结构体声明 //2.6.1.00    g.roughness /* perceptualRoughness */   = SmoothnessToPerceptualRoughness(Smoothness); //2.6.1.01    //函数调用 return (1 - smoothness); 反向下参数控制更加好调节效果    g.reflUVW   = reflect(-worldViewDir, Normal); //cubemap的UV    return g;}
+</note>
+</topic>
+<topic id="240" parent="239" guid="wZJCR0hvQEC3t-dCForROQ" x="2358.50" y="1473.50" text="in"/>
+<topic id="241" parent="240" guid="EPS4CAdyVEef4cfxY6XsPQ" x="2472.50" y="1434.50" text="s.smoothness"/>
+<topic id="242" parent="240" x="2460.50" y="1460.50" text="-s.eyeVec"/>
+<topic id="243" parent="240" guid="bU64_heaMUWtLHshQKZ19Q" x="2477.00" y="1486.50" text="s.normalWorld"/>
+<topic id="244" parent="240" guid="Ao4Ervh2NEePpCTNdEGMMA" x="2467.00" y="1512.50" text="s.specColor"/>
+<topic id="245" parent="239" guid="KnM8LjMIskiADQ5xWcpQCw" x="2358.50" y="1557.50" text="out"/>
+<topic id="246" parent="245" guid="mZFbvFuzFESW9wq2M5C7Jg" x="2577.00" y="1557.50" text="6.1.00、结构体Unity_GlossyEnvironmentData"/>
+<topic id="247" parent="246" guid="HjL_5TljTk-Ji622DLh6ag" x="2830.00" y="1544.50" text="half  roughness"/>
+<topic id="248" parent="246" guid="5kjKWjuxTk-E7I4vpCRKyQ" x="2825.00" y="1570.50" text="half3 reflUVW"/>
+<topic id="249" parent="239" guid="27iSQCrOpUuZYTLpt7x6jw" x="2486.50" y="1615.50" text="6.1.1、SmoothnessToPerceptualRoughness()">
+<parent-relation guid="tcyf5KXlX0ukhn5Ke6_RSA"/>
+<note>
+float SmoothnessToPerceptualRoughness(float smoothness){    return (1 - smoothness);}
+</note>
+</topic>
+<topic id="250" parent="249" guid="AeYI2-DI80GC2yT0yUGGhQ" x="2700.50" y="1602.50" text="in"/>
+<topic id="251" parent="250" x="2814.50" y="1602.50" text="s.smoothness"/>
+<topic id="252" parent="249" guid="WyGKZpERVUCO-G8bGnbV-A" x="2700.50" y="1628.50" text="out"/>
+<topic id="253" parent="252" x="2811.00" y="1628.50" text="g.roughness"/>
+<topic id="254" parent="207" guid="qvkWkpDCH02CQlSw9rJTVg" x="2150.00" y="1663.50" collapsed="True" text="6.2、UnityGlobalIllumination()">
+<note>
+inline UnityGI UnityGlobalIllumination (UnityGIInput data, half occlusion, half3 normalWorld) {   //2.6.3    return UnityGI_Base(data, occlusion, normalWorld);  //2.6.2.1}inline UnityGI UnityGlobalIllumination (UnityGIInput data, half occlusion, half3 normalWorld, Unity_GlossyEnvironmentData glossIn){   //2.6.2    //输入    // UnityGIInput    // {    //     UnityLight light;        //UnityLight 结构体 包含color dir ndotl    //     float3 worldPos;    //     half3 worldViewDir;    //     half atten;    //     half3 ambient;    //     float4 lightmapUV;    //     float4 boxMax[2];    //     float4 probePosition[2];    //     float4 probeHDR[2];    // }    // 输入 Unity_GlossyEnvironmentData    // {    //     half    roughness;    //     half3   reflUVW;    // };    //输出UnityGI返回五个数值 color dir ndotl diffuse specular     UnityGI o_gi = UnityGI_Base(data, occlusion, normalWorld); //2.6.2.1    //lightmap 计算    o_gi.indirect.specular = UnityGI_IndirectSpecular(data, occlusion, glossIn);  //2.6.2.2    //间接反射     return o_gi;}return UnityGlobalIllumination (d, occlusion, s.normalWorld, g); return UnityGlobalIllumination (d, occlusion, s.normalWorld);
+</note>
+</topic>
+<topic id="255" parent="254" guid="TVeWUSP_E0i9wVcKwqrS_w" x="2300.50" y="1663.50" text="in"/>
+<topic id="256" parent="255" guid="vqjORBudGka4vaaX1KDTTw" x="2350.50" y="1663.50" text="6.2.00、结构体UnityGIInput d">
+<note>
+struct UnityGIInput{    UnityLight light; // pixel light, sent from the engine    //引擎发出的像素光    //结构体声明    //UnityLight 结构体 包含color dir ndotl    float3 worldPos;    half3 worldViewDir;    half atten;//阴影衰减    half3 ambient;    // interpolated lightmap UVs are passed as full float precision data to fragment shaders    // so lightmapUV (which is used as a tmp inside of lightmap fragment shaders) should    // also be full float precision to avoid data loss before sampling a texture.    //插值的光照贴图UV作为完整的浮动精度数据传递到片段着色器    //因此，lightmapUV（在lightmap片段着色器内部用作tmp）应该    //也应具有全浮点精度，以避免在采样纹理之前丢失数据。    // .xy =静态光照贴图UV，.zw =动态光照贴图UV    float4 lightmapUV; // .xy = static lightmap UV, .zw = dynamic lightmap UV    #if defined(UNITY_SPECCUBE_BLENDING) || defined(UNITY_SPECCUBE_BOX_PROJECTION) || defined(UNITY_ENABLE_REFLECTION_BUFFERS)        float4 boxMin[2]; //反射球混合？？？    #endif    #ifdef UNITY_SPECCUBE_BOX_PROJECTION        float4 boxMax[2];        float4 probePosition[2];    #endif    // HDR cubemap properties, use to decompress HDR texture    // HDR cubemap属性，用于解压缩HDR纹理    float4 probeHDR[2];};
+</note>
+</topic>
+<topic id="257" parent="256" guid="JMfJ2VPUjk-RUcmRS28mKw" x="2400.50" y="1663.50" text="结构体UnityLight light"/>
+<topic id="258" parent="256" guid="dosvWrEQMU-6jUVfGcJBWQ" x="2400.50" y="1663.50" text="float3 worldPos"/>
+<topic id="259" parent="256" guid="LAyz0KrwZ0uVCkUCRLYN6g" x="2400.50" y="1663.50" text="half3 worldViewDir"/>
+<topic id="260" parent="256" x="2400.50" y="1663.50" text="half atten"/>
+<topic id="261" parent="256" guid="NEPZ2ukpcky2Td95PmPwvg" x="2400.50" y="1663.50" text="half3 ambient"/>
+<topic id="262" parent="256" guid="SKYgoWklvkGUiRXfiwhGtQ" x="2400.50" y="1663.50" text="float4 lightmapUV"/>
+<topic id="263" parent="256" guid="mym36VRkNUmIkh0u14tTsw" x="2400.50" y="1663.50" text="float4 boxMin[2]"/>
+<topic id="264" parent="256" guid="BYY-z11c3E-yyoSUTBGCAQ" x="2400.50" y="1663.50" text="float4 boxMax[2]"/>
+<topic id="265" parent="256" guid="LQ6RP-NZuEmna_KD-k1tFQ" x="2400.50" y="1663.50" text="float4 probePosition[2]"/>
+<topic id="266" parent="256" guid="tTO0nVqedE64xOKojgX3cw" x="2400.50" y="1663.50" text="float4 probeHDR[2]"/>
+<topic id="267" parent="255" guid="lcuBGzgGSkCZpOURey5Tfg" x="2350.50" y="1663.50" text="occlusion"/>
+<topic id="268" parent="255" guid="PC673e_85ECjSDzKTnO28A" x="2350.50" y="1663.50" text="s.normalWorld"/>
+<topic id="269" parent="255" guid="9ksUzrzqJkGU9SkefYPSWQ" x="2350.50" y="1663.50" text="结构体Unity_GlossyEnvironmentData g"/>
+<topic id="270" parent="254" guid="VZsvzGiNkEeMBJ-ijSArmg" x="2300.50" y="1663.50" text="out"/>
+<topic id="271" parent="270" guid="QL3omj7eY0KdpzCCYe2Mvw" x="2350.50" y="1663.50" text="结构体UnityGI"/>
+<topic id="272" parent="271" x="2400.50" y="1663.50" text="含结构体UnityLight"/>
+<topic id="273" parent="272" x="2450.50" y="1663.50" text="half3 color"/>
+<topic id="274" parent="272" x="2450.50" y="1663.50" text="half3 dir"/>
+<topic id="275" parent="272" x="2450.50" y="1663.50" text="half  ndotl"/>
+<topic id="276" parent="271" x="2400.50" y="1663.50" text="含结构体UnityIndirect"/>
+<topic id="277" parent="276" x="2450.50" y="1663.50" text="half3 diffuse"/>
+<topic id="278" parent="276" x="2450.50" y="1663.50" text="half3 specular"/>
+<topic id="279" parent="254" guid="-Ai8zFAq9EK_zlDiGDEI7Q" x="2300.50" y="1663.50" text="6.2.1、UnityGI_Base()">
+<note>
+inline UnityGI UnityGI_Base(UnityGIInput data, half occlusion, half3 normalWorld){   //2.6.2.1    //输入    // UnityGIInput    // {    //     UnityLight light;        //UnityLight 结构体 包含color dir ndotl    //     float3 worldPos;    //     half3 worldViewDir;    //     half atten;    //     half3 ambient;    //     float4 lightmapUV;    //     float4 boxMax[2];    //     float4 probePosition[2];    //     float4 probeHDR[2];    // }    // 输出 结构体 UnityGI    UnityGI o_gi;//结构体声明   color dir ndotl diffuse specular     ResetUnityGI(o_gi); //2.6.2.1.0    // Base pass with Lightmap support is responsible for handling ShadowMask / blending here for performance reason    //具有光照贴图支持的基本传递负责处理ShadowMask /出于性能原因在此处进行混合    #if defined(HANDLE_SHADOWS_BLENDING_IN_GI)        half bakedAtten = UnitySampleBakedOcclusion(data.lightmapUV.xy, data.worldPos); //shadowmask 阴影        float zDist = dot(_WorldSpaceCameraPos - data.worldPos, UNITY_MATRIX_V[2].xyz); //当前片元的Z 深度         float fadeDist = UnityComputeShadowFadeDistance(data.worldPos, zDist); //计算阴影淡化        data.atten = UnityMixRealtimeAndBakedShadows(data.atten, bakedAtten, UnityComputeShadowFade(fadeDist)); //混合动态阴影和静态阴影     #endif    o_gi.light = data.light;    o_gi.light.color *= data.atten; //对亮度进行衰减    #if UNITY_SHOULD_SAMPLE_SH //diffuse 第一步计算 球谐光照        o_gi.indirect.diffuse = ShadeSHPerPixel(normalWorld, data.ambient, data.worldPos);    #endif    #if defined(LIGHTMAP_ON)        // Baked lightmaps        half4 bakedColorTex = UNITY_SAMPLE_TEX2D(unity_Lightmap, data.lightmapUV.xy);        half3 bakedColor = DecodeLightmap(bakedColorTex); //解压lightmap        #ifdef DIRLIGHTMAP_COMBINED //定向光照贴图技术 directional lightmap 略            fixed4 bakedDirTex = UNITY_SAMPLE_TEX2D_SAMPLER (unity_LightmapInd, unity_Lightmap, data.lightmapUV.xy);            o_gi.indirect.diffuse += DecodeDirectionalLightmap (bakedColor, bakedDirTex, normalWorld);            #if defined(LIGHTMAP_SHADOW_MIXING) &amp;&amp; !defined(SHADOWS_SHADOWMASK) &amp;&amp; defined(SHADOWS_SCREEN)                ResetUnityLight(o_gi.light);                 o_gi.indirect.diffuse = SubtractMainLightWithRealtimeAttenuationFromLightmap (o_gi.indirect.diffuse, data.atten, bakedColorTex, normalWorld);            #endif        #else // not directional lightmap 如果没有定向光照贴图            o_gi.indirect.diffuse += bakedColor; //diffuse 第二步计算 加上 lightmap            #if defined(LIGHTMAP_SHADOW_MIXING) &amp;&amp; !defined(SHADOWS_SHADOWMASK) &amp;&amp; defined(SHADOWS_SCREEN)            // 当混合lightmap开启 并且 没有开启shadow mask 并且 开启阴影             // 经常会碰到烘了lightmap（已经有阴影） 但角色的实时阴影加进不了 lightmap阴影里，此方法应该是较好的解决                ResetUnityLight(o_gi.light); //重置参数，清零                o_gi.indirect.diffuse = SubtractMainLightWithRealtimeAttenuationFromLightmap(o_gi.indirect.diffuse, data.atten, bakedColorTex, normalWorld);                //lambert  lightmap 和阴影  阴影颜色做混合            #endif        #endif    #endif    #ifdef DYNAMICLIGHTMAP_ON //动态lightmap 略        // Dynamic lightmaps        fixed4 realtimeColorTex = UNITY_SAMPLE_TEX2D(unity_DynamicLightmap, data.lightmapUV.zw);        half3 realtimeColor = DecodeRealtimeLightmap (realtimeColorTex);        #ifdef DIRLIGHTMAP_COMBINED            half4 realtimeDirTex = UNITY_SAMPLE_TEX2D_SAMPLER(unity_DynamicDirectionality, unity_DynamicLightmap, data.lightmapUV.zw);            o_gi.indirect.diffuse += DecodeDirectionalLightmap (realtimeColor, realtimeDirTex, normalWorld);        #else            o_gi.indirect.diffuse += realtimeColor;        #endif    #endif    o_gi.indirect.diffuse *= occlusion; //diffuse 第三步计算 乘上 AO    return o_gi;}
+</note>
+</topic>
+<topic id="280" parent="279" guid="YiSdzTHauEy01qoXa3K-FQ" x="2350.50" y="1663.50" text="in"/>
+<topic id="281" parent="280" x="2400.50" y="1663.50" text="结构体UnityGIInput d"/>
+<topic id="282" parent="280" x="2400.50" y="1663.50" text="occlusion"/>
+<topic id="283" parent="280" x="2400.50" y="1663.50" text="s.normalWorld"/>
+<topic id="284" parent="279" guid="MdFOganqPUGPerlkiAw1IQ" x="2350.50" y="1663.50" text="out"/>
+<topic id="285" parent="284" guid="zmHHshwqLUiq22H6d4se-g" x="2400.50" y="1663.50" text="结构体UnityGI"/>
+<topic id="286" parent="285" guid="jaxozF5mzU-ttOg2MjtMMA" x="2450.50" y="1663.50" text="含结构体UnityLight"/>
+<topic id="287" parent="286" x="2500.50" y="1663.50" text="half3 color"/>
+<topic id="288" parent="286" x="2500.50" y="1663.50" text="half3 dir"/>
+<topic id="289" parent="286" x="2500.50" y="1663.50" text="half  ndotl"/>
+<topic id="290" parent="285" x="2450.50" y="1663.50" text="含结构体UnityIndirect"/>
+<topic id="291" parent="290" guid="9Teu9TH3H02R1irqqzEb8A" x="2500.50" y="1663.50" text="half3 diffuse"/>
+<topic id="292" parent="290" x="2500.50" y="1663.50" text="half3 specular"/>
+<topic id="293" parent="279" guid="xYZ424g8tEC76w-8DFiRTQ" x="2350.50" y="1663.50" text="6.2.1.1、ResetUnityGI()">
+<note>
+inline void ResetUnityGI(out UnityGI outGI){   //2.6.2.1.0    ResetUnityLight(outGI.light); //传递赋值 初始化    outGI.indirect.diffuse = 0; //初始化    outGI.indirect.specular = 0;//初始化}
+</note>
+</topic>
+<topic id="294" parent="293" guid="GPyFMRhb_0KclXUu3qOVqg" x="2400.50" y="1663.50" text="in out"/>
+<topic id="295" parent="294" guid="IeTZB9yMZEi0gcY3iigW5Q" x="2450.50" y="1663.50" text="UnityGI o_gi"/>
+<topic id="296" parent="295" guid="ikrs08WFWkyd9930e9jLlg" x="2500.50" y="1663.50" text="6.2.1.1.1、ResetUnityLight()">
+<note>
+inline void ResetUnityLight(out UnityLight outLight){    outLight.color = half3(0, 0, 0);    outLight.dir = half3(0, 1, 0); // Irrelevant direction, just not null//不相关的方向，但不为null    outLight.ndotl = 0; // Not used 未使用}
+</note>
+</topic>
+<topic id="297" parent="296" guid="cdavdBLHC0qsHvZ68daDiw" x="2550.50" y="1663.50" text="void"/>
+<topic id="298" parent="297" guid="AFLEG8jDpEKHT8JAevro8w" x="2600.50" y="1663.50" text="o_gi.light.color = half3(0, 0, 0);"/>
+<topic id="299" parent="297" guid="AKbZRmbsYkilIjIV2rwm0Q" x="2600.50" y="1663.50" text="o_gi.light.dir = half3(0, 1, 0);"/>
+<topic id="300" parent="297" guid="6LseLH0bE0qpqq-JCIFPaA" x="2600.50" y="1663.50" text="o_gi.light.ndotl = 0;"/>
+<topic id="301" parent="295" guid="wE1v8TtIU0m6vjs5Ffcd5g" x="2500.50" y="1663.50" text="初始化UnityGI"/>
+<topic id="302" parent="301" guid="MRwNYdm71UCF0uaeO7ua6g" x="2550.50" y="1663.50" text="o_gi.indirect.diffuse = 0;"/>
+<topic id="303" parent="301" guid="eB11HnTAyU6cXR8glhpDnw" x="2550.50" y="1663.50" text="o_gi.indirect.specular = 0;"/>
+<topic id="304" parent="279" guid="BcgIz37jfUOgO6TLVje3uQ" x="2350.50" y="1663.50" text="6.2.1.2、ShadeSHPerPixel()">
+<note>
+#if UNITY_SHOULD_SAMPLE_SH //间接光 diffuse 第一步计算 球谐光照        o_gi.indirect.diffuse = ShadeSHPerPixel(normalWorld, data.ambient, data.worldPos);    #endifhalf3 ShadeSHPerPixel (half3 normal, half3 ambient, float3 worldPos){    half3 ambient_contrib = 0.0;        #if UNITY_SAMPLE_FULL_SH_PER_PIXEL        // 完全按像素 片元中每顶点计算球谐            #if UNITY_LIGHT_PROBE_PROXY_VOLUME                if (unity_ProbeVolumeParams.x == 1.0)                    ambient_contrib = SHEvalLinearL0L1_SampleProbeVolume(half4(normal, 1.0), worldPos);                else                    ambient_contrib = SHEvalLinearL0L1(half4(normal, 1.0));            #else                ambient_contrib = SHEvalLinearL0L1(half4(normal, 1.0));            #endif        ambient_contrib += SHEvalLinearL2(half4(normal, 1.0));        ambient += max(half3(0, 0, 0), ambient_contrib);            #ifdef UNITY_COLORSPACE_GAMMA                ambient = LinearToGammaSpace(ambient);            #endif    #elif (SHADER_TARGET &lt; 30) || UNITY_STANDARD_SIMPLE        // 完全按像素        // 无事。 SH的环境上的Gamma转换在顶点着色器中进行，请参见ShadeSHPerVertex。    #else        // 每顶点L2，每像素L0..L1和伽马校正        // 在这种情况下，环境始终是线性的，请参见ShadeSHPerVertex（）            #if UNITY_LIGHT_PROBE_PROXY_VOLUME                if (unity_ProbeVolumeParams.x == 1.0)                    ambient_contrib = SHEvalLinearL0L1_SampleProbeVolume (half4(normal, 1.0), worldPos);                else                    ambient_contrib = SHEvalLinearL0L1 (half4(normal, 1.0));            #else                ambient_contrib = SHEvalLinearL0L1 (half4(normal, 1.0));            #endif        ambient = max(half3(0, 0, 0), ambient + ambient_contrib);     // 之前在顶点着色器中包含L2贡献。            #ifdef UNITY_COLORSPACE_GAMMA                ambient = LinearToGammaSpace (ambient);            #endif    #endif    return ambient;}
+</note>
+</topic>
+<topic id="305" parent="304" guid="J3ekXuersUSw42o4JwtEvw" x="2400.50" y="1663.50" collapsed="True" text="in"/>
+<topic id="306" parent="305" guid="xTzejX9cQkOrNtK_I90xsA" x="2450.50" y="1663.50" text="half3 normalWorld"/>
+<topic id="307" parent="305" guid="dQmX8Dp5N0GlN3YlJm4aKg" x="2450.50" y="1663.50" text="UnityGIInput data.ambient"/>
+<topic id="308" parent="305" guid="TzI1vh8m1ESVfrlfm4MtJA" x="2450.50" y="1663.50" text="UnityGIInput data.worldPos"/>
+<topic id="309" parent="304" guid="4ndYFZGo3k6Wo8KoWDIWiA" x="2400.50" y="1663.50" text="out"/>
+<topic id="310" parent="309" guid="E0XEcxx3h0OAm6CLbQFysg" x="2450.50" y="1663.50" text="UnityGI o_gi.indirect.diffuse"/>
+<topic id="311" parent="279" guid="vAbgszQ0o0i3oehDknYPGg" x="2350.50" y="1663.50" collapsed="True" text="6.2.1.3、SubtractMainLightWithRealtimeAttenuationFromLightmap()">
+<parent-relation guid="3cDhK1xDvEeTC6urz5eRxw"/>
+<note>
+inline half3 SubtractMainLightWithRealtimeAttenuationFromLightmap (half3 lightmap, half attenuation, half4 bakedColorTex, half3 normalWorld){    // Let&apos;s try to make realtime shadows work on a surface, which already contains    // baked lighting and shadowing from the main sun light.    //让我们尝试使实时阴影在已经包含表面的表面上起作用     //烘烤的灯光和主要太阳光的阴影。    half3 shadowColor = unity_ShadowColor.rgb;    half shadowStrength = _LightShadowData.x;    // Summary:    // 1) Calculate possible value in the shadow by subtracting estimated light contribution from the places occluded by realtime shadow:    //      a) preserves other baked lights and light bounces    //      b) eliminates shadows on the geometry facing away from the light    // 2) Clamp against user defined ShadowColor.    // 3) Pick original lightmap value, if it is the darkest one.    //摘要：     // 1）通过从实时阴影遮挡的位置减去估计的光贡献来计算阴影中的可能值：     // a）保留其他烘焙的灯光和反弹光     // b）消除了背向灯光的几何图形上的阴影     // 2）锁定用户定义的ShadowColor。     // 3）选择原始的光照贴图值（如果它是最暗的）。    // 1) Gives good estimate of illumination as if light would&apos;ve been shadowed during the bake.    //    Preserves bounce and other baked lights    //    No shadows on the geometry facing away from the light    //提供良好的照明估计，就好像在烘焙过程中光线会被遮盖一样。     //保留反射光和其他烘烤的光     //几何体上没有阴影，远离光    half ndotl = LambertTerm (normalWorld, _WorldSpaceLightPos0.xyz); //普通lambert 但有平台判断    half3 estimatedLightContributionMaskedByInverseOfShadow = ndotl * (1- attenuation) * _LightColor0.rgb; //阴影区分    half3 subtractedLightmap = lightmap - estimatedLightContributionMaskedByInverseOfShadow; //减去光照贴图    // 2) Allows user to define overall ambient of the scene and control situation when realtime shadow becomes too dark.    // 2）允许用户定义场景的整体环境并在实时阴影变得太暗时控制情况。    half3 realtimeShadow = max(subtractedLightmap, shadowColor);    realtimeShadow = lerp(realtimeShadow, lightmap, shadowStrength);    // 3) Pick darkest color 3）选择最深的颜色    return min(lightmap, realtimeShadow);}
+</note>
+</topic>
+<topic id="312" parent="311" guid="g227btPex0CnB0vZEo4inQ" x="2400.50" y="1663.50" text="in"/>
+<topic id="313" parent="312" guid="3dQOYjGt00W1gGzcmVM_rg" x="2450.50" y="1663.50" text="o_gi.indirect.diffuse"/>
+<topic id="314" parent="312" guid="wLbhkwb7OUeaQcv-e_sB_Q" x="2450.50" y="1663.50" text="data.atten"/>
+<topic id="315" parent="312" x="2450.50" y="1663.50" text="bakedColorTex"/>
+<topic id="316" parent="312" guid="crzN3Zg4uUyN9Jz0wWWmIw" x="2450.50" y="1663.50" text="normalWorld"/>
+<topic id="317" parent="311" guid="q-4HJUwHNEKnVIM_qMpDng" x="2400.50" y="1663.50" text="out"/>
+<topic id="318" parent="317" guid="3dCjGleTDU6cBJhJrHbiYg" x="2450.50" y="1663.50" text="o_gi.indirect.diffuse"/>
+<topic id="319" parent="311" guid="5mrlcFofq0627ZH_ptGLAA" x="2400.50" y="1663.50" text="6.2.1.3.1、LambertTerm()">
+<note>
+inline half LambertTerm (half3 normal, half3 lightDir){    return DotClamped (normal, lightDir);}
+</note>
+</topic>
+<topic id="320" parent="319" guid="e8Bm0h8ztkqkKbUwLlmMWA" x="2450.50" y="1663.50" text="in"/>
+<topic id="321" parent="320" guid="4Nhs8oQGsUC0OWkwWiBCIA" x="2500.50" y="1663.50" text="normalWorld"/>
+<topic id="322" parent="320" x="2500.50" y="1663.50" text="\N_WorldSpaceLightPos0.xyz"/>
+<topic id="323" parent="319" guid="rE0ETmF1V0eoKPVi7cAVeA" x="2450.50" y="1663.50" text="out"/>
+<topic id="324" parent="323" guid="S4wP6-MXL0iswSLSXizqtw" x="2500.50" y="1663.50" text="half ndotl"/>
+<topic id="325" parent="319" guid="R1ZKnga7rk68mnNL7GSrTA" x="2450.50" y="1663.50" text="DotClamped()">
+<note>
+inline half DotClamped (half3 a, half3 b){    #if (SHADER_TARGET &lt; 30)        return saturate(dot(a, b));    #else        return max(0.0h, dot(a, b));    #endif}
+</note>
+</topic>
+<topic id="326" parent="254" guid="0VrfgSoCZU-yCekJiwysBg" x="2300.50" y="1663.50" collapsed="True" text="6.2.2、UnityGI_IndirectSpecular()">
+<note>
+inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_GlossyEnvironmentData glossIn)  {  //2.6.2.2    half3 specular;     // 变量声明     #ifdef UNITY_SPECCUBE_BOX_PROJECTION        // we will tweak reflUVW in glossIn directly (as we pass it to Unity_GlossyEnvironment twice for probe0 and probe1), so keep original to pass into BoxProjectedCubemapDirection        // 我们将直接在glossIn中调整reflUVW（因为我们将它分别两次传递给probe0和probe1两次传递给Unity_GlossyEnvironment），因此请保留原始内容以传递给BoxProjectedCubemapDirection        half3 originalReflUVW = glossIn.reflUVW;        glossIn.reflUVW = BoxProjectedCubemapDirection (originalReflUVW, data.worldPos, data.probePosition[0], data.boxMin[0], data.boxMax[0]);        // 获取立方体贴图的方向向量  视线向量相对于片元的法向量相反反射向量延长    #endif    #ifdef _GLOSSYREFLECTIONS_OFF        specular = unity_IndirectSpecColor.rgb;    #else        half3 env0 = Unity_GlossyEnvironment (UNITY_PASS_TEXCUBE(unity_SpecCube0), data.probeHDR[0], glossIn);        // 环境球        #ifdef UNITY_SPECCUBE_BLENDING //反射球混合            const float kBlendFactor = 0.99999;            float blendLerp = data.boxMin[0].w;            UNITY_BRANCH            if (blendLerp &lt; kBlendFactor)            {                #ifdef UNITY_SPECCUBE_BOX_PROJECTION                    glossIn.reflUVW = BoxProjectedCubemapDirection (originalReflUVW, data.worldPos, data.probePosition[1], data.boxMin[1], data.boxMax[1]);                #endif                half3 env1 = Unity_GlossyEnvironment (UNITY_PASS_TEXCUBE_SAMPLER(unity_SpecCube1,unity_SpecCube0), data.probeHDR[1], glossIn);                specular = lerp(env1, env0, blendLerp);            }            else            {                specular = env0;            }        #else            specular = env0;        #endif    #endif    return specular * occlusion; //最后乘上AO}
+</note>
+</topic>
+<topic id="327" parent="326" guid="0NZToJiVnUajQTjj8UibGg" x="2350.50" y="1663.50" text="in"/>
+<topic id="328" parent="327" x="2400.50" y="1663.50" text="UnityGIInput d"/>
+<topic id="329" parent="327" guid="crkLFKlytUSgkLLvK_bukA" x="2400.50" y="1663.50" text="occlusion"/>
+<topic id="330" parent="327" guid="bnSvgCSwfUu2PZCN6Omtyw" x="2400.50" y="1663.50" text="s.normalWorld"/>
+<topic id="331" parent="327" x="2400.50" y="1663.50" text="Unity_GlossyEnvironmentData g"/>
+<topic id="332" parent="326" guid="aF-6MIpZP0yIHJWZyeVXTg" x="2350.50" y="1663.50" text="out"/>
+<topic id="333" parent="332" guid="rASc5rexM0OFHSoOp8LUFQ" x="2400.50" y="1663.50" text="UnityGI o_gi.indirect.specular"/>
+<topic id="334" parent="326" guid="isLnYPHPO0a1ZgeXkDMs5A" x="2350.50" y="1663.50" text="6.2.2.1、BoxProjectedCubemapDirection()">
+<note>
+inline float3 BoxProjectedCubemapDirection (float3 worldRefl, float3 worldPos, float4 cubemapCenter, float4 boxMin, float4 boxMax){    // Do we have a valid reflection probe?    UNITY_BRANCH    if (cubemapCenter.w &gt; 0.0)    {        float3 nrdir = normalize(worldRefl);        #if 1            float3 rbmax = (boxMax.xyz - worldPos) / nrdir;            float3 rbmin = (boxMin.xyz - worldPos) / nrdir;            float3 rbminmax = (nrdir &gt; 0.0f) ? rbmax : rbmin;        #else // Optimized version            float3 rbmax = (boxMax.xyz - worldPos);            float3 rbmin = (boxMin.xyz - worldPos);            float3 select = step (float3(0,0,0), nrdir);            float3 rbminmax = lerp (rbmax, rbmin, select);            rbminmax /= nrdir;        #endif        float fa = min(min(rbminmax.x, rbminmax.y), rbminmax.z);        worldPos -= cubemapCenter.xyz;        worldRefl = worldPos + nrdir * fa;    }    return worldRefl;}
+</note>
+</topic>
+<topic id="335" parent="334" guid="i9Crz71igU6OADypDTqCnQ" x="2400.50" y="1663.50" text="in"/>
+<topic id="336" parent="335" guid="7R4CAh2k1UWLy6Vn4OKKJg" x="2450.50" y="1663.50" text="glossIn.reflUVW"/>
+<topic id="337" parent="336" x="2500.50" y="1663.50" text="float3 worldRefl"/>
+<topic id="338" parent="335" guid="WqpwKehgp0KLLh8EFye21w" x="2450.50" y="1663.50" text="data.worldPos"/>
+<topic id="339" parent="338" x="2500.50" y="1663.50" text="float3 worldPos"/>
+<topic id="340" parent="335" guid="7oSSji23HEidHwuUCqf4VA" x="2450.50" y="1663.50" text="data.probePosition[0]"/>
+<topic id="341" parent="340" x="2500.50" y="1663.50" text="float4 cubemapCenter"/>
+<topic id="342" parent="335" guid="EkFMqFgNZ0Os3FIatTMehw" x="2450.50" y="1663.50" text="data.boxMin[0]"/>
+<topic id="343" parent="342" x="2500.50" y="1663.50" text="float4 boxMin"/>
+<topic id="344" parent="335" guid="-pGVde2UVkSEHdJjMuVF0A" x="2450.50" y="1663.50" text="data.boxMax[0]"/>
+<topic id="345" parent="344" guid="thOOg2hhJkuTJNS0iyN2xA" x="2500.50" y="1663.50" text="float4 boxMax"/>
+<topic id="346" parent="334" guid="68eEBq2cMEati3zi_GMH7w" x="2400.50" y="1663.50" text="out"/>
+<topic id="347" parent="346" guid="Llr_G5RbGkiTxO3W9BTcGg" x="2450.50" y="1663.50" text="glossIn.reflUVW"/>
+<topic id="348" parent="347" x="2500.50" y="1663.50" text="float3 worldRefl"/>
+<topic id="349" parent="326" guid="Hcu7sJpIHkuofZInGPju2w" x="2350.50" y="1663.50" collapsed="True" text="6.2.2.2、Unity_GlossyEnvironment()">
+<note>
+half3 Unity_GlossyEnvironment (UNITY_ARGS_TEXCUBE(tex), half4 hdr, Unity_GlossyEnvironmentData glossIn){    half perceptualRoughness = glossIn.roughness /* perceptualRoughness */ ;// TODO: CAUTION: remap from Morten may work only with offline convolution, see impact with runtime convolution!// For now disabled    #if 0        float m = PerceptualRoughnessToRoughness(perceptualRoughness); // m is the real roughness parameter        const float fEps = 1.192092896e-07F;        // smallest such that 1.0+FLT_EPSILON != 1.0  (+1e-4h is NOT good here. is visibly very wrong)        float n =  (2.0/max(fEps, m*m))-2.0;        // remap to spec power. See eq. 21 in --&gt; https://dl.dropboxusercontent.com/u/55891920/papers/mm_brdf.pdf        n /= 4;                                     // remap from n_dot_h formulatino to n_dot_r. See section &quot;Pre-convolved Cube Maps vs Path Tracers&quot; --&gt; https://s3.amazonaws.com/docs.knaldtech.com/knald/1.0.0/lys_power_drops.html        perceptualRoughness = pow( 2/(n+2), 0.25);      // remap back to square root of real roughness (0.25 include both the sqrt root of the conversion and sqrt for going from roughness to perceptualRoughness)    #else        // MM: came up with a surprisingly close approximation to what the #if 0&apos;ed out code above does.        perceptualRoughness = perceptualRoughness*(1.7 - 0.7*perceptualRoughness);    #endif    half mip = perceptualRoughnessToMipmapLevel(perceptualRoughness);    half3 R = glossIn.reflUVW;    half4 rgbm = UNITY_SAMPLE_TEXCUBE_LOD(tex, R, mip);    return DecodeHDR(rgbm, hdr);}
+</note>
+</topic>
+<topic id="350" parent="349" guid="SltCdgWMDE-bZvZrg7jGfg" x="2400.50" y="1663.50" text="in"/>
+<topic id="351" parent="350" guid="A9Mo7oxguEykUuy3ZcCU4Q" x="2450.50" y="1663.50" text="UNITY_ARGS_TEXCUBE(tex)"/>
+<topic id="352" parent="351" guid="4CfGrMRU006A_NOfbrmPWA" x="2500.50" y="1663.50" text="unity_SpecCube0"/>
+<topic id="353" parent="350" guid="GjyVQk3XIEuPOlEB10gKHQ" x="2450.50" y="1663.50" text="half4 hdr"/>
+<topic id="354" parent="353" guid="0Je6TDDRkk2qHxscTNArSg" x="2500.50" y="1663.50" text="data.probeHDR[0]"/>
+<topic id="355" parent="350" guid="TPm4PBepi0i_5euhsTsVZw" x="2450.50" y="1663.50" text="Unity_GlossyEnvironmentData\NglossIn"/>
+<topic id="356" parent="349" guid="Cv5mkkwSYky9rBwKH-KoHQ" x="2400.50" y="1663.50" text="out"/>
+<topic id="357" parent="356" guid="HZRF-3wNhUS95RZv8hS2tg" x="2450.50" y="1663.50" text="half3 env"/>
+<topic id="358" parent="349" guid="351gZXgIG0eE9aDAPl0fOQ" x="2400.50" y="1663.50" text="6.2.2.2.1、PerceptualRoughnessToRoughness()"/>
+<topic id="359" parent="358" guid="l77QJqfNlUW5UyxdOHfymQ" x="2450.50" y="1663.50" text="in"/>
+<topic id="360" parent="359" x="2500.50" y="1663.50" text="glossIn.roughness"/>
+<topic id="361" parent="358" x="2450.50" y="1663.50" text="out"/>
+<topic id="362" parent="349" guid="NHf_xUrnhkaEwUIdQ_eQvA" x="2400.50" y="1663.50" text="6.2.2.2.2、perceptualRoughnessToMipmapLevel()"/>
+<topic id="363" parent="362" guid="TsnuvProxECWLP1ezRZIcw" x="2450.50" y="1663.50" text="in"/>
+<topic id="364" parent="363" guid="jia0zS2vpUqi6g571tk9uw" x="2500.50" y="1663.50" text="perceptualRoughness"/>
+<topic id="365" parent="362" x="2450.50" y="1663.50" text="out"/>
+<topic id="366" parent="362" guid="tmsg9LG6ZEW8yNtS7m5vLA" x="2450.50" y="1663.50" text="UNITY_SPECCUBE_LOD_STEPS"/>
+<topic id="367" parent="349" guid="S-QTlvKcn02NVxXAE65Prg" x="2400.50" y="1663.50" text="6.2.2.2.3、UNITY_SAMPLE_TEXCUBE_LOD()"/>
+<topic id="368" parent="367" guid="3y1cJGw1XkK31DrT5bvpqw" x="2450.50" y="1663.50" text="in"/>
+<topic id="369" parent="368" x="2500.50" y="1663.50" text="tex"/>
+<topic id="370" parent="368" x="2500.50" y="1663.50" text="R"/>
+<topic id="371" parent="368" guid="TFVfsCQpM0yYxB_U0NkXDA" x="2500.50" y="1663.50" text="mip"/>
+<topic id="372" parent="367" guid="o2KHh_VRuEG_f051KlSJfw" x="2450.50" y="1663.50" text="out"/>
+<topic id="373" parent="372" x="2500.50" y="1663.50" text="rgbm"/>
+<topic id="374" parent="349" guid="JltG7IDdvE2cbNDHaf04-g" x="2400.50" y="1663.50" text="6.2.2.2.4、DecodeHDR()">
+<note>
+inline half3 DecodeHDR (half4 data, half4 decodeInstructions){    // Take into account texture alpha if decodeInstructions.w is true(the alpha value affects the RGB channels)    half alpha = decodeInstructions.w * (data.a - 1.0) + 1.0;    // If Linear mode is not supported we can skip exponent part    #if defined(UNITY_COLORSPACE_GAMMA)        return (decodeInstructions.x * alpha) * data.rgb;    #else    #   if defined(UNITY_USE_NATIVE_HDR)            return decodeInstructions.x * data.rgb; // Multiplier for future HDRI relative to absolute conversion.    #   else            return (decodeInstructions.x * pow(alpha, decodeInstructions.y)) * data.rgb;    #   endif    #endif}
+</note>
+</topic>
+<topic id="375" parent="374" guid="7huuzFqgI0WwCP0djk2HyQ" x="2450.50" y="1663.50" text="in"/>
+<topic id="376" parent="375" guid="Jnab_cJq-kSjl1rOeJn9bg" x="2500.50" y="1663.50" text="rgbm"/>
+<topic id="377" parent="375" x="2500.50" y="1663.50" text="hdr"/>
+<topic id="378" parent="374" x="2450.50" y="1663.50" text="out"/>
+<topic id="379" parent="68" guid="D5NtS1EpWEGRZiCk7I9iZA" x="1961.50" y="2050.50" text="7、UNITY_BRDF_PBS()"/>
+<topic id="380" parent="379" guid="cWcWdhR8cUSYvbPDNs0WVg" x="2162.00" y="2050.50" text="7、BRDF3_Unity_PBS">
+<note>
+//老派，而不是基于微面的修正归一化Blinn-Phong BRDF//实现使用Lookup纹理提高性能//// *以RDF格式标准化的BlinnPhong// *隐式可见度术语// *没有菲涅耳项//// TODO：在线性渲染模式下镜面反射太弱half4 BRDF3_Unity_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivity, half smoothness,    float3 normal, float3 viewDir,    UnityLight light, UnityIndirect gi){   //2.7    float3 reflDir = reflect (viewDir, normal);    half nl = saturate(dot(normal, light.dir));    half nv = saturate(dot(normal, viewDir));    // 向量化Pow4以保存说明    half2 rlPow4AndFresnelTerm = Pow4 (float2(dot(reflDir, light.dir), 1-nv));     //使用R.L代替N.H保存指令    half rlPow4 = rlPow4AndFresnelTerm.x;     // 幂指数必须与GeneratedTextures.cpp的NHxRoughness（）函数中的kHorizontalWarpExp相匹配    half fresnelTerm = rlPow4AndFresnelTerm.y;   // 简化版 (1-h . wi)4(次方)    half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));  //掠射角项    half3 color = BRDF3_Direct(diffColor, specColor, rlPow4, smoothness); //直接光部分                //2.7.1    color *= light.color * nl;    color += BRDF3_Indirect(diffColor, specColor, gi, grazingTerm, fresnelTerm);  //间接光部分                //2.7.2    return half4(color, 1);}
+</note>
+</topic>
+<topic id="381" parent="380" guid="08phcqvkOU2y6dKr_pbK3w" x="2303.50" y="1795.50" text="in"/>
+<topic id="382" parent="381" guid="i840eXyePkOzV2CUbm0d3w" x="2420.00" y="1701.50" text="half3 diffColor"/>
+<topic id="383" parent="382" guid="vb3VUThxz0G0c0qB-evhFg" x="2554.50" y="1701.50" text="s.diffColor"/>
+<topic id="384" parent="381" guid="BiR1GhnmJE6tlkrnYDWpzQ" x="2424.50" y="1727.50" text="half3 specColor"/>
+<topic id="385" parent="384" x="2568.00" y="1727.50" text="s.specColor"/>
+<topic id="386" parent="381" guid="J9JTJFcgBEKm1iF8TnqDiQ" x="2455.00" y="1753.50" text="half oneMinusReflectivity"/>
+<topic id="387" parent="386" x="2663.00" y="1753.50" text="s.oneMinusReflectivity"/>
+<topic id="388" parent="381" guid="PRqTivmRuU63OFHMp4YKLA" x="2426.50" y="1779.50" text="half smoothness"/>
+<topic id="389" parent="388" x="2577.50" y="1779.50" text="s.smoothness"/>
+<topic id="390" parent="381" guid="SeHFfZVN8kGdChodfxud0w" x="2421.50" y="1805.50" text="  float3 normal"/>
+<topic id="391" parent="390" x="2572.00" y="1805.50" text="s.normalWorld"/>
+<topic id="392" parent="381" guid="COFnE9VyNUSMIOUZTo-Baw" x="2419.00" y="1831.50" text="float3 viewDir"/>
+<topic id="393" parent="392" guid="9tJmVpR1Bk-4hqtQiHKEHA" x="2550.50" y="1831.50" text="-s.eyeVec"/>
+<topic id="394" parent="381" x="2389.50" y="1873.50" text="gi"/>
+<topic id="395" parent="394" guid="BQti-pUoYk2Ej6tv3n9qNw" x="2515.50" y="1860.50" text="   UnityLight light"/>
+<topic id="396" parent="395" guid="t6ySomJSy0GY6oh9Z43uEw" x="2651.50" y="1860.50" text=" gi.light"/>
+<topic id="397" parent="394" guid="_07nyqtKfEWse3dJje1zWw" x="2509.50" y="1886.50" text="UnityIndirect gi"/>
+<topic id="398" parent="397" x="2647.50" y="1886.50" text="gi.indirect"/>
+<topic id="399" parent="380" guid="GCQ5o-A6TkysolDXZOuxGQ" x="2303.50" y="1918.50" text="out"/>
+<topic id="400" parent="399" guid="G9RIgofKeEeOHfdKKGt_SQ" x="2396.50" y="1918.50" text="half4 c"/>
+<topic id="401" parent="380" guid="Yu4KCEt5hkezKOP7cWrW6A" x="2328.50" y="1976.50" text="7.1、Pow4()">
+<note>
+inline float2 Pow4 (float2 x){    return x*x*x*x;}
+</note>
+</topic>
+<topic id="402" parent="401" guid="Ta2RI37WAUeWVkDYm49ykw" x="2439.50" y="1963.50" text="in"/>
+<topic id="403" parent="402" guid="K_jhxI-Qvky3y17GNDubhQ" x="2529.00" y="1963.50" text="float2"/>
+<topic id="404" parent="403" x="2666.00" y="1950.50" text="dot(reflDir, light.dir)"/>
+<topic id="405" parent="403" guid="fuDvjgsoMEKYQCP6VSrnVw" x="2618.50" y="1976.50" text="1-nv"/>
+<topic id="406" parent="401" guid="ni3eYIP05US7oYw1DGpa0w" x="2439.50" y="2005.50" text="out"/>
+<topic id="407" parent="406" guid="elkbEJuGmkiThQSwaCYA9w" x="2603.00" y="2005.50" text="half2 rlPow4AndFresnelTerm"/>
+<topic id="408" parent="380" guid="toqHWEexg0aL-WHrvqf-aA" x="2354.00" y="2134.50" text="7.2、BRDF3_Direct()">
+<note>
+sampler2D_float unity_NHxRoughness;half3 BRDF3_Direct(half3 diffColor, half3 specColor, half rlPow4, half smoothness){ //基于blinn-phong 光照模型的优化实现     half LUT_RANGE = 16.0; // must match range in NHxRoughness() function in GeneratedTextures.cpp    // Lookup texture to save instructions    //必须与GeneratedTextures.cpp中的NHxRoughness（）函数中的范围匹配     //查找纹理以保存指令    half specular = tex2D(unity_NHxRoughness, half2(rlPow4, SmoothnessToPerceptualRoughness(smoothness))).r * LUT_RANGE;    #if defined(_SPECULARHIGHLIGHTS_OFF)        specular = 0.0;    #endif    return diffColor + specular * specColor;}
+</note>
+</topic>
+<topic id="409" parent="408" guid="MqUdbN8ox027cdxPqV1paw" x="2490.50" y="2092.50" text="in"/>
+<topic id="410" parent="409" guid="snthhHA4QkSW9Rl82aMCLQ" x="2607.00" y="2040.50" text="half3 diffColor"/>
+<topic id="411" parent="410" guid="q4dU0DHZDEagR9EmuRNXbw" x="2736.50" y="2040.50" text="diffColor"/>
+<topic id="412" parent="409" guid="MMCIs2VCjUqtqUeDAn5BYg" x="2611.50" y="2066.50" text="half3 specColor"/>
+<topic id="413" parent="412" guid="UckWMzRtOUekKKCHcUJjbg" x="2750.00" y="2066.50" text="specColor"/>
+<topic id="414" parent="409" guid="MYBJ_c3mUkatcaQII0N6vg" x="2642.50" y="2092.50" text="rlPow4AndFresnelTerm.x"/>
+<topic id="415" parent="414" guid="PfoRBLsHpEi5U9_ma5WWlA" x="2802.50" y="2092.50" text="rlPow4"/>
+<topic id="416" parent="409" guid="WmwJ42oLTUu9mDR2sD3L9A" x="2613.50" y="2118.50" text="half smoothness"/>
+<topic id="417" parent="416" guid="YfLi6SAYtU2Fnmj03cm1bg" x="2759.50" y="2118.50" text="smoothness"/>
+<topic id="418" parent="409" guid="9yOrI87qekSJv_Kf83uygg" x="2613.50" y="2144.50" text="sampler2D_float"/>
+<topic id="419" parent="418" x="2789.00" y="2144.50" text="unity_NHxRoughness"/>
+<topic id="420" parent="408" guid="1fIqT1i1KkeN6KpkxGsGlw" x="2490.50" y="2173.50" text="out"/>
+<topic id="421" parent="420" guid="Z5o4Cpgs80yRxZhXy0hbKw" x="2596.00" y="2173.50" text="half3 color"/>
+<topic id="422" parent="408" guid="FDQ7jlXuP0iDIeV9tW0_bQ" x="2618.50" y="2215.50" text="7.2.1、SmoothnessToPerceptualRoughness()">
+<note>
+float SmoothnessToPerceptualRoughness(float smoothness){    return (1 - smoothness);}
+</note>
+</topic>
+<topic id="423" parent="422" guid="WkWh3TfmR0G7QnZuqh6QDA" x="2832.50" y="2202.50" text="in"/>
+<topic id="424" parent="423" guid="6vXc8TG08UCXn4nvfaP0bw" x="2941.50" y="2202.50" text="smoothness"/>
+<topic id="425" parent="422" guid="p4DhL7gLoESXkCKDh48Gzw" x="2832.50" y="2228.50" text="out"/>
+<topic id="426" parent="380" guid="UZr801GbrEi8buYnCa3FIw" x="2359.50" y="2331.50" text="7.3、BRDF3_Indirect()">
+<note>
+half3 BRDF3_Indirect(half3 diffColor, half3 specColor, UnityIndirect indirect, half grazingTerm, half fresnelTerm){    half3 c = indirect.diffuse * diffColor;    c += indirect.specular * lerp (specColor, grazingTerm, fresnelTerm);    return c;}
+</note>
+</topic>
+<topic id="427" parent="426" guid="LOCO33kxNUSOvZfN9Je8vA" x="2501.50" y="2318.50" text="in"/>
+<topic id="428" parent="427" guid="3CwESoZ1rkKflGhaJQV1gQ" x="2618.00" y="2266.50" text="half3 diffColor"/>
+<topic id="429" parent="427" guid="SCSwA4uD8k2h4o6B14HbWw" x="2622.50" y="2292.50" text="half3 specColor"/>
+<topic id="430" parent="427" guid="syrQSA_2GUqjrYZ_Dzl1ag" x="2621.50" y="2318.50" text="UnityIndirect gi"/>
+<topic id="431" parent="430" x="2793.50" y="2318.50" text="UnityIndirect indirect"/>
+<topic id="432" parent="427" x="2627.50" y="2344.50" text="half grazingTerm"/>
+<topic id="433" parent="427" guid="C3VwMh972kOZI9VeBbsOZA" x="2653.00" y="2370.50" text="rlPow4AndFresnelTerm.y"/>
+<topic id="434" parent="433" x="2842.00" y="2370.50" text="half fresnelTerm"/>
+<topic id="435" parent="426" guid="K8C4AuOIBk2getn1byK1Hg" x="2501.50" y="2399.50" text="out"/>
+<topic id="436" parent="435" x="2601.50" y="2399.50" text="half3 rgb"/>
+<topic id="437" parent="68" guid="UmHJnVpiT0C3Ru1QZ2_QMg" x="1932.50" y="2447.50" text="8、Emission()">
+<note>
+half3 Emission(float2 uv){#ifndef _EMISSION    return 0;#else    return tex2D(_EmissionMap, uv).rgb * _EmissionColor.rgb;#endif}
+</note>
+</topic>
+<topic id="438" parent="437" guid="nuP969ZUjk2wT4kBU8WAYA" x="2048.50" y="2434.50" text="in"/>
+<topic id="439" parent="438" guid="ogINXeY3RE-w8KIas1oxOg" x="2144.00" y="2434.50" text="i.tex.xy"/>
+<topic id="440" parent="437" guid="AMfKWE028UWv2JcVEfVZNw" x="2048.50" y="2460.50" text="out"/>
+<topic id="441" parent="440" x="2148.50" y="2460.50" text="half3 rgb"/>
+<topic id="442" parent="68" guid="EGqmmK1pqEezqvUjE1x3EQ" x="1952.00" y="2550.50" text="9、OutputForward()">
+<note>
+half4 OutputForward (half4 output, half alphaFromSurface){    #if defined(_ALPHABLEND_ON) || defined(_ALPHAPREMULTIPLY_ON)        output.a = alphaFromSurface;    #else        UNITY_OPAQUE_ALPHA(output.a);    #endif    return output;}
+</note>
+</topic>
+<topic id="443" parent="442" guid="eJcEXE96DEWo2wJRwRaVLw" x="2087.50" y="2508.50" text="in"/>
+<topic id="444" parent="443" guid="5DMoEewvW0eVaAC_VoaZOA" x="2180.50" y="2495.50" text="half4 c"/>
+<topic id="445" parent="443" guid="y6mUtEjX9k69VcfVx22k6A" x="2182.50" y="2521.50" text="s.alpha"/>
+<topic id="446" parent="442" guid="Gix-sDenUUe77wzbT59SCw" x="2087.50" y="2550.50" text="out"/>
+<topic id="447" parent="446" guid="ZGIZPHF6WEGqmVqDdBISQA" x="2191.50" y="2550.50" text="half4 rgba"/>
+<topic id="448" parent="442" guid="3oRTpOUdx02Cqvcs5x6UUQ" x="2164.50" y="2592.50" text="9、UNITY_OPAQUE_ALPHA()"/>
+<topic id="449" parent="448" guid="jNLup_DpVUeIqDKC1nmhQg" x="2327.50" y="2579.50" text="in"/>
+<topic id="450" parent="449" guid="DIB85Eba8kqj3xOcwYrQEw" x="2422.50" y="2579.50" text="s.alpha"/>
+<topic id="451" parent="448" guid="0kdwKQsgikS1ULFq4Cs4uw" x="2327.50" y="2605.50" text="out"/>
+<topic id="452" parent="451" guid="AuTJlWbWBkqCVTCMhtJJRA" x="2455.00" y="2605.50" text="outputAlpha = 1.0"/>
+<topic id="453" parent="-1" guid="u_KlGILJREuuBw-Kaf1IVQ" x="140.00" y="220.00" layout="strict-horizontal" layout-direction="right" text="Standard.Shader"/>
+<topic id="454" parent="453" guid="CQZHeUtoMkKsanSJtVbwLg" x="328.50" y="191.00" text="\NMetallicSetup"/>
+<topic id="455" parent="453" x="394.00" y="244.00" text="非UNITY_STANDARD_SIMPLE"/>
+<topic id="456" parent="455" guid="vR1Kb90s5E2yq8erBnCSmQ" x="628.50" y="244.00" text="UnityStandardCore"/>
+<topic id="457" parent="456" guid="aS8ny-OQ5kCLu99osE7FRg" x="774.00" y="231.00" text="vertBase"/>
+<topic id="458" parent="457" x="917.50" y="231.00" text="vertForwardBase()"/>
+<topic id="459" parent="456" guid="Il9TYQFjE06UJroZ4JN8Ag" x="774.50" y="257.00" text="fragBase"/>
+<topic id="460" parent="459" x="943.50" y="257.00" text="fragForwardBaseInternal()"/>
+</topics>
+<relations>
+<relation guid="EiBAgmweCkSEaJAJXCEbzg" source="30" target="31">
+<path>
+<custom-point x="-20.32" y="15.70"/>
+</path>
+</relation>
+<relation source="34" target="62"/>
+<relation guid="bbhuhTRzE0iq0r404q8eTA" source="111" target="80">
+<path>
+<custom-point x="15.13" y="32.50"/>
+</path>
+</relation>
+<relation guid="or83tDzEDUi-9uxRxywvrQ" source="139" target="151">
+<path>
+<custom-point x="18.50" y="-26.50"/>
+</path>
+</relation>
+<relation guid="vTi2JJhsRUuGjrZzmAQ2iw" source="160" target="154">
+<path>
+<custom-point x="54.28" y="-22.28"/>
+</path>
+</relation>
+<relation guid="d5g1nr7Tg0SiAMd-y3AwsQ" source="94" target="209"/>
+<relation guid="Xe9681kPOkKuHPOXwXCzhQ" source="94" target="126">
+<path>
+<custom-point x="51.00" y="34.00"/>
+</path>
+</relation>
+<relation guid="ls0b0xnfNk-h14C6OPZKHA" source="57" target="67">
+<path>
+<custom-point x="7.17" y="-132.15"/>
+</path>
+</relation>
+<relation source="246" target="269"/>
+<relation guid="PybPFpGXjkuV-a55dEy-ZA" source="126" target="121">
+<path>
+<custom-point x="110.63" y="-40.38"/>
+</path>
+</relation>
+<relation guid="wiIjWuBSSEGhhRuuteGpKA" source="121" target="94">
+<path>
+<custom-point x="-71.88" y="64.63"/>
+</path>
+</relation>
+<relation guid="qt4RSsqahk-GdEf7sI9zjA" source="139" target="131">
+<children>
+<text x="0.00" y="0.00">
+<note>
+.y
+</note>
+</text>
+</children>
+</relation>
+<relation guid="MCLW4yPNY0CbrOZFopVBsg" source="154" target="130">
+<path>
+<custom-point x="468.25" y="19.33"/>
+</path>
+</relation>
+<relation guid="dNvomkCX-0W72LjpzHiCSg" source="153" target="129">
+<path>
+<custom-point x="67.92" y="-20.00"/>
+</path>
+</relation>
+<relation guid="AHd944K8ZUCJI2xzgH7kNg" source="155" target="128">
+<path>
+<custom-point x="-84.25" y="109.00"/>
+</path>
+</relation>
+<relation source="163" target="168"/>
+<relation source="153" target="182"/>
+<relation guid="sm-gwcQ9SkqoSR4LkTncJA" source="116" target="183">
+<path>
+<custom-point x="-76.11" y="236.67"/>
+</path>
+</relation>
+<relation source="154" target="184"/>
+<relation guid="ak5VFfK0yUGM_KBJAQ6Z3A" source="186" target="99">
+<path>
+<custom-point x="8.50" y="-87.00"/>
+</path>
+</relation>
+<relation guid="yHAG801qx06hAp6T6JQzhg" source="195" target="228">
+<path>
+<custom-point x="11.37" y="154.31"/>
+</path>
+</relation>
+<relation source="228" target="257"/>
+<relation source="209" target="240"/>
+<relation guid="XqGeIYZbZ0mFwNVDL2o6nQ" source="271" target="231">
+<path>
+<custom-point x="-89.77" y="172.14"/>
+</path>
+</relation>
+<relation source="256" target="281"/>
+<relation source="267" target="282"/>
+<relation source="225" target="267"/>
+<relation guid="JmJha3uk70WVDsKRN_FLYA" source="268" target="283">
+<path>
+<custom-point x="-31.83" y="59.33"/>
+</path>
+</relation>
+<relation source="310" target="291"/>
+<relation guid="tRE4bK13V06jRxux_l9VSA" source="256" target="328"/>
+<relation source="333" target="278"/>
+<relation guid="Rjk0Kz-JKkachmOPF9TvrQ" source="291" target="277">
+<path>
+<custom-point x="78.50" y="-36.50"/>
+</path>
+</relation>
+<relation guid="RXfSKYxMRkSvReTrvOqGJQ" source="257" target="272">
+<path>
+<custom-point x="8.75" y="90.50"/>
+</path>
+</relation>
+<relation guid="fDZgS94KWk2VXu8uc_wV1w" source="231" target="394"/>
+</relations>
+</mindmap>
+</simplemind-mindmaps>
